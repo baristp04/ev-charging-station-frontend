@@ -1204,9 +1204,31 @@
             { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#1a2235' }] },
         ];
     }
-</script>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap&libraries=places" async defer></script>
+    // Backend'ten API key'i fetch et ve Google Maps script'ini yükle
+    async function loadGoogleMaps() {
+        try {
+            const response = await fetch('http://localhost:8000/api/config');
+            const config = await response.json();
+            const apiKey = config.google_maps_api_key || '';
+            
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
+            script.async = true;
+            script.defer = true;
+            document.body.appendChild(script);
+        } catch (error) {
+            console.error('API key yüklenemedi:', error);
+        }
+    }
+
+    // Sayfa yüklenince Google Maps'i yükle
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', loadGoogleMaps);
+    } else {
+        loadGoogleMaps();
+    }
+</script>
 
 </body>
 </html>
