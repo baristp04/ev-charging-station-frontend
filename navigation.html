@@ -510,6 +510,150 @@
         .empty-icon { font-size: 32px; margin-bottom: 10px; }
         .empty-text { font-size: 13px; line-height: 1.5; }
 
+
+        /* ── Navigation Panel ── */
+        .nav-panel {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .nav-panel.active { display: flex; }
+
+        .nav-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,255,157,0.05));
+        }
+
+        .nav-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .nav-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .nav-end-btn {
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--danger);
+            background: rgba(255,59,92,0.1);
+            color: var(--danger);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .nav-end-btn:hover { background: rgba(255,59,92,0.2); }
+
+        .nav-destination {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .nav-summary {
+            display: flex;
+            gap: 14px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .nav-summary span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-summary strong {
+            color: var(--accent);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* ── Steps ── */
+        .nav-steps {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+        }
+
+        .nav-steps::-webkit-scrollbar { width: 4px; }
+        .nav-steps::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .nav-step {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .nav-step.current {
+            border-color: var(--accent);
+            background: rgba(0,229,255,0.07);
+        }
+
+        .nav-step.passed {
+            opacity: 0.4;
+        }
+
+        .step-icon {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .nav-step.current .step-icon {
+            background: rgba(0,229,255,0.15);
+            border-color: var(--accent);
+        }
+
+        .step-body { flex: 1; }
+
+        .step-instruction {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 3px;
+        }
+
+        .step-distance {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .nav-arrived {
+            margin: 16px 20px;
+            padding: 14px;
+            border-radius: 10px;
+            background: rgba(0,255,157,0.1);
+            border: 1px solid var(--accent2);
+            text-align: center;
+            color: var(--accent2);
+            font-weight: 600;
+            font-size: 14px;
+            display: none;
+        }
+
         /* ── Map Type Toggle ── */
         .map-type-toggle {
             position: absolute;
@@ -623,6 +767,23 @@
             <button class="navigate-btn" id="navigateBtn" onclick="startNavigation()" disabled>
                 🧭 Navigasyonu Başlat
             </button>
+        </div>
+
+        <!-- Navigation Panel -->
+        <div id="navPanel" class="nav-panel">
+            <div class="nav-header">
+                <div class="nav-header-top">
+                    <div class="nav-title">🧭 Navigasyon</div>
+                    <button class="nav-end-btn" onclick="endNavigation()">✕ Bitir</button>
+                </div>
+                <div class="nav-destination" id="navDestination"></div>
+                <div class="nav-summary">
+                    <span>🕐 <strong id="navDuration">—</strong></span>
+                    <span>📍 <strong id="navDistance">—</strong></span>
+                </div>
+            </div>
+            <div class="nav-steps" id="navSteps"></div>
+            <div class="nav-arrived" id="navArrived">✅ Hedefe ulaştınız!</div>
         </div>
 
     </div>
@@ -921,10 +1082,61 @@
 
     // ── Navigate ──────────────────────────────────────────────────────────────
     function startNavigation() {
-        if (!selectedStation) return;
-        const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedStation.latitude},${selectedStation.longitude}&travelmode=${currentTravelMode.toLowerCase()}`;
-        window.open(url, '_blank');
-        showToast('Google Maps açılıyor...');
+        if (!selectedStation || !currentRoutes.length) return;
+
+        const route = currentRoutes[selectedRouteIndex];
+        const leg = route.legs[0];
+        const steps = leg.steps;
+
+        // Fill nav panel
+        document.getElementById('navDestination').textContent = selectedStation.name;
+        document.getElementById('navDuration').textContent = leg.duration.text;
+        document.getElementById('navDistance').textContent = leg.distance.text;
+
+        // Render steps
+        const stepsEl = document.getElementById('navSteps');
+        stepsEl.innerHTML = steps.map((step, i) => {
+            const instruction = step.instructions.replace(/<[^>]*>/g, '');
+            const icon = getStepIcon(instruction);
+            return `
+            <div class="nav-step ${i === 0 ? 'current' : ''}" id="step-${i}">
+                <div class="step-icon">${icon}</div>
+                <div class="step-body">
+                    <div class="step-instruction">${instruction}</div>
+                    <div class="step-distance">${step.distance.text} · ${step.duration.text}</div>
+                </div>
+            </div>`;
+        }).join('') + `
+            <div class="nav-step" style="border-color:var(--accent2); background:rgba(0,255,157,0.05);">
+                <div class="step-icon">⚡</div>
+                <div class="step-body">
+                    <div class="step-instruction">${selectedStation.name} — Hedefiniz</div>
+                    <div class="step-distance">${leg.distance.text} toplam</div>
+                </div>
+            </div>`;
+
+        // Show nav panel, hide detail
+        document.getElementById('detailView').classList.remove('active');
+        document.getElementById('navPanel').classList.add('active');
+
+        showToast('Navigasyon başladı!');
+    }
+
+    function getStepIcon(instruction) {
+        const t = instruction.toLowerCase();
+        if (t.includes('sağa') || t.includes('right')) return '↱';
+        if (t.includes('sola') || t.includes('left')) return '↰';
+        if (t.includes('düz') || t.includes('straight') || t.includes('continue')) return '↑';
+        if (t.includes('roundabout') || t.includes('dönel')) return '↻';
+        if (t.includes('u-turn') || t.includes('geri')) return '↩';
+        if (t.includes('dest') || t.includes('hedef') || t.includes('arrive')) return '⚡';
+        return '→';
+    }
+
+    function endNavigation() {
+        document.getElementById('navPanel').classList.remove('active');
+        document.getElementById('detailView').classList.add('active');
+        showToast('Navigasyon sonlandırıldı.');
     }
 
     // ── Filter / search ───────────────────────────────────────────────────────
