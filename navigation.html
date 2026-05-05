@@ -21,6 +21,7 @@
             --green: #00ff9d;
             --yellow: #ffb800;
             --red: #ff3b5c;
+            --purple: #a855f7;
             --panel-width: 380px;
         }
 
@@ -83,9 +84,10 @@
             margin-right: 5px;
         }
 
-        .status-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .status-dot.green  { background: var(--green);  box-shadow: 0 0 6px var(--green); }
         .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-        .status-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+        .status-dot.red    { background: var(--red);    box-shadow: 0 0 6px var(--red); }
+        .status-dot.purple { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
 
         /* ── Main Layout ── */
         .main {
@@ -120,9 +122,7 @@
         }
 
         /* ── Search ── */
-        .search-box {
-            position: relative;
-        }
+        .search-box { position: relative; }
 
         .search-box input {
             width: 100%;
@@ -155,6 +155,7 @@
             gap: 6px;
             padding: 12px 20px;
             border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
         }
 
         .filter-tab {
@@ -209,9 +210,10 @@
             transition: background 0.2s;
         }
 
-        .station-card.available::before { background: var(--green); }
-        .station-card.occupied::before { background: var(--yellow); }
-        .station-card.offline::before { background: var(--red); }
+        .station-card.available::before    { background: var(--green); }
+        .station-card.occupied::before     { background: var(--yellow); }
+        .station-card.offline::before      { background: var(--red); }
+        .station-card.maintenance::before  { background: var(--purple); }
 
         .station-card:hover, .station-card.selected {
             border-color: var(--accent);
@@ -242,9 +244,10 @@
             flex-shrink: 0;
         }
 
-        .badge-available { background: rgba(0,255,157,0.15); color: var(--green); }
-        .badge-occupied  { background: rgba(255,184,0,0.15);  color: var(--yellow); }
-        .badge-offline   { background: rgba(255,59,92,0.15);  color: var(--red); }
+        .badge-available    { background: rgba(0,255,157,0.15);   color: var(--green); }
+        .badge-occupied     { background: rgba(255,184,0,0.15);   color: var(--yellow); }
+        .badge-offline      { background: rgba(255,59,92,0.15);   color: var(--red); }
+        .badge-maintenance  { background: rgba(168,85,247,0.15);  color: var(--purple); }
 
         .station-location {
             font-size: 12px;
@@ -510,7 +513,6 @@
         .empty-icon { font-size: 32px; margin-bottom: 10px; }
         .empty-text { font-size: 13px; line-height: 1.5; }
 
-
         /* ── Navigation Panel ── */
         .nav-panel {
             display: none;
@@ -607,9 +609,7 @@
             background: rgba(0,229,255,0.07);
         }
 
-        .nav-step.passed {
-            opacity: 0.4;
-        }
+        .nav-step.passed { opacity: 0.4; }
 
         .step-icon {
             width: 32px; height: 32px;
@@ -729,6 +729,7 @@
         <span><span class="status-dot green"></span>Müsait</span>
         <span><span class="status-dot yellow"></span>Dolu</span>
         <span><span class="status-dot red"></span>Çevrimdışı</span>
+        <span><span class="status-dot purple"></span>Bakımda</span>
     </div>
 </header>
 
@@ -751,6 +752,7 @@
                 <button class="filter-tab" onclick="setFilter('available', this)">Müsait</button>
                 <button class="filter-tab" onclick="setFilter('occupied', this)">Dolu</button>
                 <button class="filter-tab" onclick="setFilter('offline', this)">Çevrimdışı</button>
+                <button class="filter-tab" onclick="setFilter('maintenance', this)">Bakımda</button>
             </div>
             <div class="station-list" id="stationList">
                 <div class="loading-overlay" id="listLoading">
@@ -817,6 +819,20 @@
     let currentTravelMode = 'DRIVING';
     let userLocation = null;
 
+    const STATUS_LABELS = {
+        available:   'Müsait',
+        occupied:    'Dolu',
+        offline:     'Çevrimdışı',
+        maintenance: 'Bakımda'
+    };
+
+    const STATUS_COLORS = {
+        available:   '#00ff9d',
+        occupied:    '#ffb800',
+        offline:     '#ff3b5c',
+        maintenance: '#a855f7'
+    };
+
     // ── Google Maps init ──────────────────────────────────────────────────────
     function initMap() {
         document.getElementById('mapLoading').style.display = 'none';
@@ -840,7 +856,6 @@
 
         distanceService = new google.maps.DistanceMatrixService();
 
-        // Get user location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -894,16 +909,17 @@
         }
 
         list.innerHTML = filteredStations.map(s => {
-            const statusLabel = { available: 'Müsait', occupied: 'Dolu', offline: 'Çevrimdışı' }[s.status] || s.status;
+            const label = STATUS_LABELS[s.status] || s.status;
             return `
             <div class="station-card ${s.status}" id="card-${s.id}" onclick="selectStation(${s.id})">
                 <div class="station-card-top">
                     <div class="station-name">${s.name}</div>
-                    <span class="station-badge badge-${s.status}">${statusLabel}</span>
+                    <span class="station-badge badge-${s.status}">${label}</span>
                 </div>
                 <div class="station-location">📍 ${s.location}</div>
                 <div class="station-meta">
                     <span class="meta-item">🌍 ${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}</span>
+                    <span class="meta-item">🔌 ${s.available_chargers}/${s.total_chargers} müsait</span>
                 </div>
             </div>`;
         }).join('');
@@ -916,7 +932,7 @@
         markers = [];
 
         allStations.forEach(s => {
-            const color = { available: '#00ff9d', occupied: '#ffb800', offline: '#ff3b5c' }[s.status] || '#888';
+            const color = STATUS_COLORS[s.status] || '#888';
             const marker = new google.maps.Marker({
                 position: { lat: s.latitude, lng: s.longitude },
                 map,
@@ -940,18 +956,15 @@
         selectedStation = allStations.find(s => s.id === id);
         if (!selectedStation) return;
 
-        // Highlight card
         document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
         const card = document.getElementById(`card-${id}`);
         if (card) card.classList.add('selected');
 
-        // Center map
         map.setCenter({ lat: selectedStation.latitude, lng: selectedStation.longitude });
         map.setZoom(14);
 
         showDetail(selectedStation);
 
-        // Get routes if user location available
         if (userLocation) {
             await calculateRoutes(currentTravelMode);
         }
@@ -962,12 +975,12 @@
         document.getElementById('listView').style.display = 'none';
         document.getElementById('detailView').classList.add('active');
 
-        const statusLabel = { available: 'Müsait', occupied: 'Dolu', offline: 'Çevrimdışı' }[station.status] || station.status;
+        const label = STATUS_LABELS[station.status] || station.status;
 
         document.getElementById('detailContent').innerHTML = `
             <div class="detail-station-name">${station.name}</div>
             <div class="detail-location">📍 ${station.location}</div>
-            <span class="station-badge badge-${station.status}">${statusLabel}</span>
+            <span class="station-badge badge-${station.status}">${label} · ${station.available_chargers}/${station.total_chargers}</span>
 
             <div class="section-label">Ulaşım Modu</div>
             <div class="travel-modes">
@@ -1041,7 +1054,6 @@
 
     function renderRouteOptions(routes) {
         const el = document.getElementById('routeOptions');
-        // Deduplicate by duration
         const seen = new Set();
         const unique = routes.filter(r => {
             const key = r.legs[0].duration.value;
@@ -1088,12 +1100,10 @@
         const leg = route.legs[0];
         const steps = leg.steps;
 
-        // Fill nav panel
         document.getElementById('navDestination').textContent = selectedStation.name;
         document.getElementById('navDuration').textContent = leg.duration.text;
         document.getElementById('navDistance').textContent = leg.distance.text;
 
-        // Render steps
         const stepsEl = document.getElementById('navSteps');
         stepsEl.innerHTML = steps.map((step, i) => {
             const instruction = step.instructions.replace(/<[^>]*>/g, '');
@@ -1115,10 +1125,8 @@
                 </div>
             </div>`;
 
-        // Show nav panel, hide detail
         document.getElementById('detailView').classList.remove('active');
         document.getElementById('navPanel').classList.add('active');
-
         showToast('Navigasyon başladı!');
     }
 
@@ -1168,12 +1176,11 @@
         document.getElementById('navigateBtn').disabled = true;
     }
 
-    // ── Map Type ─────────────────────────────────────────────────────────────
+    // ── Map Type ──────────────────────────────────────────────────────────────
     function setMapType(type, btn) {
         map.setMapTypeId(type);
         document.querySelectorAll('.map-type-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        // Switch dark style only for roadmap
         if (type === 'roadmap') {
             map.setOptions({ styles: darkMapStyle() });
         } else {
@@ -1181,7 +1188,7 @@
         }
     }
 
-    // ── Toast ─────────────────────────────────────────────────────────────────────
+    // ── Toast ──────────────────────────────────────────────────────────────────
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -1189,7 +1196,7 @@
         setTimeout(() => t.classList.remove('show'), 2800);
     }
 
-    // ── Dark map style ────────────────────────────────────────────────────────
+    // ── Dark map style ─────────────────────────────────────────────────────────
     function darkMapStyle() {
         return [
             { elementType: 'geometry', stylers: [{ color: '#0a0f1e' }] },
@@ -1205,13 +1212,12 @@
         ];
     }
 
-    // Backend'ten API key'i fetch et ve Google Maps script'ini yükle
+    // ── Load Google Maps ───────────────────────────────────────────────────────
     async function loadGoogleMaps() {
         try {
             const response = await fetch('http://localhost:8000/api/config');
             const config = await response.json();
             const apiKey = config.google_maps_api_key || '';
-            
             const script = document.createElement('script');
             script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
             script.async = true;
@@ -1222,7 +1228,6 @@
         }
     }
 
-    // Sayfa yüklenince Google Maps'i yükle
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadGoogleMaps);
     } else {
