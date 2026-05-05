@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EV Charging — İstasyon Navigasyon</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+        :root {
+            --bg: #0a0f1e;
+            --surface: #111827;
+            --surface2: #1a2235;
+            --border: #1e2d45;
+            --accent: #00e5ff;
+            --accent2: #00ff9d;
+            --warn: #ffb800;
+            --danger: #ff3b5c;
+            --text: #e8f0fe;
+            --text-muted: #6b7fa3;
+            --green: #00ff9d;
+            --yellow: #ffb800;
+            --red: #ff3b5c;
+            --panel-width: 380px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Header ── */
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            height: 56px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: var(--accent);
+        }
+
+        .logo-icon {
+            width: 28px; height: 28px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        .status-dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+        .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+        .status-dot.red { background: var(--red); box-shadow: 0 0 6px var(--red); }
+
+        /* ── Main Layout ── */
+        .main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ── Side Panel ── */
+        .panel {
+            width: var(--panel-width);
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .panel-header {
+            padding: 18px 20px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        /* ── Search ── */
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 14px 9px 36px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-box input:focus { border-color: var(--accent); }
+        .search-box input::placeholder { color: var(--text-muted); }
+
+        .search-icon {
+            position: absolute;
+            left: 11px; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        /* ── Filter tabs ── */
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .filter-tab {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            background: transparent;
+            transition: all 0.2s;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .filter-tab.active, .filter-tab:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0,229,255,0.08);
+        }
+
+        /* ── Station List ── */
+        .station-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+        }
+
+        .station-list::-webkit-scrollbar { width: 4px; }
+        .station-list::-webkit-scrollbar-track { background: transparent; }
+        .station-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .station-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .station-card::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 3px;
+            border-radius: 0 2px 2px 0;
+            background: var(--border);
+            transition: background 0.2s;
+        }
+
+        .station-card.available::before { background: var(--green); }
+        .station-card.occupied::before { background: var(--yellow); }
+        .station-card.offline::before { background: var(--red); }
+
+        .station-card:hover, .station-card.selected {
+            border-color: var(--accent);
+            background: rgba(0,229,255,0.05);
+        }
+
+        .station-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .station-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            line-height: 1.3;
+        }
+
+        .station-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            flex-shrink: 0;
+        }
+
+        .badge-available { background: rgba(0,255,157,0.15); color: var(--green); }
+        .badge-occupied  { background: rgba(255,184,0,0.15);  color: var(--yellow); }
+        .badge-offline   { background: rgba(255,59,92,0.15);  color: var(--red); }
+
+        .station-location {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .station-meta {
+            display: flex;
+            gap: 10px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        /* ── Detail Panel ── */
+        .detail-panel {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .detail-panel.active { display: flex; }
+
+        .detail-back {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .detail-back:hover { opacity: 0.7; }
+
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 20px;
+        }
+
+        .detail-content::-webkit-scrollbar { width: 4px; }
+        .detail-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .detail-station-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .detail-location {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            margin-top: 16px;
+        }
+
+        /* ── Travel Mode ── */
+        .travel-modes {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .travel-mode-btn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            text-align: center;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .travel-mode-btn.active, .travel-mode-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(0,229,255,0.08);
+        }
+
+        /* ── Route Options ── */
+        .route-option {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .route-option:hover, .route-option.selected {
+            border-color: var(--accent);
+            background: rgba(0,229,255,0.05);
+        }
+
+        .route-option.selected .route-badge {
+            background: rgba(0,229,255,0.15);
+            color: var(--accent);
+        }
+
+        .route-info { flex: 1; }
+
+        .route-duration {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .route-distance {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .route-badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: var(--surface);
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* ── Navigate Button ── */
+        .navigate-btn {
+            margin: 16px 20px;
+            padding: 13px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            color: #0a0f1e;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            letter-spacing: 0.02em;
+        }
+
+        .navigate-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0,229,255,0.3);
+        }
+
+        .navigate-btn:disabled {
+            background: var(--border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ── Charger list ── */
+        .charger-item {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .charger-type {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .charger-detail {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .charger-price {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--accent2);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* ── Map ── */
+        #map {
+            flex: 1;
+            position: relative;
+        }
+
+        /* ── Loading ── */
+        .loading-overlay {
+            position: absolute;
+            inset: 0;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            gap: 16px;
+        }
+
+        .loading-spinner {
+            width: 36px; height: 36px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .loading-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* ── Empty state ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon { font-size: 32px; margin-bottom: 10px; }
+        .empty-text { font-size: 13px; line-height: 1.5; }
+
+        /* ── Map Type Toggle ── */
+        .map-type-toggle {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 9999;
+            display: flex;
+            gap: 4px;
+            background: rgba(10,15,30,0.85);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 5px;
+            backdrop-filter: blur(8px);
+        }
+
+        .map-type-btn {
+            padding: 6px 12px;
+            border-radius: 7px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .map-type-btn.active {
+            background: var(--surface2);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+
+        .map-type-btn:hover:not(.active) {
+            color: var(--text);
+            background: var(--surface2);
+        }
+
+        /* ── Toast ── */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: var(--surface2);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 13px;
+            color: var(--accent);
+            z-index: 999;
+            transition: transform 0.3s ease;
+            font-family: 'Space Mono', monospace;
+            white-space: nowrap;
+        }
+
+        .toast.show { transform: translateX(-50%) translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <div class="logo">
+        <div class="logo-icon">⚡</div>
+        EV CHARGE NETWORK
+    </div>
+    <div class="header-status">
+        <span><span class="status-dot green"></span>Müsait</span>
+        <span><span class="status-dot yellow"></span>Dolu</span>
+        <span><span class="status-dot red"></span>Çevrimdışı</span>
+    </div>
+</header>
+
+<div class="main">
+
+    <!-- Side Panel -->
+    <div class="panel">
+
+        <!-- Station List View -->
+        <div id="listView" style="display:flex; flex-direction:column; height:100%;">
+            <div class="panel-header">
+                <div class="panel-title">İstasyonlar</div>
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="İstasyon ara..." oninput="filterStations()">
+                </div>
+            </div>
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="setFilter('all', this)">Tümü</button>
+                <button class="filter-tab" onclick="setFilter('available', this)">Müsait</button>
+                <button class="filter-tab" onclick="setFilter('occupied', this)">Dolu</button>
+                <button class="filter-tab" onclick="setFilter('offline', this)">Çevrimdışı</button>
+            </div>
+            <div class="station-list" id="stationList">
+                <div class="loading-overlay" id="listLoading">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">İstasyonlar yükleniyor...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail View -->
+        <div id="detailView" class="detail-panel">
+            <div class="detail-back" onclick="showList()">← Geri</div>
+            <div class="detail-content" id="detailContent"></div>
+            <button class="navigate-btn" id="navigateBtn" onclick="startNavigation()" disabled>
+                🧭 Navigasyonu Başlat
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Map wrapper -->
+    <div style="position:relative; flex:1; overflow:hidden;">
+        <div id="map" style="width:100%; height:100%;"></div>
+        <div class="loading-overlay" id="mapLoading">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Harita yükleniyor...</div>
+        </div>
+        <div class="map-type-toggle">
+            <button class="map-type-btn active" id="btn-roadmap" onclick="setMapType('roadmap', this)">🗺️ Normal</button>
+            <button class="map-type-btn" id="btn-satellite" onclick="setMapType('satellite', this)">🛰️ Uydu</button>
+            <button class="map-type-btn" id="btn-hybrid" onclick="setMapType('hybrid', this)">🌍 Hybrid</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const API_BASE = 'http://127.0.0.1:8000/api/navigation';
+    let map, userMarker, directionsRenderer, distanceService;
+    let stations = [], filteredStations = [], allStations = [];
+    let selectedStation = null;
+    let currentFilter = 'all';
+    let selectedRouteIndex = 0;
+    let currentRoutes = [];
+    let currentTravelMode = 'DRIVING';
+    let userLocation = null;
+
+    // ── Google Maps init ──────────────────────────────────────────────────────
+    function initMap() {
+        document.getElementById('mapLoading').style.display = 'none';
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: { lat: 38.4192, lng: 27.1287 },
+            zoom: 12,
+            styles: darkMapStyle(),
+            disableDefaultUI: false,
+            zoomControl: true,
+            mapTypeControl: false,
+            streetViewControl: false,
+            fullscreenControl: false,
+        });
+
+        directionsRenderer = new google.maps.DirectionsRenderer({
+            map,
+            suppressMarkers: false,
+            polylineOptions: { strokeColor: '#00e5ff', strokeWeight: 4, strokeOpacity: 0.85 }
+        });
+
+        distanceService = new google.maps.DistanceMatrixService();
+
+        // Get user location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                userMarker = new google.maps.Marker({
+                    position: userLocation,
+                    map,
+                    title: 'Konumunuz',
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 9,
+                        fillColor: '#00e5ff',
+                        fillOpacity: 1,
+                        strokeColor: '#ffffff',
+                        strokeWeight: 2.5
+                    },
+                    zIndex: 999
+                });
+                map.setCenter(userLocation);
+            }, () => showToast('Konum alınamadı'));
+        }
+
+        loadStations();
+    }
+
+    // ── Load stations from API ────────────────────────────────────────────────
+    async function loadStations() {
+        try {
+            const res = await fetch(`${API_BASE}/stations`);
+            allStations = await res.json();
+            stations = [...allStations];
+            filteredStations = [...allStations];
+            document.getElementById('listLoading').style.display = 'none';
+            renderStationList();
+            placeMarkers();
+        } catch (e) {
+            document.getElementById('listLoading').style.display = 'none';
+            document.getElementById('stationList').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">⚠️</div>
+                    <div class="empty-text">API'ye bağlanılamadı.<br>Backend çalışıyor mu?</div>
+                </div>`;
+        }
+    }
+
+    // ── Render station cards ──────────────────────────────────────────────────
+    function renderStationList() {
+        const list = document.getElementById('stationList');
+        if (!filteredStations.length) {
+            list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔌</div><div class="empty-text">İstasyon bulunamadı.</div></div>`;
+            return;
+        }
+
+        list.innerHTML = filteredStations.map(s => {
+            const statusLabel = { available: 'Müsait', occupied: 'Dolu', offline: 'Çevrimdışı' }[s.status] || s.status;
+            return `
+            <div class="station-card ${s.status}" id="card-${s.id}" onclick="selectStation(${s.id})">
+                <div class="station-card-top">
+                    <div class="station-name">${s.name}</div>
+                    <span class="station-badge badge-${s.status}">${statusLabel}</span>
+                </div>
+                <div class="station-location">📍 ${s.location}</div>
+                <div class="station-meta">
+                    <span class="meta-item">🌍 ${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}</span>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── Place markers on map ──────────────────────────────────────────────────
+    let markers = [];
+    function placeMarkers() {
+        markers.forEach(m => m.setMap(null));
+        markers = [];
+
+        allStations.forEach(s => {
+            const color = { available: '#00ff9d', occupied: '#ffb800', offline: '#ff3b5c' }[s.status] || '#888';
+            const marker = new google.maps.Marker({
+                position: { lat: s.latitude, lng: s.longitude },
+                map,
+                title: s.name,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 11,
+                    fillColor: color,
+                    fillOpacity: 0.95,
+                    strokeColor: '#0a0f1e',
+                    strokeWeight: 2.5
+                }
+            });
+            marker.addListener('click', () => selectStation(s.id));
+            markers.push(marker);
+        });
+    }
+
+    // ── Select station ────────────────────────────────────────────────────────
+    async function selectStation(id) {
+        selectedStation = allStations.find(s => s.id === id);
+        if (!selectedStation) return;
+
+        // Highlight card
+        document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
+        const card = document.getElementById(`card-${id}`);
+        if (card) card.classList.add('selected');
+
+        // Center map
+        map.setCenter({ lat: selectedStation.latitude, lng: selectedStation.longitude });
+        map.setZoom(14);
+
+        showDetail(selectedStation);
+
+        // Get routes if user location available
+        if (userLocation) {
+            await calculateRoutes(currentTravelMode);
+        }
+    }
+
+    // ── Show detail panel ─────────────────────────────────────────────────────
+    function showDetail(station) {
+        document.getElementById('listView').style.display = 'none';
+        document.getElementById('detailView').classList.add('active');
+
+        const statusLabel = { available: 'Müsait', occupied: 'Dolu', offline: 'Çevrimdışı' }[station.status] || station.status;
+
+        document.getElementById('detailContent').innerHTML = `
+            <div class="detail-station-name">${station.name}</div>
+            <div class="detail-location">📍 ${station.location}</div>
+            <span class="station-badge badge-${station.status}">${statusLabel}</span>
+
+            <div class="section-label">Ulaşım Modu</div>
+            <div class="travel-modes">
+                <button class="travel-mode-btn active" id="mode-DRIVING" onclick="changeTravelMode('DRIVING', this)" title="Araç">🚗</button>
+                <button class="travel-mode-btn" id="mode-WALKING" onclick="changeTravelMode('WALKING', this)" title="Yürüyüş">🚶</button>
+                <button class="travel-mode-btn" id="mode-TRANSIT" onclick="changeTravelMode('TRANSIT', this)" title="Toplu Taşıma">🚌</button>
+            </div>
+
+            <div class="section-label">Rota Seçenekleri</div>
+            <div id="routeOptions">
+                ${!userLocation ? '<div style="font-size:12px;color:var(--text-muted);">Konum izni verilmedi, rota hesaplanamıyor.</div>' : '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>'}
+            </div>
+
+            <div class="section-label">Şarj Cihazları</div>
+            <div id="chargerList">
+                <div style="font-size:12px;color:var(--text-muted);">Yükleniyor...</div>
+            </div>
+        `;
+
+        loadChargers(station.id);
+    }
+
+    // ── Load chargers ─────────────────────────────────────────────────────────
+    async function loadChargers(stationId) {
+        try {
+            const res = await fetch(`${API_BASE}/stations/${stationId}`);
+            const data = await res.json();
+            const chargers = data.chargers || [];
+            const el = document.getElementById('chargerList');
+            if (!chargers.length) {
+                el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi yok.</div>';
+                return;
+            }
+            el.innerHTML = chargers.map(c => `
+                <div class="charger-item">
+                    <div>
+                        <div class="charger-type">${c.type} — ${c.connectorType}</div>
+                        <div class="charger-detail">${c.powerOutput} kW · ${c.status}</div>
+                    </div>
+                    <div class="charger-price">${c.pricePerKwh} ₺/kWh</div>
+                </div>`).join('');
+        } catch {
+            document.getElementById('chargerList').innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi alınamadı.</div>';
+        }
+    }
+
+    // ── Calculate routes ──────────────────────────────────────────────────────
+    async function calculateRoutes(mode) {
+        if (!userLocation || !selectedStation) return;
+
+        const directionsService = new google.maps.DirectionsService();
+        directionsService.route({
+            origin: userLocation,
+            destination: { lat: selectedStation.latitude, lng: selectedStation.longitude },
+            travelMode: google.maps.TravelMode[mode],
+            provideRouteAlternatives: true
+        }, (result, status) => {
+            if (status === 'OK') {
+                currentRoutes = result.routes;
+                renderRouteOptions(result.routes);
+                directionsRenderer.setDirections(result);
+                directionsRenderer.setRouteIndex(0);
+                selectedRouteIndex = 0;
+                document.getElementById('navigateBtn').disabled = false;
+            } else {
+                document.getElementById('routeOptions').innerHTML =
+                    '<div style="font-size:12px;color:var(--text-muted);">Rota bulunamadı.</div>';
+            }
+        });
+    }
+
+    function renderRouteOptions(routes) {
+        const el = document.getElementById('routeOptions');
+        // Deduplicate by duration
+        const seen = new Set();
+        const unique = routes.filter(r => {
+            const key = r.legs[0].duration.value;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+        unique.sort((a, b) => a.legs[0].duration.value - b.legs[0].duration.value);
+
+        el.innerHTML = unique.map((r, i) => `
+            <div class="route-option ${i === 0 ? 'selected' : ''}" onclick="selectRoute(${i}, this)">
+                <div class="route-info">
+                    <div class="route-duration">${r.legs[0].duration.text}</div>
+                    <div class="route-distance">${r.legs[0].distance.text}</div>
+                </div>
+                <span class="route-badge">${i === 0 ? 'EN HIZLI' : 'ALT. ' + i}</span>
+            </div>`).join('');
+    }
+
+    function selectRoute(index, el) {
+        selectedRouteIndex = index;
+        document.querySelectorAll('.route-option').forEach((r, i) => {
+            r.classList.toggle('selected', i === index);
+            r.querySelector('.route-badge').textContent = i === 0 ? 'EN HIZLI' : (i === index ? 'SEÇİLDİ' : `ALT. ${i}`);
+        });
+        directionsRenderer.setRouteIndex(index);
+    }
+
+    // ── Travel mode ───────────────────────────────────────────────────────────
+    function changeTravelMode(mode, btn) {
+        currentTravelMode = mode;
+        document.querySelectorAll('.travel-mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        directionsRenderer.setDirections({ routes: [] });
+        document.getElementById('routeOptions').innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>';
+        calculateRoutes(mode);
+    }
+
+    // ── Navigate ──────────────────────────────────────────────────────────────
+    function startNavigation() {
+        if (!selectedStation) return;
+        const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedStation.latitude},${selectedStation.longitude}&travelmode=${currentTravelMode.toLowerCase()}`;
+        window.open(url, '_blank');
+        showToast('Google Maps açılıyor...');
+    }
+
+    // ── Filter / search ───────────────────────────────────────────────────────
+    function setFilter(filter, btn) {
+        currentFilter = filter;
+        document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        applyFilters();
+    }
+
+    function filterStations() { applyFilters(); }
+
+    function applyFilters() {
+        const q = document.getElementById('searchInput').value.toLowerCase();
+        filteredStations = allStations.filter(s => {
+            const matchStatus = currentFilter === 'all' || s.status === currentFilter;
+            const matchSearch = !q || s.name.toLowerCase().includes(q) || s.location.toLowerCase().includes(q);
+            return matchStatus && matchSearch;
+        });
+        renderStationList();
+    }
+
+    // ── Show list ─────────────────────────────────────────────────────────────
+    function showList() {
+        document.getElementById('listView').style.display = 'flex';
+        document.getElementById('detailView').classList.remove('active');
+        directionsRenderer.setDirections({ routes: [] });
+        selectedStation = null;
+        document.getElementById('navigateBtn').disabled = true;
+    }
+
+    // ── Map Type ─────────────────────────────────────────────────────────────
+    function setMapType(type, btn) {
+        map.setMapTypeId(type);
+        document.querySelectorAll('.map-type-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Switch dark style only for roadmap
+        if (type === 'roadmap') {
+            map.setOptions({ styles: darkMapStyle() });
+        } else {
+            map.setOptions({ styles: [] });
+        }
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────────────
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2800);
+    }
+
+    // ── Dark map style ────────────────────────────────────────────────────────
+    function darkMapStyle() {
+        return [
+            { elementType: 'geometry', stylers: [{ color: '#0a0f1e' }] },
+            { elementType: 'labels.text.fill', stylers: [{ color: '#6b7fa3' }] },
+            { elementType: 'labels.text.stroke', stylers: [{ color: '#0a0f1e' }] },
+            { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#1a2235' }] },
+            { featureType: 'road', elementType: 'geometry.stroke', stylers: [{ color: '#111827' }] },
+            { featureType: 'road.highway', elementType: 'geometry', stylers: [{ color: '#1e2d45' }] },
+            { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0d1a2e' }] },
+            { featureType: 'poi', stylers: [{ visibility: 'off' }] },
+            { featureType: 'transit', stylers: [{ visibility: 'off' }] },
+            { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#1a2235' }] },
+        ];
+    }
+</script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=API_KEY&callback=initMap&libraries=places" async defer></script>
+
+</body>
+</html>
