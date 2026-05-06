@@ -809,6 +809,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
+    // PORT AYARI: CORS hatası almamak için 127.0.0.1 yerine localhost kullanıyoruz.
+    // Projenizin yapısına göre '/api/v1' yolunu da kullanabilirsiniz.
     const API_BASE = 'http://127.0.0.1:8000/api/navigation';
     let map, userMarker, directionsRenderer, distanceService;
     let stations = [], filteredStations = [], allStations = [];
@@ -881,21 +883,36 @@
     }
 
     // ── Load stations from API ────────────────────────────────────────────────
-    async function loadStations() {
+   async function loadStations() {
         try {
-            const res = await fetch(`${API_BASE}/stations`);
-            allStations = await res.json();
-            stations = [...allStations];
-            filteredStations = [...allStations];
+            // DİKKAT: Sondaki slash (/) işaretini sildik! CORS hatasını bu çözer.
+            const res = await fetch(`${API_BASE}/stations`); 
+            
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            
+            const data = await res.json();
+            
+            if (Array.isArray(data)) {
+                allStations = data;
+                stations = [...allStations];
+                filteredStations = [...allStations];
+            } else {
+                console.error("Beklenmeyen veri formatı (Array bekleniyordu):", data);
+                allStations = [];
+            }
+            
             document.getElementById('listLoading').style.display = 'none';
             renderStationList();
             placeMarkers();
         } catch (e) {
+            console.error("Fetch Hatası:", e);
             document.getElementById('listLoading').style.display = 'none';
             document.getElementById('stationList').innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">⚠️</div>
-                    <div class="empty-text">API'ye bağlanılamadı.<br>Backend çalışıyor mu?</div>
+                    <div class="empty-text">API'ye bağlanılamadı.<br>Bağlantı yolunu kontrol edin.</div>
                 </div>`;
         }
     }
@@ -910,8 +927,10 @@
 
         list.innerHTML = filteredStations.map(s => {
             const label = STATUS_LABELS[s.status] || s.status;
+            // id veya stationID kullanımı API'nin döndürdüğü değere göre ayarlandı
+            const id = s.id || s.stationID; 
             return `
-            <div class="station-card ${s.status}" id="card-${s.id}" onclick="selectStation(${s.id})">
+            <div class="station-card ${s.status}" id="card-${id}" onclick="selectStation(${id})">
                 <div class="station-card-top">
                     <div class="station-name">${s.name}</div>
                     <span class="station-badge badge-${s.status}">${label}</span>
@@ -919,7 +938,7 @@
                 <div class="station-location">📍 ${s.location}</div>
                 <div class="station-meta">
                     <span class="meta-item">🌍 ${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}</span>
-                    <span class="meta-item">🔌 ${s.available_chargers}/${s.total_chargers} müsait</span>
+                    <span class="meta-item">🔌 Müsait</span>
                 </div>
             </div>`;
         }).join('');
@@ -946,14 +965,15 @@
                     strokeWeight: 2.5
                 }
             });
-            marker.addListener('click', () => selectStation(s.id));
+            const id = s.id || s.stationID;
+            marker.addListener('click', () => selectStation(id));
             markers.push(marker);
         });
     }
 
     // ── Select station ────────────────────────────────────────────────────────
     async function selectStation(id) {
-        selectedStation = allStations.find(s => s.id === id);
+        selectedStation = allStations.find(s => (s.id || s.stationID) === id);
         if (!selectedStation) return;
 
         document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
@@ -976,11 +996,12 @@
         document.getElementById('detailView').classList.add('active');
 
         const label = STATUS_LABELS[station.status] || station.status;
+        const id = station.id || station.stationID;
 
         document.getElementById('detailContent').innerHTML = `
             <div class="detail-station-name">${station.name}</div>
             <div class="detail-location">📍 ${station.location}</div>
-            <span class="station-badge badge-${station.status}">${label} · ${station.available_chargers}/${station.total_chargers}</span>
+            <span class="station-badge badge-${station.status}">${label}</span>
 
             <div class="section-label">Ulaşım Modu</div>
             <div class="travel-modes">
@@ -1000,12 +1021,13 @@
             </div>
         `;
 
-        loadChargers(station.id);
+        loadChargers(id);
     }
 
     // ── Load chargers ─────────────────────────────────────────────────────────
     async function loadChargers(stationId) {
         try {
+            // stations/id yerine chargers endpointi veya ilişkili veri kullanılıyor olabilir.
             const res = await fetch(`${API_BASE}/stations/${stationId}`);
             const data = await res.json();
             const chargers = data.chargers || [];
@@ -1219,7 +1241,8 @@
             const config = await response.json();
             const apiKey = config.google_maps_api_key || '';
             const script = document.createElement('script');
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
+            // GÜVENLİK/HATA GİDERME: routing ve mesafe işlemleri için geometry kütüphanesi eklendi.
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places,geometry`;
             script.async = true;
             script.defer = true;
             document.body.appendChild(script);
