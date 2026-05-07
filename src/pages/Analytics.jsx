@@ -361,7 +361,7 @@ export default function Analytics() {
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const S = {
-  shell: { minHeight: '100vh', display: 'flex', flexDirection: 'column' },
+  shell: {display: 'flex', flexDirection: 'column' },
 
   header: {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',

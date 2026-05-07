@@ -291,6 +291,7 @@
             font-size: 13px;
             font-weight: 500;
             transition: opacity 0.2s;
+            flex-shrink: 0;
         }
 
         .detail-back:hover { opacity: 0.7; }
@@ -313,7 +314,7 @@
         .detail-location {
             font-size: 13px;
             color: var(--text-muted);
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 4px;
@@ -422,6 +423,7 @@
             justify-content: center;
             gap: 8px;
             letter-spacing: 0.02em;
+            flex-shrink: 0;
         }
 
         .navigate-btn:hover {
@@ -437,7 +439,7 @@
             box-shadow: none;
         }
 
-        /* ── Charger list ── */
+        /* ── Charger list (detail view) ── */
         .charger-item {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -641,19 +643,6 @@
             font-family: 'Space Mono', monospace;
         }
 
-        .nav-arrived {
-            margin: 16px 20px;
-            padding: 14px;
-            border-radius: 10px;
-            background: rgba(0,255,157,0.1);
-            border: 1px solid var(--accent2);
-            text-align: center;
-            color: var(--accent2);
-            font-weight: 600;
-            font-size: 14px;
-            display: none;
-        }
-
         /* ── Map Type Toggle ── */
         .map-type-toggle {
             position: absolute;
@@ -715,6 +704,193 @@
         }
 
         .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* ── Google Maps InfoWindow pill override ── */
+        .gm-style .gm-style-iw-c {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            min-width: 0 !important;
+        }
+        .gm-style .gm-style-iw-d {
+            overflow: visible !important;
+            padding: 0 !important;
+        }
+        .gm-style .gm-style-iw-tc { display: none !important; }
+        .gm-style button.gm-ui-hover-effect { display: none !important; }
+        .gm-style .gm-style-iw-chr { display: none !important; }
+
+        /* ── Map reservation pill button ── */
+        .map-reservation-pill {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #0a0f1e;
+            padding: 9px 20px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            white-space: nowrap;
+            box-shadow: 0 4px 20px rgba(0,229,255,0.45);
+            transition: transform 0.15s;
+            user-select: none;
+            letter-spacing: 0.02em;
+        }
+        .map-reservation-pill:hover { transform: scale(1.06); }
+
+        /* ── Reservation View ── */
+        .reservation-view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* Selectable charger cards in reservation view */
+        .res-charger-card {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .res-charger-card:hover:not(.unavailable) {
+            border-color: var(--accent);
+            background: rgba(0,229,255,0.05);
+        }
+
+        .res-charger-card.selected {
+            border-color: var(--accent) !important;
+            background: rgba(0,229,255,0.1) !important;
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .res-charger-card.unavailable {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* Reservation form fields */
+        .res-form-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .res-field { margin-bottom: 14px; }
+
+        .res-field label {
+            display: block;
+            font-size: 10px;
+            font-family: 'Space Mono', monospace;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            margin-bottom: 6px;
+        }
+
+        .res-field select,
+        .res-field input[type="datetime-local"] {
+            width: 100%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 9px 12px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.2s;
+            color-scheme: dark;
+        }
+
+        .res-field select:focus,
+        .res-field input[type="datetime-local"]:focus {
+            border-color: var(--accent);
+        }
+
+        /* Cost display box */
+        .cost-box {
+            background: rgba(0,229,255,0.06);
+            border: 1px solid rgba(0,229,255,0.2);
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+
+        .cost-label {
+            font-size: 10px;
+            font-family: 'Space Mono', monospace;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            margin-bottom: 8px;
+        }
+
+        .cost-amount {
+            font-size: 28px;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            color: var(--accent2);
+            margin-bottom: 6px;
+        }
+
+        .cost-detail {
+            font-size: 11px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Pay button */
+        .pay-btn {
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent2), #00c87a);
+            border: none;
+            color: #0a0f1e;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+            margin-top: 4px;
+        }
+
+        .pay-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0,255,157,0.3);
+        }
+
+        .pay-btn:disabled {
+            background: var(--border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Selected charger info banner */
+        .selected-charger-banner {
+            background: rgba(0,229,255,0.08);
+            border: 1px solid rgba(0,229,255,0.25);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 4px;
+            font-size: 12px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
     </style>
 </head>
 <body>
@@ -762,7 +938,7 @@
             </div>
         </div>
 
-        <!-- Detail View -->
+        <!-- Detail View (route planning) -->
         <div id="detailView" class="detail-panel">
             <div class="detail-back" onclick="showList()">← Geri</div>
             <div class="detail-content" id="detailContent"></div>
@@ -785,7 +961,14 @@
                 </div>
             </div>
             <div class="nav-steps" id="navSteps"></div>
-            <div class="nav-arrived" id="navArrived">✅ Hedefe ulaştınız!</div>
+        </div>
+
+        <!-- Reservation View (new) -->
+        <div id="reservationView" class="reservation-view">
+            <div class="detail-back" onclick="backFromReservation()">← Geri</div>
+            <div class="detail-content" id="reservationContent">
+                <!-- Dynamically populated by openReservationPanel() -->
+            </div>
         </div>
 
     </div>
@@ -812,6 +995,7 @@
     // PORT AYARI: CORS hatası almamak için 127.0.0.1 yerine localhost kullanıyoruz.
     // Projenizin yapısına göre '/api/v1' yolunu da kullanabilirsiniz.
     const API_BASE = 'http://127.0.0.1:8000/api/navigation';
+
     let map, userMarker, directionsRenderer, distanceService;
     let stations = [], filteredStations = [], allStations = [];
     let selectedStation = null;
@@ -820,6 +1004,11 @@
     let currentRoutes = [];
     let currentTravelMode = 'DRIVING';
     let userLocation = null;
+
+    // Reservation state
+    let reservationPill = null;
+    let currentChargers = [];
+    let selectedCharger = null;
 
     const STATUS_LABELS = {
         available:   'Müsait',
@@ -858,6 +1047,11 @@
 
         distanceService = new google.maps.DistanceMatrixService();
 
+        // Close pill when clicking empty map area
+        map.addListener('click', () => {
+            if (reservationPill) reservationPill.close();
+        });
+
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -885,29 +1079,23 @@
     // ── Load stations from API ────────────────────────────────────────────────
    async function loadStations() {
         try {
-            // DİKKAT: Sondaki slash (/) işaretini sildik! CORS hatasını bu çözer.
-            const res = await fetch(`${API_BASE}/stations`); 
-            
-            if (!res.ok) {
-                throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            
+            const res = await fetch(`${API_BASE}/stations`);
+            if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             const data = await res.json();
-            
+
             if (Array.isArray(data)) {
                 allStations = data;
                 stations = [...allStations];
                 filteredStations = [...allStations];
             } else {
-                console.error("Beklenmeyen veri formatı (Array bekleniyordu):", data);
                 allStations = [];
             }
-            
+
             document.getElementById('listLoading').style.display = 'none';
             renderStationList();
             placeMarkers();
         } catch (e) {
-            console.error("Fetch Hatası:", e);
+            console.error('Fetch error:', e);
             document.getElementById('listLoading').style.display = 'none';
             document.getElementById('stationList').innerHTML = `
                 <div class="empty-state">
@@ -917,7 +1105,7 @@
         }
     }
 
-    // ── Render station cards ──────────────────────────────────────────────────
+    // ── Render station cards in list ──────────────────────────────────────────
     function renderStationList() {
         const list = document.getElementById('stationList');
         if (!filteredStations.length) {
@@ -938,7 +1126,6 @@
                 <div class="station-location">📍 ${s.location}</div>
                 <div class="station-meta">
                     <span class="meta-item">🌍 ${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}</span>
-                    <span class="meta-item">🔌 Müsait</span>
                 </div>
             </div>`;
         }).join('');
@@ -946,6 +1133,7 @@
 
     // ── Place markers on map ──────────────────────────────────────────────────
     let markers = [];
+
     function placeMarkers() {
         markers.forEach(m => m.setMap(null));
         markers = [];
@@ -966,33 +1154,91 @@
                 }
             });
             const id = s.id || s.stationID;
-            marker.addListener('click', () => selectStation(id));
+
+            // Marker click shows the reservation pill on map (does not open sidebar)
+            marker.addListener('click', () => markerClick(id));
             markers.push(marker);
         });
     }
 
-    // ── Select station ────────────────────────────────────────────────────────
-    async function selectStation(id) {
-        selectedStation = allStations.find(s => (s.id || s.stationID) === id);
-        if (!selectedStation) return;
+    // ── Marker click — show pill on map ───────────────────────────────────────
+    function markerClick(id) {
+        const station = allStations.find(s => (s.id || s.stationID) === id);
+        if (!station) return;
 
+        selectedStation = station;
+        currentChargers = [];
+        selectedCharger = null;
+
+        // Center and zoom map
+        map.setCenter({ lat: station.latitude, lng: station.longitude });
+        map.setZoom(15);
+
+        // Highlight matching list card without opening detail panel
         document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
         const card = document.getElementById(`card-${id}`);
-        if (card) card.classList.add('selected');
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-        map.setCenter({ lat: selectedStation.latitude, lng: selectedStation.longitude });
-        map.setZoom(14);
+        // Preload chargers in background for faster reservation panel open
+        preloadChargers(id);
 
-        showDetail(selectedStation);
+        // Show reservation pill floating above the marker
+        if (reservationPill) reservationPill.close();
+        reservationPill = new google.maps.InfoWindow({
+            content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Rezervasyon Yap</div>`,
+            position: { lat: station.latitude, lng: station.longitude },
+            disableAutoPan: true,
+            pixelOffset: new google.maps.Size(0, -32)
+        });
+        reservationPill.open(map);
+    }
 
-        if (userLocation) {
-            await calculateRoutes(currentTravelMode);
+    // ── Preload chargers when marker is clicked ───────────────────────────────
+    async function preloadChargers(stationId) {
+        try {
+            const res = await fetch(`${API_BASE}/stations/${stationId}`);
+            const data = await res.json();
+            currentChargers = data.chargers || [];
+        } catch {
+            currentChargers = [];
         }
     }
 
-    // ── Show detail panel ─────────────────────────────────────────────────────
+    // ── Select station from list card (opens detail + routes) ─────────────────
+    async function selectStation(id) {
+    selectedStation = allStations.find(s => (s.id || s.stationID) === id);
+    if (!selectedStation) return;
+
+    document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
+    const card = document.getElementById(`card-${id}`);
+    if (card) card.classList.add('selected');
+
+    map.setCenter({ lat: selectedStation.latitude, lng: selectedStation.longitude });
+    map.setZoom(14);
+
+    // Show reservation pill above the station marker (same as marker click)
+    if (reservationPill) reservationPill.close();
+    reservationPill = new google.maps.InfoWindow({
+        content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Rezervasyon Yap</div>`,
+        position: { lat: selectedStation.latitude, lng: selectedStation.longitude },
+        disableAutoPan: true,
+        pixelOffset: new google.maps.Size(0, -32)
+    });
+    reservationPill.open(map);
+
+    // Preload chargers in background for faster reservation panel open
+    preloadChargers(id);
+
+    showDetail(selectedStation);
+
+    if (userLocation) await calculateRoutes(currentTravelMode);
+}
+
+    // ── Show detail panel (routes + charger info) ─────────────────────────────
     function showDetail(station) {
         document.getElementById('listView').style.display = 'none';
+        document.getElementById('reservationView').style.display = 'none';
+        document.getElementById('navPanel').classList.remove('active');
         document.getElementById('detailView').classList.add('active');
 
         const label = STATUS_LABELS[station.status] || station.status;
@@ -1012,7 +1258,9 @@
 
             <div class="section-label">Rota Seçenekleri</div>
             <div id="routeOptions">
-                ${!userLocation ? '<div style="font-size:12px;color:var(--text-muted);">Konum izni verilmedi, rota hesaplanamıyor.</div>' : '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>'}
+                ${!userLocation
+                    ? '<div style="font-size:12px;color:var(--text-muted);">Konum izni verilmedi.</div>'
+                    : '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>'}
             </div>
 
             <div class="section-label">Şarj Cihazları</div>
@@ -1024,28 +1272,255 @@
         loadChargers(id);
     }
 
-    // ── Load chargers ─────────────────────────────────────────────────────────
+    // ── Load chargers for detail view (info only, no reserve button) ──────────
     async function loadChargers(stationId) {
         try {
             // stations/id yerine chargers endpointi veya ilişkili veri kullanılıyor olabilir.
             const res = await fetch(`${API_BASE}/stations/${stationId}`);
             const data = await res.json();
             const chargers = data.chargers || [];
+            currentChargers = chargers; // Cache for reservation panel
+
             const el = document.getElementById('chargerList');
+            if (!el) return;
+
             if (!chargers.length) {
                 el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi yok.</div>';
                 return;
             }
-            el.innerHTML = chargers.map(c => `
+
+            el.innerHTML = chargers.map(c => {
+                const statusLabel = STATUS_LABELS[c.status] || c.status;
+                const statusColor = c.status === 'available' ? 'var(--green)'
+                    : c.status === 'occupied' ? 'var(--yellow)'
+                    : c.status === 'maintenance' ? 'var(--purple)'
+                    : 'var(--red)';
+                return `
                 <div class="charger-item">
                     <div>
-                        <div class="charger-type">${c.type} — ${c.connectorType}</div>
-                        <div class="charger-detail">${c.powerOutput} kW · ${c.status}</div>
+                        <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
+                        <div class="charger-detail" style="color:${statusColor};">
+                            Ünite #${c.chargerID} · ${statusLabel}
+                        </div>
                     </div>
-                    <div class="charger-price">${c.pricePerKwh} ₺/kWh</div>
-                </div>`).join('');
+                    <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
+                </div>`;
+            }).join('');
         } catch {
-            document.getElementById('chargerList').innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi alınamadı.</div>';
+            const el = document.getElementById('chargerList');
+            if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi alınamadı.</div>';
+        }
+    }
+
+    // ── Open reservation panel (triggered by pill click) ──────────────────────
+    async function openReservationPanel() {
+        if (!selectedStation) return;
+        if (reservationPill) reservationPill.close();
+
+        selectedCharger = null;
+
+        // Switch sidebar to reservation view
+        document.getElementById('listView').style.display = 'none';
+        document.getElementById('detailView').classList.remove('active');
+        document.getElementById('navPanel').classList.remove('active');
+        document.getElementById('reservationView').style.display = 'flex';
+
+        const label = STATUS_LABELS[selectedStation.status] || selectedStation.status;
+        const id = selectedStation.id || selectedStation.stationID;
+
+        // Render reservation panel skeleton
+        document.getElementById('reservationContent').innerHTML = `
+            <div class="detail-station-name">${selectedStation.name}</div>
+            <div class="detail-location">📍 ${selectedStation.location}</div>
+            <span class="station-badge badge-${selectedStation.status}" style="display:inline-block; margin-bottom:4px;">${label}</span>
+
+            <div class="section-label">Şarj Cihazları</div>
+            <div id="resChargerList">
+                <div style="font-size:12px;color:var(--text-muted);">Yükleniyor...</div>
+            </div>
+
+            <div id="resForm" style="display:none;">
+                <div class="res-form-section">
+                    <div id="selectedChargerBanner" class="selected-charger-banner"></div>
+
+                    <div class="res-field">
+                        <label>Kaç saat şarj etmek istiyorsunuz?</label>
+                        <select id="hoursSelect" onchange="calculateCost()">
+                            <option value="">Seçin...</option>
+                            <option value="0.5">30 dakika</option>
+                            <option value="1">1 saat</option>
+                            <option value="1.5">1,5 saat</option>
+                            <option value="2">2 saat (maksimum)</option>
+                        </select>
+                    </div>
+
+                    <div class="res-field">
+                        <label>Randevu saati</label>
+                        <input type="datetime-local" id="reservationTime" onchange="calculateCost()">
+                    </div>
+
+                    <div id="costDisplay" style="display:none;">
+                        <div class="cost-box">
+                            <div class="cost-label">Tahmini Ücret</div>
+                            <div class="cost-amount" id="costAmount">—</div>
+                            <div class="cost-detail" id="costDetail">—</div>
+                        </div>
+                    </div>
+
+                    <button class="pay-btn" id="payBtn" onclick="proceedToPayment()" disabled>
+                        💳 Ödemeye Geç
+                    </button>
+                </div>
+            </div>
+        `;
+
+        // Fetch chargers fresh (or use cached if available)
+        if (currentChargers.length) {
+            renderResChargerList();
+        } else {
+            try {
+                const res = await fetch(`${API_BASE}/stations/${id}`);
+                const data = await res.json();
+                currentChargers = data.chargers || [];
+                renderResChargerList();
+            } catch {
+                document.getElementById('resChargerList').innerHTML =
+                    '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi alınamadı.</div>';
+            }
+        }
+    }
+
+    // ── Render selectable charger list in reservation panel ───────────────────
+    function renderResChargerList() {
+        const el = document.getElementById('resChargerList');
+        if (!el) return;
+
+        if (!currentChargers.length) {
+            el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Bu istasyonda şarj cihazı bulunamadı.</div>';
+            return;
+        }
+
+        el.innerHTML = currentChargers.map(c => {
+            const isAvailable = c.status === 'available';
+            const statusLabel = STATUS_LABELS[c.status] || c.status;
+            const statusColor = isAvailable ? 'var(--green)'
+                : c.status === 'occupied' ? 'var(--yellow)'
+                : c.status === 'maintenance' ? 'var(--purple)'
+                : 'var(--red)';
+
+            return `
+            <div class="res-charger-card ${isAvailable ? '' : 'unavailable'}"
+                 id="res-charger-${c.chargerID}"
+                 ${isAvailable ? `onclick="selectCharger(${c.chargerID})"` : `title="Bu ünite şu an ${statusLabel.toLowerCase()}"`}>
+                <div>
+                    <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
+                    <div class="charger-detail" style="color:${statusColor}; margin-top:3px;">
+                        Ünite #${c.chargerID} · ${statusLabel}
+                    </div>
+                </div>
+                <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── Select a charger in reservation panel ─────────────────────────────────
+    function selectCharger(chargerId) {
+        selectedCharger = currentChargers.find(c => c.chargerID === chargerId);
+        if (!selectedCharger || selectedCharger.status !== 'available') return;
+
+        // Highlight selected card
+        document.querySelectorAll('.res-charger-card').forEach(el => el.classList.remove('selected'));
+        const card = document.getElementById(`res-charger-${chargerId}`);
+        if (card) card.classList.add('selected');
+
+        // Update banner
+        document.getElementById('selectedChargerBanner').innerHTML =
+            `⚡ Seçilen: ${selectedCharger.connectorType} · ${selectedCharger.powerOutput} kW · ${selectedCharger.pricePerKwh} ₺/kWh`;
+
+        // Show form and reset values
+        const resForm = document.getElementById('resForm');
+        resForm.style.display = 'block';
+        document.getElementById('hoursSelect').value = '';
+        document.getElementById('reservationTime').value = '';
+        document.getElementById('costDisplay').style.display = 'none';
+        document.getElementById('payBtn').disabled = true;
+
+        // Set minimum datetime to now (local time)
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        document.getElementById('reservationTime').min = now.toISOString().slice(0, 16);
+
+        // Scroll form into view
+        resForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ── Calculate and show estimated cost ─────────────────────────────────────
+    function calculateCost() {
+        if (!selectedCharger) return;
+
+        const hours = parseFloat(document.getElementById('hoursSelect').value);
+        const time = document.getElementById('reservationTime').value;
+
+        if (!hours || !time) {
+            document.getElementById('costDisplay').style.display = 'none';
+            document.getElementById('payBtn').disabled = true;
+            return;
+        }
+
+        // Energy (kWh) = power (kW) × time (h)
+        const energyKwh = selectedCharger.powerOutput * hours;
+        const cost = energyKwh * selectedCharger.pricePerKwh;
+
+        document.getElementById('costAmount').textContent = `${cost.toFixed(2)} ₺`;
+        document.getElementById('costDetail').textContent =
+            `${selectedCharger.powerOutput} kW × ${hours} saat = ${energyKwh.toFixed(1)} kWh\n` +
+            `${energyKwh.toFixed(1)} kWh × ${selectedCharger.pricePerKwh} ₺/kWh`;
+        document.getElementById('costDisplay').style.display = 'block';
+        document.getElementById('payBtn').disabled = false;
+    }
+
+    // ── Proceed to payment — sends data to parent React app ───────────────────
+    function proceedToPayment() {
+        if (!selectedStation || !selectedCharger) return;
+
+        const hours = parseFloat(document.getElementById('hoursSelect').value);
+        const reservationTimeVal = document.getElementById('reservationTime').value;
+
+        if (!hours || !reservationTimeVal) {
+            showToast('Lütfen tüm alanları doldurun.');
+            return;
+        }
+
+        const startTime = new Date(reservationTimeVal).toISOString();
+        const endTime = new Date(new Date(reservationTimeVal).getTime() + hours * 3600000).toISOString();
+        const costText = document.getElementById('costAmount').textContent;
+
+        // Send enriched reservation data to parent (MapStations.jsx) for vehicle selection + API call
+        window.parent.postMessage({
+            type: 'OPEN_RESERVATION',
+            stationId: selectedStation.id || selectedStation.stationID,
+            stationName: selectedStation.name,
+            charger: selectedCharger,
+            startTime,
+            endTime,
+            hours,
+            estimatedCost: costText
+        }, '*');
+
+        showToast('Araç seçimi için yönlendiriliyorsunuz...');
+    }
+
+    // ── Back from reservation view to detail view ─────────────────────────────
+    function backFromReservation() {
+        if (reservationPill) reservationPill.close();
+        document.getElementById('reservationView').style.display = 'none';
+        selectedCharger = null;
+
+        if (selectedStation) {
+            showDetail(selectedStation);
+            if (userLocation) calculateRoutes(currentTravelMode);
+        } else {
+            showList();
         }
     }
 
@@ -1068,14 +1543,16 @@
                 selectedRouteIndex = 0;
                 document.getElementById('navigateBtn').disabled = false;
             } else {
-                document.getElementById('routeOptions').innerHTML =
-                    '<div style="font-size:12px;color:var(--text-muted);">Rota bulunamadı.</div>';
+                const el = document.getElementById('routeOptions');
+                if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Rota bulunamadı.</div>';
             }
         });
     }
 
     function renderRouteOptions(routes) {
         const el = document.getElementById('routeOptions');
+        if (!el) return;
+
         const seen = new Set();
         const unique = routes.filter(r => {
             const key = r.legs[0].duration.value;
@@ -1110,29 +1587,28 @@
         document.querySelectorAll('.travel-mode-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         directionsRenderer.setDirections({ routes: [] });
-        document.getElementById('routeOptions').innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>';
+        const el = document.getElementById('routeOptions');
+        if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>';
         calculateRoutes(mode);
     }
 
-    // ── Navigate ──────────────────────────────────────────────────────────────
+    // ── Start navigation ──────────────────────────────────────────────────────
     function startNavigation() {
         if (!selectedStation || !currentRoutes.length) return;
 
         const route = currentRoutes[selectedRouteIndex];
         const leg = route.legs[0];
-        const steps = leg.steps;
 
         document.getElementById('navDestination').textContent = selectedStation.name;
         document.getElementById('navDuration').textContent = leg.duration.text;
         document.getElementById('navDistance').textContent = leg.distance.text;
 
         const stepsEl = document.getElementById('navSteps');
-        stepsEl.innerHTML = steps.map((step, i) => {
+        stepsEl.innerHTML = leg.steps.map((step, i) => {
             const instruction = step.instructions.replace(/<[^>]*>/g, '');
-            const icon = getStepIcon(instruction);
             return `
             <div class="nav-step ${i === 0 ? 'current' : ''}" id="step-${i}">
-                <div class="step-icon">${icon}</div>
+                <div class="step-icon">${getStepIcon(instruction)}</div>
                 <div class="step-body">
                     <div class="step-instruction">${instruction}</div>
                     <div class="step-distance">${step.distance.text} · ${step.duration.text}</div>
@@ -1189,12 +1665,17 @@
         renderStationList();
     }
 
-    // ── Show list ─────────────────────────────────────────────────────────────
+    // ── Show station list (reset all panels) ──────────────────────────────────
     function showList() {
+        if (reservationPill) reservationPill.close();
         document.getElementById('listView').style.display = 'flex';
         document.getElementById('detailView').classList.remove('active');
+        document.getElementById('navPanel').classList.remove('active');
+        document.getElementById('reservationView').style.display = 'none';
         directionsRenderer.setDirections({ routes: [] });
         selectedStation = null;
+        selectedCharger = null;
+        currentChargers = [];
         document.getElementById('navigateBtn').disabled = true;
     }
 
@@ -1203,14 +1684,10 @@
         map.setMapTypeId(type);
         document.querySelectorAll('.map-type-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        if (type === 'roadmap') {
-            map.setOptions({ styles: darkMapStyle() });
-        } else {
-            map.setOptions({ styles: [] });
-        }
+        map.setOptions({ styles: type === 'roadmap' ? darkMapStyle() : [] });
     }
 
-    // ── Toast ──────────────────────────────────────────────────────────────────
+    // ── Toast ─────────────────────────────────────────────────────────────────
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -1218,7 +1695,7 @@
         setTimeout(() => t.classList.remove('show'), 2800);
     }
 
-    // ── Dark map style ─────────────────────────────────────────────────────────
+    // ── Dark map style ────────────────────────────────────────────────────────
     function darkMapStyle() {
         return [
             { elementType: 'geometry', stylers: [{ color: '#0a0f1e' }] },
@@ -1234,20 +1711,24 @@
         ];
     }
 
-    // ── Load Google Maps ───────────────────────────────────────────────────────
+    // ── Load Google Maps ──────────────────────────────────────────────────────
     async function loadGoogleMaps() {
         try {
             const response = await fetch('http://localhost:8000/api/config');
             const config = await response.json();
             const apiKey = config.google_maps_api_key || '';
             const script = document.createElement('script');
-            // GÜVENLİK/HATA GİDERME: routing ve mesafe işlemleri için geometry kütüphanesi eklendi.
             script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places,geometry`;
             script.async = true;
             script.defer = true;
             document.body.appendChild(script);
         } catch (error) {
-            console.error('API key yüklenemedi:', error);
+            console.error('API key could not be loaded:', error);
+            document.getElementById('mapLoading').innerHTML = `
+                <div style="text-align:center; color:var(--danger);">
+                    <div style="font-size:28px; margin-bottom:12px;">⚠️</div>
+                    <div style="font-family:'Space Mono',monospace; font-size:12px;">Backend bağlantısı kurulamadı.<br>localhost:8000 çalışıyor mu?</div>
+                </div>`;
         }
     }
 

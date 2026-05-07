@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 
 // Backend API URL'si (Backend'in 8000 portunda çalıştığını varsayıyoruz)
 const API_BASE = 'http://localhost:8000/api/v1/vehicles';
-const TEST_DRIVER_ID = 1; // Şimdilik test için sabit bir sürücü ID'si kullanıyoruz
+const getDriverId = () => {
+  const user = localStorage.getItem('ev_user');
+  return user ? JSON.parse(user).driverID : null;
+};
 
 export default function Vehicles() {
   const [vehicles, setVehicles] = useState([]);
@@ -24,7 +27,9 @@ export default function Vehicles() {
   const fetchVehicles = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${API_BASE}/driver/${TEST_DRIVER_ID}`);
+      const driverID = getDriverId();
+      if (!driverID) { setError('Please sign in to view your vehicles'); setLoading(false); return; }
+      const res = await fetch(`${API_BASE}/driver/${driverID}`);
       if (!res.ok) throw new Error('Araçlar getirilirken bir hata oluştu');
       const data = await res.json();
       setVehicles(data);
@@ -73,7 +78,7 @@ export default function Vehicles() {
     const payload = {
       ...formData,
       batteryCapacity: parseFloat(formData.batteryCapacity),
-      driver_id: TEST_DRIVER_ID
+      driver_id: getDriverId()
     };
 
     try {
@@ -230,8 +235,30 @@ const S = {
   errorBanner: { background: 'rgba(255,77,109,0.1)', border: '1px solid var(--red)', padding: '12px', borderRadius: 'var(--radius)', color: 'var(--red)', marginBottom: '20px' },
   
   // Modal Stilleri
-  modalOverlay: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 },
-  modalContent: { background: 'var(--bg-panel)', border: '1px solid var(--border-bright)', borderRadius: 'var(--radius-lg)', padding: '32px', width: '100%', maxWidth: '500px' },
+  modalOverlay: { 
+  position: 'fixed', 
+  top: 0, 
+  left: '260px',
+  right: 0, 
+  bottom: 0, 
+  background: 'rgba(0,0,0,0.7)', 
+  backdropFilter: 'blur(4px)', 
+  display: 'flex', 
+  justifyContent: 'center', 
+  alignItems: 'center',
+  overflowY: 'auto',
+  padding: '40px 20px',
+  zIndex: 1000 
+},
+modalContent: { 
+  background: 'var(--bg-panel)', 
+  border: '1px solid var(--border-bright)', 
+  borderRadius: 'var(--radius-lg)', 
+  padding: '32px', 
+  width: '100%', 
+  maxWidth: '500px',
+  margin: 'auto'
+},
   form: { display: 'flex', flexDirection: 'column', gap: '16px' },
   row: { display: 'flex', gap: '16px' },
   inputGroup: { display: 'flex', flexDirection: 'column', gap: '6px', flex: 1 },
