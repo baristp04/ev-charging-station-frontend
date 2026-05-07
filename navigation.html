@@ -1078,11 +1078,6 @@
     async function loadStations() {
         try {
             const res = await fetch(`${API_BASE}/stations`);
-<<<<<<< Updated upstream
-            allStations = await res.json();
-            stations = [...allStations];
-            filteredStations = [...allStations];
-=======
             if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             const data = await res.json();
 
@@ -1094,7 +1089,6 @@
                 allStations = [];
             }
 
->>>>>>> Stashed changes
             document.getElementById('listLoading').style.display = 'none';
             renderStationList();
             placeMarkers();
@@ -1122,10 +1116,6 @@
 
         list.innerHTML = filteredStations.map(s => {
             const label = STATUS_LABELS[s.status] || s.status;
-<<<<<<< Updated upstream
-=======
-            const id = s.id || s.stationID;
->>>>>>> Stashed changes
             return `
             <div class="station-card ${s.status}" id="card-${s.id}" onclick="selectStation(${s.id})">
                 <div class="station-card-top">
@@ -1135,10 +1125,6 @@
                 <div class="station-location">📍 ${s.location}</div>
                 <div class="station-meta">
                     <span class="meta-item">🌍 ${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}</span>
-<<<<<<< Updated upstream
-                    <span class="meta-item">🔌 ${s.available_chargers}/${s.total_chargers} müsait</span>
-=======
->>>>>>> Stashed changes
                 </div>
             </div>`;
         }).join('');
@@ -1740,11 +1726,7 @@
             const config = await response.json();
             const apiKey = config.google_maps_api_key || '';
             const script = document.createElement('script');
-<<<<<<< Updated upstream
-            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places`;
-=======
             script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places,geometry`;
->>>>>>> Stashed changes
             script.async = true;
             script.defer = true;
             document.body.appendChild(script);
