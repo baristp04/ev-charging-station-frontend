@@ -1093,10 +1093,7 @@
             renderStationList();
             placeMarkers();
         } catch (e) {
-<<<<<<< Updated upstream
-=======
             console.error('Fetch error:', e);
->>>>>>> Stashed changes
             document.getElementById('listLoading').style.display = 'none';
             document.getElementById('stationList').innerHTML = `
                 <div class="empty-state">
@@ -1152,29 +1149,18 @@
                     strokeWeight: 2.5
                 }
             });
-<<<<<<< Updated upstream
-            marker.addListener('click', () => selectStation(s.id));
-=======
             const id = s.id || s.stationID;
 
             // Marker click shows the reservation pill on map (does not open sidebar)
             marker.addListener('click', () => markerClick(id));
->>>>>>> Stashed changes
             markers.push(marker);
         });
     }
 
-<<<<<<< Updated upstream
-    // ── Select station ────────────────────────────────────────────────────────
-    async function selectStation(id) {
-        selectedStation = allStations.find(s => s.id === id);
-        if (!selectedStation) return;
-=======
     // ── Marker click — show pill on map ───────────────────────────────────────
     function markerClick(id) {
         const station = allStations.find(s => (s.id || s.stationID) === id);
         if (!station) return;
->>>>>>> Stashed changes
 
         selectedStation = station;
         currentChargers = [];

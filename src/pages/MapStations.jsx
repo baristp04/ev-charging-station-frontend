@@ -31,7 +31,7 @@ export default function MapStations({ user }) {
     useEffect(() => {
         if (!user?.driverID) return;
 
-        fetch(`http://localhost:8000/api/v1/vehicles?driver_id=${user.driverID}`)
+        fetch(`http://localhost:8000/api/v1/vehicles/driver/${user.driverID}`)
             .then(r => r.json())
             .then(setVehicles)
             .catch(console.error);
@@ -41,13 +41,14 @@ export default function MapStations({ user }) {
     async function confirmReservation() {
         if (!selectedVehicleId || !reservationData) return;
         setSubmitting(true);
-
+        console.log('charger:', reservationData.charger);
+        console.log('chargerID:', reservationData.charger.chargerID);
         const body = {
             driver_id:  user.driverID,
-            charger_id: reservationData.charger.chargerID,
+            charger_id: reservationData.charger.id || reservationData.charger.chargerID,
             vehicle_id: parseInt(selectedVehicleId),
-            start_time: reservationData.startTime,
-            end_time:   reservationData.endTime,
+            startTime: reservationData.startTime,
+            endTime: reservationData.endTime,
         };
 
         try {
