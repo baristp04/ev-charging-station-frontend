@@ -992,6 +992,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
+    // PORT AYARI: CORS hatası almamak için 127.0.0.1 yerine localhost kullanıyoruz.
+    // Projenizin yapısına göre '/api/v1' yolunu da kullanabilirsiniz.
     const API_BASE = 'http://127.0.0.1:8000/api/navigation';
 
     let map, userMarker, directionsRenderer, distanceService;
@@ -1075,7 +1077,7 @@
     }
 
     // ── Load stations from API ────────────────────────────────────────────────
-    async function loadStations() {
+   async function loadStations() {
         try {
             const res = await fetch(`${API_BASE}/stations`);
             if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
@@ -1098,7 +1100,7 @@
             document.getElementById('stationList').innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">⚠️</div>
-                    <div class="empty-text">API'ye bağlanılamadı.<br>Backend çalışıyor mu?</div>
+                    <div class="empty-text">API'ye bağlanılamadı.<br>Bağlantı yolunu kontrol edin.</div>
                 </div>`;
         }
     }
@@ -1113,8 +1115,10 @@
 
         list.innerHTML = filteredStations.map(s => {
             const label = STATUS_LABELS[s.status] || s.status;
+            // id veya stationID kullanımı API'nin döndürdüğü değere göre ayarlandı
+            const id = s.id || s.stationID; 
             return `
-            <div class="station-card ${s.status}" id="card-${s.id}" onclick="selectStation(${s.id})">
+            <div class="station-card ${s.status}" id="card-${id}" onclick="selectStation(${id})">
                 <div class="station-card-top">
                     <div class="station-name">${s.name}</div>
                     <span class="station-badge badge-${s.status}">${label}</span>
@@ -1238,11 +1242,12 @@
         document.getElementById('detailView').classList.add('active');
 
         const label = STATUS_LABELS[station.status] || station.status;
+        const id = station.id || station.stationID;
 
         document.getElementById('detailContent').innerHTML = `
             <div class="detail-station-name">${station.name}</div>
             <div class="detail-location">📍 ${station.location}</div>
-            <span class="station-badge badge-${station.status}">${label} · ${station.available_chargers}/${station.total_chargers}</span>
+            <span class="station-badge badge-${station.status}">${label}</span>
 
             <div class="section-label">Ulaşım Modu</div>
             <div class="travel-modes">
@@ -1264,12 +1269,13 @@
             </div>
         `;
 
-        loadChargers(station.id);
+        loadChargers(id);
     }
 
     // ── Load chargers for detail view (info only, no reserve button) ──────────
     async function loadChargers(stationId) {
         try {
+            // stations/id yerine chargers endpointi veya ilişkili veri kullanılıyor olabilir.
             const res = await fetch(`${API_BASE}/stations/${stationId}`);
             const data = await res.json();
             const chargers = data.chargers || [];

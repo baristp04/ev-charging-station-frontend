@@ -64,11 +64,12 @@ export default function App() {
           <Route path="/analytics"   element={<Analytics />} />
         </Routes>
       </main>
+
     </div>
   )
 }
 
-// ── Styles ────────────────────────────────────────────────────────────────────
+// ── Layout Stilleri ──
 const S = {
   layout: {
     display: 'flex',
