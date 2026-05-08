@@ -30,7 +30,7 @@ export default function App() {
         </div>
 
         {/* Navigation links — always visible regardless of auth state */}
-        <div style={S.navMenu}>
+<div style={S.navMenu}>
           <NavLink to="/" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
             📍 Map & Stations
           </NavLink>
@@ -40,9 +40,13 @@ export default function App() {
           <NavLink to="/reservations" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
             📅 My Reservations
           </NavLink>
-          <NavLink to="/analytics" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
-            📊 Management Reports
-          </NavLink>
+          
+          {/* Only Admins */}
+          {user?.is_admin && (
+            <NavLink to="/analytics" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+              📊 Management Reports
+            </NavLink>
+          )}
         </div>
 
         {/* Auth section — shows login/register or user info based on session */}
@@ -61,7 +65,7 @@ export default function App() {
           <Route path="/"            element={<MapStations user={user} />} />
           <Route path="/vehicles"    element={<Vehicles />} />
           <Route path="/reservations" element={<Reservations user={user} />} />
-          <Route path="/analytics"   element={<Analytics />} />
+          <Route path="/analytics"   element={<Analytics user={user}/>} />
         </Routes>
       </main>
 

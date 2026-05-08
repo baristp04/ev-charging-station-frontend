@@ -284,7 +284,18 @@ function ErrorBanner({ msg }) {
 }
 
 // ── Main App ──────────────────────────────────────────────────────────────────
-export default function Analytics() {
+export default function Analytics({user}) {
+
+  if (!user || !user.is_admin) {
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '60px', textAlign: 'center' }}>
+        <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🔒</div>
+        <h2 style={{ color: 'var(--red)', fontFamily: 'var(--font-display)', letterSpacing: '2px' }}>ACCESS DENIED</h2>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '10px' }}>You do not have administrative privileges to view this page.</p>
+      </div>
+    )
+  }
+  
   const today = new Date().toISOString().slice(0, 10)
   const threeMonthsAgo = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10)
 
