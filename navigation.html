@@ -574,16 +574,8 @@
             color: var(--text-muted);
         }
 
-        .nav-summary span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-summary strong {
-            color: var(--accent);
-            font-family: 'Space Mono', monospace;
-        }
+        .nav-summary span { display: flex; align-items: center; gap: 4px; }
+        .nav-summary strong { color: var(--accent); font-family: 'Space Mono', monospace; }
 
         /* ── Steps ── */
         .nav-steps {
@@ -641,19 +633,6 @@
             font-size: 11px;
             color: var(--text-muted);
             font-family: 'Space Mono', monospace;
-        }
-
-        .nav-arrived {
-            margin: 16px 20px;
-            padding: 14px;
-            border-radius: 10px;
-            background: rgba(0,255,157,0.1);
-            border: 1px solid var(--accent2);
-            text-align: center;
-            color: var(--accent2);
-            font-weight: 600;
-            font-size: 14px;
-            display: none;
         }
 
         /* ── Map Type Toggle ── */
@@ -723,12 +702,13 @@
             background: transparent !important;
             box-shadow: none !important;
             padding: 0 !important;
-            border-radius: 0 !important;
+            border-radius: 999px !important;
             min-width: 0 !important;
         }
         .gm-style .gm-style-iw-d {
             overflow: visible !important;
             padding: 0 !important;
+            border-radius: 999px !important;
         }
         .gm-style .gm-style-iw-tc { display: none !important; }
         .gm-style button.gm-ui-hover-effect { display: none !important; }
@@ -738,19 +718,25 @@
         .map-reservation-pill {
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: #0a0f1e;
-            padding: 9px 20px;
-            border-radius: 24px;
+            padding: 10px 24px;
+            border-radius: 999px;
             font-weight: 700;
             font-size: 13px;
             cursor: pointer;
             font-family: 'DM Sans', sans-serif;
             white-space: nowrap;
-            box-shadow: 0 4px 20px rgba(0,229,255,0.45);
-            transition: transform 0.15s;
+            box-shadow: 0 4px 24px rgba(0,229,255,0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
             user-select: none;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.03em;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        .map-reservation-pill:hover { transform: scale(1.06); }
+        .map-reservation-pill:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 28px rgba(0,229,255,0.65);
+        }
 
         /* ── Reservation View ── */
         .reservation-view {
@@ -759,7 +745,84 @@
             height: 100%;
         }
 
-        /* Selectable charger cards in reservation view */
+        /* ── Vehicle select cards ── */
+        .vehicle-card {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vehicle-card:hover {
+            border-color: var(--accent);
+            background: rgba(0,229,255,0.05);
+        }
+
+        .vehicle-card.selected {
+            border-color: var(--accent) !important;
+            background: rgba(0,229,255,0.1) !important;
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+
+        .vehicle-card-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .vehicle-card-detail {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        .vehicle-connector-badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 8px;
+            background: rgba(0,229,255,0.12);
+            color: var(--accent);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* ── Continue button ── */
+        .continue-btn {
+            width: 100%;
+            padding: 13px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            color: #0a0f1e;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.02em;
+            margin-top: 8px;
+        }
+
+        .continue-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0,229,255,0.3);
+        }
+
+        .continue-btn:disabled {
+            background: var(--border);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* ── Selectable charger cards ── */
         .res-charger-card {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -789,7 +852,7 @@
             cursor: not-allowed;
         }
 
-        /* Reservation form fields */
+        /* ── Reservation form fields ── */
         .res-form-section {
             margin-top: 16px;
             padding-top: 16px;
@@ -824,11 +887,9 @@
         }
 
         .res-field select:focus,
-        .res-field input[type="datetime-local"]:focus {
-            border-color: var(--accent);
-        }
+        .res-field input[type="datetime-local"]:focus { border-color: var(--accent); }
 
-        /* Cost display box */
+        /* ── Cost display box ── */
         .cost-box {
             background: rgba(0,229,255,0.06);
             border: 1px solid rgba(0,229,255,0.2);
@@ -861,7 +922,7 @@
             line-height: 1.6;
         }
 
-        /* Pay button */
+        /* ── Pay button ── */
         .pay-btn {
             width: 100%;
             padding: 13px;
@@ -891,15 +952,29 @@
             box-shadow: none;
         }
 
-        /* Selected charger info banner */
+        /* ── Selected charger banner ── */
         .selected-charger-banner {
             background: rgba(0,229,255,0.08);
             border: 1px solid rgba(0,229,255,0.25);
             border-radius: 8px;
             padding: 10px 14px;
-            margin-bottom: 4px;
+            margin-bottom: 12px;
             font-size: 12px;
             color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Selected vehicle banner ── */
+        .selected-vehicle-banner {
+            background: rgba(0,255,157,0.08);
+            border: 1px solid rgba(0,255,157,0.25);
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: var(--accent2);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -908,7 +983,6 @@
 </head>
 <body>
 
-<!-- Header -->
 <header>
     <div class="logo">
         <div class="logo-icon">⚡</div>
@@ -924,7 +998,6 @@
 
 <div class="main">
 
-    <!-- Side Panel -->
     <div class="panel">
 
         <!-- Station List View -->
@@ -951,7 +1024,7 @@
             </div>
         </div>
 
-        <!-- Detail View (route planning) -->
+        <!-- Detail View -->
         <div id="detailView" class="detail-panel">
             <div class="detail-back" onclick="showList()">← Back</div>
             <div class="detail-content" id="detailContent"></div>
@@ -976,17 +1049,15 @@
             <div class="nav-steps" id="navSteps"></div>
         </div>
 
-        <!-- Reservation View (new) -->
+        <!-- Reservation View -->
         <div id="reservationView" class="reservation-view">
-            <div class="detail-back" onclick="backFromReservation()">← Back</div>
-            <div class="detail-content" id="reservationContent">
-                <!-- Dynamically populated by openReservationPanel() -->
-            </div>
+            <div class="detail-back" id="resBackBtn" onclick="backFromReservation()">← Back</div>
+            <div class="detail-content" id="reservationContent"></div>
         </div>
 
     </div>
 
-    <!-- Map wrapper -->
+    <!-- Map -->
     <div style="position:relative; flex:1; overflow:hidden;">
         <div id="map" style="width:100%; height:100%;"></div>
         <div class="loading-overlay" id="mapLoading">
@@ -1005,8 +1076,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // PORT AYARI: CORS hatası almamak için 127.0.0.1 yerine localhost kullanıyoruz.
-    // Projenizin yapısına göre '/api/v1' yolunu da kullanabilirsiniz.
     const API_BASE = 'http://127.0.0.1:8000/api/navigation';
 
     let map, userMarker, directionsRenderer, distanceService;
@@ -1023,6 +1092,13 @@
     let currentChargers = [];
     let selectedCharger = null;
 
+    // Vehicle state — received from parent React app via postMessage
+    let userVehicles = [];
+    let selectedVehicle = null;
+
+    // Reservation flow step: 'vehicle' | 'charger'
+    let resStep = 'vehicle';
+
     const STATUS_LABELS = {
         available:   'Available',
         occupied:    'Occupied',
@@ -1036,6 +1112,13 @@
         offline:     '#ff3b5c',
         maintenance: '#a855f7'
     };
+
+    // ── Listen for messages from parent React app ─────────────────────────────
+    window.addEventListener('message', (e) => {
+        if (e.data?.type === 'SET_VEHICLES') {
+            userVehicles = e.data.vehicles || [];
+        }
+    });
 
     // ── Google Maps init ──────────────────────────────────────────────────────
     function initMap() {
@@ -1060,7 +1143,6 @@
 
         distanceService = new google.maps.DistanceMatrixService();
 
-        // Close pill when clicking empty map area
         map.addListener('click', () => {
             if (reservationPill) reservationPill.close();
         });
@@ -1089,20 +1171,16 @@
         loadStations();
     }
 
-    // ── Load stations from API ────────────────────────────────────────────────
-   async function loadStations() {
+    // ── Load stations ─────────────────────────────────────────────────────────
+    async function loadStations() {
         try {
             const res = await fetch(`${API_BASE}/stations`);
             if (!res.ok) throw new Error(`HTTP error: ${res.status}`);
             const data = await res.json();
 
-            if (Array.isArray(data)) {
-                allStations = data;
-                stations = [...allStations];
-                filteredStations = [...allStations];
-            } else {
-                allStations = [];
-            }
+            allStations = Array.isArray(data) ? data : [];
+            stations = [...allStations];
+            filteredStations = [...allStations];
 
             document.getElementById('listLoading').style.display = 'none';
             renderStationList();
@@ -1118,7 +1196,7 @@
         }
     }
 
-    // ── Render station cards in list ──────────────────────────────────────────
+    // ── Render station list ───────────────────────────────────────────────────
     function renderStationList() {
         const list = document.getElementById('stationList');
         if (!filteredStations.length) {
@@ -1128,8 +1206,7 @@
 
         list.innerHTML = filteredStations.map(s => {
             const label = STATUS_LABELS[s.status] || s.status;
-            // id veya stationID kullanımı API'nin döndürdüğü değere göre ayarlandı
-            const id = s.id || s.stationID; 
+            const id = s.id || s.stationID;
             return `
             <div class="station-card ${s.status}" id="card-${id}" onclick="selectStation(${id})">
                 <div class="station-card-top">
@@ -1144,7 +1221,7 @@
         }).join('');
     }
 
-    // ── Place markers on map ──────────────────────────────────────────────────
+    // ── Place markers ─────────────────────────────────────────────────────────
     let markers = [];
 
     function placeMarkers() {
@@ -1167,14 +1244,12 @@
                 }
             });
             const id = s.id || s.stationID;
-
-            // Marker click shows the reservation pill on map (does not open sidebar)
             marker.addListener('click', () => markerClick(id));
             markers.push(marker);
         });
     }
 
-    // ── Marker click — show pill on map ───────────────────────────────────────
+    // ── Marker click ──────────────────────────────────────────────────────────
     function markerClick(id) {
         const station = allStations.find(s => (s.id || s.stationID) === id);
         if (!station) return;
@@ -1183,19 +1258,15 @@
         currentChargers = [];
         selectedCharger = null;
 
-        // Center and zoom map
         map.setCenter({ lat: station.latitude, lng: station.longitude });
         map.setZoom(15);
 
-        // Highlight matching list card without opening detail panel
         document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
         const card = document.getElementById(`card-${id}`);
         if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-        // Preload chargers in background for faster reservation panel open
         preloadChargers(id);
 
-        // Show reservation pill floating above the marker
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
             content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
@@ -1206,7 +1277,7 @@
         reservationPill.open(map);
     }
 
-    // ── Preload chargers when marker is clicked ───────────────────────────────
+    // ── Preload chargers ──────────────────────────────────────────────────────
     async function preloadChargers(stationId) {
         try {
             const res = await fetch(`${API_BASE}/stations/${stationId}`);
@@ -1217,37 +1288,33 @@
         }
     }
 
-    // ── Select station from list card (opens detail + routes) ─────────────────
+    // ── Select station from list ──────────────────────────────────────────────
     async function selectStation(id) {
-    selectedStation = allStations.find(s => (s.id || s.stationID) === id);
-    if (!selectedStation) return;
+        selectedStation = allStations.find(s => (s.id || s.stationID) === id);
+        if (!selectedStation) return;
 
-    document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
-    const card = document.getElementById(`card-${id}`);
-    if (card) card.classList.add('selected');
+        document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
+        const card = document.getElementById(`card-${id}`);
+        if (card) card.classList.add('selected');
 
-    map.setCenter({ lat: selectedStation.latitude, lng: selectedStation.longitude });
-    map.setZoom(14);
+        map.setCenter({ lat: selectedStation.latitude, lng: selectedStation.longitude });
+        map.setZoom(14);
 
-    // Show reservation pill above the station marker (same as marker click)
-    if (reservationPill) reservationPill.close();
-    reservationPill = new google.maps.InfoWindow({
-        content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
-        position: { lat: selectedStation.latitude, lng: selectedStation.longitude },
-        disableAutoPan: true,
-        pixelOffset: new google.maps.Size(0, -32)
-    });
-    reservationPill.open(map);
+        if (reservationPill) reservationPill.close();
+        reservationPill = new google.maps.InfoWindow({
+            content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
+            position: { lat: selectedStation.latitude, lng: selectedStation.longitude },
+            disableAutoPan: true,
+            pixelOffset: new google.maps.Size(0, -32)
+        });
+        reservationPill.open(map);
 
-    // Preload chargers in background for faster reservation panel open
-    preloadChargers(id);
+        preloadChargers(id);
+        showDetail(selectedStation);
+        if (userLocation) await calculateRoutes(currentTravelMode);
+    }
 
-    showDetail(selectedStation);
-
-    if (userLocation) await calculateRoutes(currentTravelMode);
-}
-
-    // ── Show detail panel (routes + charger info) ─────────────────────────────
+    // ── Show detail panel ─────────────────────────────────────────────────────
     function showDetail(station) {
         document.getElementById('listView').style.display = 'none';
         document.getElementById('reservationView').style.display = 'none';
@@ -1285,14 +1352,13 @@
         loadChargers(id);
     }
 
-    // ── Load chargers for detail view (info only, no reserve button) ──────────
+    // ── Load chargers for detail view ─────────────────────────────────────────
     async function loadChargers(stationId) {
         try {
-            // stations/id yerine chargers endpointi veya ilişkili veri kullanılıyor olabilir.
             const res = await fetch(`${API_BASE}/stations/${stationId}`);
             const data = await res.json();
             const chargers = data.chargers || [];
-            currentChargers = chargers; // Cache for reservation panel
+            currentChargers = chargers;
 
             const el = document.getElementById('chargerList');
             if (!el) return;
@@ -1303,6 +1369,7 @@
             }
 
             el.innerHTML = chargers.map(c => {
+                const cid = c.id || c.chargerID;
                 const statusLabel = STATUS_LABELS[c.status] || c.status;
                 const statusColor = c.status === 'available' ? 'var(--green)'
                     : c.status === 'occupied' ? 'var(--yellow)'
@@ -1313,7 +1380,7 @@
                     <div>
                         <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
                         <div class="charger-detail" style="color:${statusColor};">
-                            Unit #${c.chargerID} · ${statusLabel}
+                            Unit #${cid} · ${statusLabel}
                         </div>
                     </div>
                     <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
@@ -1325,32 +1392,110 @@
         }
     }
 
-    // ── Open reservation panel (triggered by pill click) ──────────────────────
+    // ── Open reservation panel ────────────────────────────────────────────────
     async function openReservationPanel() {
         if (!selectedStation) return;
         if (reservationPill) reservationPill.close();
 
         selectedCharger = null;
+        selectedVehicle = null;
+        resStep = 'vehicle';
 
-        // Switch sidebar to reservation view
         document.getElementById('listView').style.display = 'none';
         document.getElementById('detailView').classList.remove('active');
         document.getElementById('navPanel').classList.remove('active');
         document.getElementById('reservationView').style.display = 'flex';
 
-        const label = STATUS_LABELS[selectedStation.status] || selectedStation.status;
-        const id = selectedStation.id || selectedStation.stationID;
+        // Fetch chargers if not cached
+        if (!currentChargers.length) {
+            const id = selectedStation.id || selectedStation.stationID;
+            try {
+                const res = await fetch(`${API_BASE}/stations/${id}`);
+                const data = await res.json();
+                currentChargers = data.chargers || [];
+            } catch {
+                currentChargers = [];
+            }
+        }
 
-        // Render reservation panel skeleton
+        renderVehicleStep();
+    }
+
+    // ── Step 1: Vehicle selection ─────────────────────────────────────────────
+    function renderVehicleStep() {
+        const label = STATUS_LABELS[selectedStation.status] || selectedStation.status;
+
         document.getElementById('reservationContent').innerHTML = `
             <div class="detail-station-name">${selectedStation.name}</div>
             <div class="detail-location">📍 ${selectedStation.location}</div>
-            <span class="station-badge badge-${selectedStation.status}" style="display:inline-block; margin-bottom:4px;">${label}</span>
+            <span class="station-badge badge-${selectedStation.status}" style="display:inline-block; margin-bottom:16px;">${label}</span>
 
-            <div class="section-label">Chargers</div>
-            <div id="resChargerList">
-                <div style="font-size:12px;color:var(--text-muted);">Loading...</div>
+            <div class="section-label">Step 1 of 2 — Select Your Vehicle</div>
+
+            <div id="vehicleList">
+                ${renderVehicleCards()}
             </div>
+
+            <button class="continue-btn" id="continueToChargerBtn" onclick="goToChargerStep()" disabled>
+                Continue →
+            </button>
+        `;
+    }
+
+    function renderVehicleCards() {
+        if (!userVehicles.length) {
+            return `<div class="empty-state">
+                <div class="empty-icon">🚗</div>
+                <div class="empty-text">No vehicles found.<br>Add a vehicle from the sidebar first.</div>
+            </div>`;
+        }
+
+        return userVehicles.map(v => `
+            <div class="vehicle-card" id="vcard-${v.vehicleID}" onclick="selectVehicle(${v.vehicleID})">
+                <div>
+                    <div class="vehicle-card-name">${v.brand} ${v.model}</div>
+                    <div class="vehicle-card-detail">${v.plateNumber} · ${v.batteryCapacity} kWh</div>
+                </div>
+                <span class="vehicle-connector-badge">${v.connectorType}</span>
+            </div>
+        `).join('');
+    }
+
+    function selectVehicle(vehicleId) {
+        selectedVehicle = userVehicles.find(v => v.vehicleID === vehicleId);
+        if (!selectedVehicle) return;
+
+        document.querySelectorAll('.vehicle-card').forEach(el => el.classList.remove('selected'));
+        const card = document.getElementById(`vcard-${vehicleId}`);
+        if (card) card.classList.add('selected');
+
+        const btn = document.getElementById('continueToChargerBtn');
+        if (btn) btn.disabled = false;
+    }
+
+    // ── Step 2: Charger selection (filtered by vehicle connector type) ─────────
+    function goToChargerStep() {
+        if (!selectedVehicle) return;
+        resStep = 'charger';
+        selectedCharger = null;
+
+        const label = STATUS_LABELS[selectedStation.status] || selectedStation.status;
+
+        document.getElementById('reservationContent').innerHTML = `
+            <div class="detail-station-name">${selectedStation.name}</div>
+            <div class="detail-location">📍 ${selectedStation.location}</div>
+            <span class="station-badge badge-${selectedStation.status}" style="display:inline-block; margin-bottom:8px;">${label}</span>
+
+            <div class="selected-vehicle-banner">
+                🚗 ${selectedVehicle.brand} ${selectedVehicle.model} · ${selectedVehicle.connectorType}
+            </div>
+
+            <div class="section-label">Step 2 of 2 — Select Charger</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-bottom:10px;">
+                Showing compatible chargers for <strong style="color:var(--accent)">${selectedVehicle.connectorType}</strong>
+            </div>
+
+            <div id="resChargerList"></div>
 
             <div id="resForm" style="display:none;">
                 <div class="res-form-section">
@@ -1387,23 +1532,10 @@
             </div>
         `;
 
-        // Fetch chargers fresh (or use cached if available)
-        if (currentChargers.length) {
-            renderResChargerList();
-        } else {
-            try {
-                const res = await fetch(`${API_BASE}/stations/${id}`);
-                const data = await res.json();
-                currentChargers = data.chargers || [];
-                renderResChargerList();
-            } catch {
-                document.getElementById('resChargerList').innerHTML =
-                    '<div style="font-size:12px;color:var(--text-muted);">Could not get charger info.</div>';
-            }
-        }
+        renderResChargerList();
     }
 
-    // ── Render selectable charger list in reservation panel ───────────────────
+    // ── Render charger list filtered by vehicle connector type ────────────────
     function renderResChargerList() {
         const el = document.getElementById('resChargerList');
         if (!el) return;
@@ -1413,22 +1545,38 @@
             return;
         }
 
+        const vehicleConnector = selectedVehicle?.connectorType || '';
+
         el.innerHTML = currentChargers.map(c => {
+            const cid = c.id || c.chargerID;
+            const isCompatible = !vehicleConnector || c.connectorType === vehicleConnector;
             const isAvailable = c.status === 'available';
+            // Charger is selectable only if compatible AND available
+            const isSelectable = isCompatible && isAvailable;
+            // Dimmed if incompatible OR unavailable
+            const isDimmed = !isSelectable;
+
             const statusLabel = STATUS_LABELS[c.status] || c.status;
             const statusColor = isAvailable ? 'var(--green)'
                 : c.status === 'occupied' ? 'var(--yellow)'
                 : c.status === 'maintenance' ? 'var(--purple)'
                 : 'var(--red)';
 
+            // Tooltip explains why it's unavailable
+            let tooltip = '';
+            if (!isCompatible) tooltip = `Incompatible with your ${vehicleConnector}`;
+            else if (!isAvailable) tooltip = `This unit is currently ${statusLabel.toLowerCase()}`;
+
             return `
-            <div class="res-charger-card ${isAvailable ? '' : 'unavailable'}"
-                 id="res-charger-${c.chargerID}"
-                 ${isAvailable ? `onclick="selectCharger(${c.chargerID})"` : `title="This unit is currently ${statusLabel.toLowerCase()}"`}>
+            <div class="res-charger-card ${isDimmed ? 'unavailable' : ''}"
+                 id="res-charger-${cid}"
+                 ${isSelectable ? `onclick="selectCharger(${cid})"` : `title="${tooltip}"`}>
                 <div>
-                    <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
+                    <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW
+                        ${!isCompatible ? '<span style="font-size:10px;color:var(--danger);margin-left:6px;">✗ incompatible</span>' : ''}
+                    </div>
                     <div class="charger-detail" style="color:${statusColor}; margin-top:3px;">
-                        Unit #${c.chargerID} · ${statusLabel}
+                        Unit #${cid} · ${statusLabel}
                     </div>
                 </div>
                 <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
@@ -1436,21 +1584,20 @@
         }).join('');
     }
 
-    // ── Select a charger in reservation panel ─────────────────────────────────
+    // ── Select charger ────────────────────────────────────────────────────────
     function selectCharger(chargerId) {
-        selectedCharger = currentChargers.find(c => c.chargerID === chargerId);
+        selectedCharger = currentChargers.find(c => (c.id || c.chargerID) === chargerId);
         if (!selectedCharger || selectedCharger.status !== 'available') return;
 
-        // Highlight selected card
+        const cid = selectedCharger.id || selectedCharger.chargerID;
+
         document.querySelectorAll('.res-charger-card').forEach(el => el.classList.remove('selected'));
-        const card = document.getElementById(`res-charger-${chargerId}`);
+        const card = document.getElementById(`res-charger-${cid}`);
         if (card) card.classList.add('selected');
 
-        // Update banner
         document.getElementById('selectedChargerBanner').innerHTML =
-            `⚡ Selected: ${selectedCharger.connectorType} · ${selectedCharger.powerOutput} kW · ${selectedCharger.pricePerKwh} ₺/kWh`;
+            `⚡ ${selectedCharger.connectorType} · ${selectedCharger.powerOutput} kW · ${selectedCharger.pricePerKwh} ₺/kWh`;
 
-        // Show form and reset values
         const resForm = document.getElementById('resForm');
         resForm.style.display = 'block';
         document.getElementById('hoursSelect').value = '';
@@ -1458,16 +1605,14 @@
         document.getElementById('costDisplay').style.display = 'none';
         document.getElementById('payBtn').disabled = true;
 
-        // Set minimum datetime to now (local time)
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('reservationTime').min = now.toISOString().slice(0, 16);
 
-        // Scroll form into view
         resForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // ── Calculate and show estimated cost ─────────────────────────────────────
+    // ── Calculate cost ────────────────────────────────────────────────────────
     function calculateCost() {
         if (!selectedCharger) return;
 
@@ -1480,11 +1625,11 @@
             return;
         }
 
-        // Energy (kWh) = power (kW) × time (h)
         const energyKwh = selectedCharger.powerOutput * hours;
         const cost = energyKwh * selectedCharger.pricePerKwh;
 
-        document.getElementById('costAmount').textContent = `${new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cost)} ₺`;
+        document.getElementById('costAmount').textContent =
+            `${new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cost)} ₺`;
         document.getElementById('costDetail').textContent =
             `${selectedCharger.powerOutput} kW × ${hours} hr = ${energyKwh.toFixed(1)} kWh\n` +
             `${energyKwh.toFixed(1)} kWh × ${selectedCharger.pricePerKwh} ₺/kWh`;
@@ -1492,7 +1637,7 @@
         document.getElementById('payBtn').disabled = false;
     }
 
-    // ── Proceed to payment — sends data to parent React app ───────────────────
+    // ── Proceed to payment ────────────────────────────────────────────────────
     function proceedToPayment() {
         if (!selectedStation || !selectedCharger) return;
 
@@ -1508,26 +1653,46 @@
         const endTime = new Date(new Date(reservationTimeVal).getTime() + hours * 3600000).toISOString();
         const costText = document.getElementById('costAmount').textContent;
 
-        // Send enriched reservation data to parent (MapStations.jsx) for vehicle selection + API call
+        // Send data to parent React app — includes selected vehicle for API call
         window.parent.postMessage({
             type: 'OPEN_RESERVATION',
             stationId: selectedStation.id || selectedStation.stationID,
             stationName: selectedStation.name,
             charger: selectedCharger,
+            vehicleId: selectedVehicle.vehicleID,  // pre-selected vehicle
             startTime,
             endTime,
             hours,
             estimatedCost: costText
         }, '*');
 
-        showToast('Redirecting for vehicle selection...');
+        showToast('Confirming reservation...');
     }
 
-    // ── Back from reservation view to detail view ─────────────────────────────
+    // ── Back from reservation ─────────────────────────────────────────────────
     function backFromReservation() {
+        if (resStep === 'charger') {
+            // Go back to vehicle selection step
+            resStep = 'vehicle';
+            selectedCharger = null;
+            renderVehicleStep();
+            // Re-select previously chosen vehicle
+            if (selectedVehicle) {
+                const card = document.getElementById(`vcard-${selectedVehicle.vehicleID}`);
+                if (card) {
+                    card.classList.add('selected');
+                    const btn = document.getElementById('continueToChargerBtn');
+                    if (btn) btn.disabled = false;
+                }
+            }
+            return;
+        }
+
+        // Back from vehicle step → detail or list
         if (reservationPill) reservationPill.close();
         document.getElementById('reservationView').style.display = 'none';
         selectedCharger = null;
+        selectedVehicle = null;
 
         if (selectedStation) {
             showDetail(selectedStation);
@@ -1594,7 +1759,6 @@
         directionsRenderer.setRouteIndex(index);
     }
 
-    // ── Travel mode ───────────────────────────────────────────────────────────
     function changeTravelMode(mode, btn) {
         currentTravelMode = mode;
         document.querySelectorAll('.travel-mode-btn').forEach(b => b.classList.remove('active'));
@@ -1605,7 +1769,6 @@
         calculateRoutes(mode);
     }
 
-    // ── Start navigation ──────────────────────────────────────────────────────
     function startNavigation() {
         if (!selectedStation || !currentRoutes.length) return;
 
@@ -1658,7 +1821,6 @@
         showToast('Navigation ended.');
     }
 
-    // ── Filter / search ───────────────────────────────────────────────────────
     function setFilter(filter, btn) {
         currentFilter = filter;
         document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
@@ -1678,7 +1840,6 @@
         renderStationList();
     }
 
-    // ── Show station list (reset all panels) ──────────────────────────────────
     function showList() {
         if (reservationPill) reservationPill.close();
         document.getElementById('listView').style.display = 'flex';
@@ -1688,11 +1849,11 @@
         directionsRenderer.setDirections({ routes: [] });
         selectedStation = null;
         selectedCharger = null;
+        selectedVehicle = null;
         currentChargers = [];
         document.getElementById('navigateBtn').disabled = true;
     }
 
-    // ── Map Type ──────────────────────────────────────────────────────────────
     function setMapType(type, btn) {
         map.setMapTypeId(type);
         document.querySelectorAll('.map-type-btn').forEach(b => b.classList.remove('active'));
@@ -1700,7 +1861,6 @@
         map.setOptions({ styles: type === 'roadmap' ? darkMapStyle() : [] });
     }
 
-    // ── Toast ─────────────────────────────────────────────────────────────────
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -1708,7 +1868,6 @@
         setTimeout(() => t.classList.remove('show'), 2800);
     }
 
-    // ── Dark map style ────────────────────────────────────────────────────────
     function darkMapStyle() {
         return [
             { elementType: 'geometry', stylers: [{ color: '#0a0f1e' }] },
@@ -1724,7 +1883,6 @@
         ];
     }
 
-    // ── Load Google Maps ──────────────────────────────────────────────────────
     async function loadGoogleMaps() {
         try {
             const response = await fetch('http://localhost:8000/api/config');

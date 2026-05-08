@@ -2,6 +2,7 @@
 // Full-page standalone registration screen.
 // Opened in a new tab via window.open('/register', '_blank') from AuthPanel.
 // On success, stores session and closes the tab to return to the main app.
+// Self-registration is restricted to EV Drivers only — staff accounts are created by administrators.
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -52,8 +53,8 @@ const STRENGTH_COLORS = ['', '#ef4444', '#f59e0b', '#3b82f6', '#00ff9d']
 export default function Register() {
   const navigate = useNavigate()
 
-const [form, setForm] = useState({
-    name: '', email: '', phoneNumber: '', password: '', confirmPassword: '', role: 'driver'
+  const [form, setForm] = useState({
+    name: '', email: '', phoneNumber: '', password: '', confirmPassword: ''
   })
   const [errors, setErrors]           = useState({})
   const [apiError, setApiError]       = useState('')
@@ -80,7 +81,7 @@ const [form, setForm] = useState({
     }
     setLoading(true)
     try {
-const res = await fetch(`${API}/register`, {
+      const res = await fetch(`${API}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -88,7 +89,7 @@ const res = await fetch(`${API}/register`, {
           email: form.email,
           phoneNumber: form.phoneNumber,
           password: form.password,
-          role: form.role  // YENİ EKLENEN KISIM
+          role: 'driver'  // Always driver — self-registration restricted to drivers only
         })
       })
       const data = await res.json()
@@ -136,25 +137,10 @@ const res = await fetch(`${API}/register`, {
         </div>
 
         <h1 style={S.title}>Create Account</h1>
-        <p style={S.subtitle}>Join the EV Charging Network</p>
+        <p style={S.subtitle}>Join the EV Charging Network as an EV Driver</p>
 
         {/* API error banner */}
         {apiError && <div style={S.errorBox}>⚠️ {apiError}</div>}
-
-        {/* Account Type (Role) */}
-        <div style={S.fieldGroup}>
-          <label style={S.label}>Account Type</label>
-          <select
-            style={S.input}
-            value={form.role}
-            onChange={e => updateField('role', e.target.value)}
-          >
-            <option value="driver">EV Driver</option>
-            <option value="technician">EV Technician</option>
-            <option value="specialist">Operation Specialist</option>
-            <option value="analyst">System Analyst</option>
-          </select>
-        </div>
 
         {/* Full Name */}
         <div style={S.fieldGroup}>

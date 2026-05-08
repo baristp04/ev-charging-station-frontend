@@ -213,7 +213,7 @@ export default function Vehicles() {
 
 // ── Styles ──
 const S = {
-  container: { padding: '32px', maxWidth: '1200px', margin: '0 auto', color: 'var(--text-primary)' },
+  container: { padding: '32px', maxWidth: '1200px', margin: '0 auto', color: 'var(--text-primary)', height: '100%', overflowY: 'auto' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' },
   title: { fontSize: '1.5rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' },
   subtitle: { fontSize: '0.85rem', color: 'var(--text-secondary)' },

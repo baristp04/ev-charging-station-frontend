@@ -45,6 +45,21 @@ export default function Reservations({ user }) {
     )
   }
 
+  // Badge config per status
+  const badgeStyle = (status) => {
+    if (status === 'active')    return { backgroundColor: 'var(--accent-glow)', color: 'var(--accent)' }
+    if (status === 'expired')   return { backgroundColor: 'rgba(255,184,0,0.12)', color: '#ffb800' }
+    if (status === 'completed') return { backgroundColor: 'rgba(100,100,100,0.15)', color: '#888' }
+    return { backgroundColor: '#1e1e1e', color: 'var(--text-secondary)' }
+  }
+
+  const badgeLabel = (status) => {
+    if (status === 'active')    return '● Active'
+    if (status === 'expired')   return '⏱ Expired'
+    if (status === 'completed') return '✓ Completed'
+    return status
+  }
+
   return (
     <div style={S.shell}>
       <div style={S.header}>
@@ -85,20 +100,39 @@ export default function Reservations({ user }) {
           {!loading && reservations.length > 0 && (
             <div style={S.resList}>
               {reservations.map(r => (
-                <div key={r.reservationID} style={S.resItem}>
+                <div key={r.reservationID} style={{
+                  ...S.resItem,
+                  // Dim expired cards slightly
+                  opacity: r.status === 'expired' ? 0.7 : 1,
+                }}>
                   <div style={S.resLeft}>
                     <div style={S.resTitle}>Reservation #{r.reservationID}</div>
                     <div style={S.resMeta}>
+                      🏢 {r.stationName || '—'} &nbsp;·&nbsp; 📍 {r.stationLocation || '—'}
+                    </div>
+                    <div style={S.resMeta}>
                       📅 {new Date(r.startTime).toLocaleString('tr-TR')} → {new Date(r.endTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
                     </div>
-                    <div style={S.resMeta}>🔌 Unit #{r.charger_id} &nbsp;·&nbsp; 🚘 Vehicle #{r.vehicle_id}</div>
+                    <div style={S.resMeta}>
+                      🔌 {r.connectorType || `Unit #${r.charger_id}`} &nbsp;·&nbsp; 🚘 {r.vehicleBrand ? `${r.vehicleBrand} (${r.vehiclePlate})` : `Vehicle #${r.vehicle_id}`}
+                    </div>
                   </div>
                   <div style={S.resRight}>
-                    <div style={{ ...S.resBadge, backgroundColor: r.status === 'active' ? 'var(--accent-glow)' : '#1e1e1e', color: r.status === 'active' ? 'var(--accent)' : 'var(--text-secondary)' }}>
-                      {r.status === 'active' ? '● Active' : r.status}
+                    {/* Status badge */}
+                    <div style={{ ...S.resBadge, ...badgeStyle(r.status) }}>
+                      {badgeLabel(r.status)}
                     </div>
+
+                    {/* Cancel only allowed for active reservations */}
                     {r.status === 'active' && (
-                      <button style={S.cancelBtn} onClick={() => handleCancel(r.reservationID)}>Cancel</button>
+                      <button style={S.cancelBtn} onClick={() => handleCancel(r.reservationID)}>
+                        Cancel
+                      </button>
+                    )}
+
+                    {/* Expired — no action available */}
+                    {r.status === 'expired' && (
+                      <span style={S.noAction}>No action available</span>
                     )}
                   </div>
                 </div>
@@ -112,7 +146,7 @@ export default function Reservations({ user }) {
 }
 
 const S = {
-  shell:      { display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--bg-base)' },
+  shell: { display: 'flex', flexDirection: 'column', overflowY: 'auto', height: '100%', backgroundColor: 'var(--bg-base)' },  header:     { padding: '32px 40px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' },
   header:     { padding: '32px 40px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' },
   pageTitle:  { margin: 0, fontSize: '1.6rem', fontWeight: 700, color: 'var(--text-primary)' },
   pageSub:    { margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '0.9rem' },
@@ -139,8 +173,9 @@ const S = {
   resMeta:    { fontSize: '0.82rem', color: 'var(--text-secondary)' },
   resBadge:   { padding: '4px 12px', borderRadius: '20px', fontSize: '0.78rem', fontWeight: 600 },
   cancelBtn:  { padding: '6px 14px', backgroundColor: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: 'var(--radius)', fontSize: '0.8rem', cursor: 'pointer' },
+  noAction:   { fontSize: '0.75rem', color: 'var(--text-secondary)', fontStyle: 'italic' },
   loginWall:  { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', flex: 1, gap: '12px', padding: '80px 40px' },
   loginIcon:  { fontSize: '3rem', marginBottom: '8px' },
   loginMsg:   { fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' },
   loginSub:   { color: 'var(--text-secondary)', fontSize: '0.9rem' },
-}
+} 
