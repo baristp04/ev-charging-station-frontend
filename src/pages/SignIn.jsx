@@ -39,10 +39,12 @@ export default function SignIn() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.detail || 'Invalid email or password.')
 
-      // Always use localStorage so the storage event fires in the main tab
-      // (sessionStorage does not trigger cross-tab storage events)
-      const storage = remember ? localStorage : localStorage
-      storage.setItem('ev_user', JSON.stringify(data))
+      // remember me off → 10 min expiry, on → 7 days expiry
+      const expiry = remember
+        ? Date.now() + 7 * 24 * 60 * 60 * 1000
+        : Date.now() + 10 * 60 * 1000
+
+      localStorage.setItem('ev_user', JSON.stringify({ ...data, expiry }))
 
       // Close this tab; main tab picks up the change via storage event
       window.close()
