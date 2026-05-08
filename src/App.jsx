@@ -1,23 +1,41 @@
 // ── App.jsx ───────────────────────────────────────────────────────────────────
-// Root layout component. Manages user session state and renders the sidebar
-// with navigation links and the AuthPanel at the bottom.
+// Root layout. Manages user session state and renders sidebar + main content.
+// /signin and /register render as standalone full-page routes (no sidebar).
 
 import { useState, useEffect } from 'react'
-import { Routes, Route, NavLink } from 'react-router-dom'
+import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import Analytics from './pages/Analytics'
 import MapStations from './pages/MapStations'
 import Vehicles from './pages/Vehicles'
 import Reservations from './pages/Reservations'
+import Register from './pages/Register'
+import SignIn from './pages/SignIn'
 import AuthPanel from './components/AuthPanel'
 
 export default function App() {
   const [user, setUser] = useState(null)
+  const location = useLocation()
 
-  // Restore user session from localStorage on initial load
+  // Restore session on mount (localStorage = remember me, sessionStorage = tab session)
   useEffect(() => {
-    const saved = localStorage.getItem('ev_user')
+    const saved = localStorage.getItem('ev_user') || sessionStorage.getItem('ev_user')
     if (saved) setUser(JSON.parse(saved))
   }, [])
+
+  // Listen for localStorage changes from other tabs (sign in tab → main tab)
+  // Note: storage event only fires for localStorage, not sessionStorage
+  useEffect(() => {
+    const handleStorage = () => {
+      const saved = localStorage.getItem('ev_user')
+      if (saved) setUser(JSON.parse(saved))
+    }
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [])
+
+  // Standalone pages — render without sidebar layout
+  if (location.pathname === '/signin')   return <SignIn />
+  if (location.pathname === '/register') return <Register />
 
   return (
     <div style={S.layout}>
@@ -29,7 +47,6 @@ export default function App() {
           <div style={S.logoText}>EV CHARGE</div>
         </div>
 
-        {/* Navigation links — always visible regardless of auth state */}
         <div style={S.navMenu}>
           <NavLink to="/" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
             📍 Map & Stations
@@ -45,7 +62,6 @@ export default function App() {
           </NavLink>
         </div>
 
-        {/* Auth section — shows login/register or user info based on session */}
         <div style={S.sidebarBottom}>
           <AuthPanel
             user={user}
@@ -58,10 +74,12 @@ export default function App() {
       {/* ── Main Content ── */}
       <main style={S.content}>
         <Routes>
-          <Route path="/"            element={<MapStations user={user} />} />
-          <Route path="/vehicles"    element={<Vehicles />} />
+          <Route path="/"             element={<MapStations user={user} />} />
+          <Route path="/vehicles"     element={<Vehicles />} />
           <Route path="/reservations" element={<Reservations user={user} />} />
-          <Route path="/analytics"   element={<Analytics />} />
+          <Route path="/analytics"    element={<Analytics />} />
+          <Route path="/signin"       element={<SignIn />} />
+          <Route path="/register"     element={<Register />} />
         </Routes>
       </main>
 
@@ -69,7 +87,7 @@ export default function App() {
   )
 }
 
-// ── Layout Stilleri ──
+// ── Styles ────────────────────────────────────────────────────────────────────
 const S = {
   layout: {
     display: 'flex',
@@ -77,7 +95,6 @@ const S = {
     overflow: 'hidden',
     backgroundColor: 'var(--bg-base)',
   },
-
   sidebar: {
     width: '260px',
     height: '100vh',
@@ -91,7 +108,6 @@ const S = {
     overflowY: 'auto',
     flexShrink: 0,
   },
-
   logoContainer: {
     display: 'flex',
     alignItems: 'center',
@@ -99,61 +115,36 @@ const S = {
     padding: '0 24px 30px 24px',
     borderBottom: '1px solid var(--border)',
   },
-
   logoIcon: {
-    width: '32px',
-    height: '32px',
-    backgroundColor: 'var(--accent-glow)',
-    color: 'var(--accent)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: '8px',
-    fontWeight: 'bold',
+    width: '32px', height: '32px',
+    backgroundColor: 'var(--accent-glow)', color: 'var(--accent)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    borderRadius: '8px', fontWeight: 'bold',
   },
-
   logoText: {
     fontFamily: 'var(--font-display)',
-    fontWeight: 700,
-    letterSpacing: '2px',
-    color: 'var(--text-primary)',
+    fontWeight: 700, letterSpacing: '2px', color: 'var(--text-primary)',
   },
-
   navMenu: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    padding: '24px 16px',
-    flex: 1,
+    display: 'flex', flexDirection: 'column', gap: '8px',
+    padding: '24px 16px', flex: 1,
   },
-
   navItem: {
-    padding: '12px 16px',
-    borderRadius: 'var(--radius)',
-    color: 'var(--text-secondary)',
-    textDecoration: 'none',
-    fontSize: '0.9rem',
-    fontWeight: 500,
-    transition: 'all 0.2s',
+    padding: '12px 16px', borderRadius: 'var(--radius)',
+    color: 'var(--text-secondary)', textDecoration: 'none',
+    fontSize: '0.9rem', fontWeight: 500, transition: 'all 0.2s',
   },
-
   navItemActive: {
     backgroundColor: 'var(--accent-glow)',
     color: 'var(--accent)',
     borderLeft: '4px solid var(--accent)',
   },
-
   sidebarBottom: {
     borderTop: '1px solid var(--border)',
     padding: '16px',
   },
-
   content: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    minHeight: 0,
-    overflow: 'hidden',
-    position: 'relative',
+    flex: 1, display: 'flex', flexDirection: 'column',
+    minHeight: 0, overflow: 'hidden', position: 'relative',
   },
 }
