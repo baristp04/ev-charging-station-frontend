@@ -55,12 +55,12 @@ export default function Register() {
   const [form, setForm] = useState({
     name: '', email: '', phoneNumber: '', password: '', confirmPassword: ''
   })
-  const [errors, setErrors]       = useState({})
-  const [apiError, setApiError]   = useState('')
-  const [loading, setLoading]     = useState(false)
-  const [success, setSuccess]     = useState(false)
-  const [remember, setRemember]   = useState(false)
-  const [showPass, setShowPass]   = useState(false)
+  const [errors, setErrors]           = useState({})
+  const [apiError, setApiError]       = useState('')
+  const [loading, setLoading]         = useState(false)
+  const [success, setSuccess]         = useState(false)
+  const [remember, setRemember]       = useState(false)
+  const [showPass, setShowPass]       = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
   const updateField = (field, value) => {
@@ -93,12 +93,14 @@ export default function Register() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.detail || 'Registration failed.')
 
-      // Persist session based on remember me preference
-      const storage = remember ? localStorage : sessionStorage
-      storage.setItem('ev_user', JSON.stringify(data))
+      // remember me off → 10 min expiry, on → 7 days expiry
+      const expiry = remember
+        ? Date.now() + 7 * 24 * 60 * 60 * 1000
+        : Date.now() + 10 * 60 * 1000
+
+      localStorage.setItem('ev_user', JSON.stringify({ ...data, expiry }))
 
       setSuccess(true)
-      // Close tab and return to main app
       setTimeout(() => { window.close(); navigate('/') }, 1500)
     } catch (err) {
       setApiError(err.message)
@@ -257,28 +259,19 @@ export default function Register() {
 // ── Styles ────────────────────────────────────────────────────────────────────
 const S = {
   page: {
-    minHeight: '100vh',
-    backgroundColor: '#0a0f1e',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '40px 16px',
-    fontFamily: 'DM Sans, sans-serif',
+    minHeight: '100vh', backgroundColor: '#0a0f1e',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    padding: '40px 16px', fontFamily: 'DM Sans, sans-serif',
   },
   card: {
-    width: '100%',
-    maxWidth: '460px',
-    backgroundColor: '#111827',
-    border: '1px solid #1e2d45',
-    borderRadius: '16px',
-    padding: '40px',
+    width: '100%', maxWidth: '460px', backgroundColor: '#111827',
+    border: '1px solid #1e2d45', borderRadius: '16px', padding: '40px',
     boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
   },
   logoRow:  { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px' },
   logoIcon: {
-    width: '32px', height: '32px',
-    backgroundColor: 'rgba(0,229,255,0.1)', color: '#00e5ff',
-    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    width: '32px', height: '32px', backgroundColor: 'rgba(0,229,255,0.1)',
+    color: '#00e5ff', display: 'flex', alignItems: 'center', justifyContent: 'center',
     borderRadius: '8px', fontWeight: 'bold', fontSize: '16px',
   },
   logoText:    { fontWeight: 700, letterSpacing: '2px', color: '#e8f0fe', fontSize: '0.9rem' },

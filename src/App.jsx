@@ -16,18 +16,36 @@ export default function App() {
   const [user, setUser] = useState(null)
   const location = useLocation()
 
-  // Restore session on mount (localStorage = remember me, sessionStorage = tab session)
+  // Restore session on mount — clear if expiry has passed
   useEffect(() => {
-    const saved = localStorage.getItem('ev_user') || sessionStorage.getItem('ev_user')
-    if (saved) setUser(JSON.parse(saved))
+    const saved = localStorage.getItem('ev_user')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (parsed.expiry && Date.now() > parsed.expiry) {
+        // Session expired — clear and force logout
+        localStorage.removeItem('ev_user')
+      } else {
+        setUser(parsed)
+      }
+    }
   }, [])
 
-  // Listen for localStorage changes from other tabs (sign in tab → main tab)
+  // Listen for localStorage changes from other tabs (sign-in/register tab → main tab)
   // Note: storage event only fires for localStorage, not sessionStorage
   useEffect(() => {
     const handleStorage = () => {
       const saved = localStorage.getItem('ev_user')
-      if (saved) setUser(JSON.parse(saved))
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (parsed.expiry && Date.now() > parsed.expiry) {
+          localStorage.removeItem('ev_user')
+          setUser(null)
+        } else {
+          setUser(parsed)
+        }
+      } else {
+        setUser(null)
+      }
     }
     window.addEventListener('storage', handleStorage)
     return () => window.removeEventListener('storage', handleStorage)
