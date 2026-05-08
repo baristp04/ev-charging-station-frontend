@@ -52,8 +52,8 @@ const STRENGTH_COLORS = ['', '#ef4444', '#f59e0b', '#3b82f6', '#00ff9d']
 export default function Register() {
   const navigate = useNavigate()
 
-  const [form, setForm] = useState({
-    name: '', email: '', phoneNumber: '', password: '', confirmPassword: ''
+const [form, setForm] = useState({
+    name: '', email: '', phoneNumber: '', password: '', confirmPassword: '', role: 'driver'
   })
   const [errors, setErrors]           = useState({})
   const [apiError, setApiError]       = useState('')
@@ -80,7 +80,7 @@ export default function Register() {
     }
     setLoading(true)
     try {
-      const res = await fetch(`${API}/register`, {
+const res = await fetch(`${API}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -88,6 +88,7 @@ export default function Register() {
           email: form.email,
           phoneNumber: form.phoneNumber,
           password: form.password,
+          role: form.role  // YENİ EKLENEN KISIM
         })
       })
       const data = await res.json()
@@ -139,6 +140,21 @@ export default function Register() {
 
         {/* API error banner */}
         {apiError && <div style={S.errorBox}>⚠️ {apiError}</div>}
+
+        {/* Account Type (Role) */}
+        <div style={S.fieldGroup}>
+          <label style={S.label}>Account Type</label>
+          <select
+            style={S.input}
+            value={form.role}
+            onChange={e => updateField('role', e.target.value)}
+          >
+            <option value="driver">EV Driver</option>
+            <option value="technician">EV Technician</option>
+            <option value="specialist">Operation Specialist</option>
+            <option value="analyst">System Analyst</option>
+          </select>
+        </div>
 
         {/* Full Name */}
         <div style={S.fieldGroup}>
