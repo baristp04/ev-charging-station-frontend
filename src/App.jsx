@@ -47,6 +47,7 @@ export default function App() {
           <div style={S.logoText}>EV CHARGE</div>
         </div>
 
+        {/* Navigation links — always visible regardless of auth state */}
         <div style={S.navMenu}>
           <NavLink to="/" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
             📍 Map & Stations
@@ -57,9 +58,13 @@ export default function App() {
           <NavLink to="/reservations" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
             📅 My Reservations
           </NavLink>
-          <NavLink to="/analytics" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
-            📊 Management Reports
-          </NavLink>
+
+          {/* Analytics link — visible to admins only */}
+          {user?.is_admin && (
+            <NavLink to="/analytics" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+              📊 Management Reports
+            </NavLink>
+          )}
         </div>
 
         <div style={S.sidebarBottom}>
@@ -77,7 +82,7 @@ export default function App() {
           <Route path="/"             element={<MapStations user={user} />} />
           <Route path="/vehicles"     element={<Vehicles />} />
           <Route path="/reservations" element={<Reservations user={user} />} />
-          <Route path="/analytics"    element={<Analytics />} />
+          <Route path="/analytics"    element={<Analytics user={user} />} />
           <Route path="/signin"       element={<SignIn />} />
           <Route path="/register"     element={<Register />} />
         </Routes>
