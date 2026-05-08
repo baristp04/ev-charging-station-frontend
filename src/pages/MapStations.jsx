@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export default function MapStations({ user }) {
+    const iframeRef = useRef(null);
 
     const [modalOpen, setModalOpen]                 = useState(false);
     const [reservationData, setReservationData]     = useState(null);
     const [selectedVehicleId, setSelectedVehicleId] = useState('');
     const [vehicles, setVehicles]                   = useState([]);
     const [submitting, setSubmitting]               = useState(false);
+    const [errorMsg, setErrorMsg]                   = useState('');
 
     // Listen for postMessage events sent from navigation.html iframe
     useEffect(() => {
@@ -15,11 +17,13 @@ export default function MapStations({ user }) {
 
             const {
                 stationId, stationName, charger,
+                vehicleId,
                 startTime, endTime, hours, estimatedCost
             } = e.data;
 
             setReservationData({ stationId, stationName, charger, startTime, endTime, hours, estimatedCost });
-            setSelectedVehicleId('');
+            setSelectedVehicleId(vehicleId ? String(vehicleId) : ''); // pre-select vehicle chosen in map
+            setErrorMsg('');
             setModalOpen(true);
         };
 
@@ -27,13 +31,20 @@ export default function MapStations({ user }) {
         return () => window.removeEventListener('message', handleMessage);
     }, []);
 
-    // Fetch vehicles belonging to the logged-in driver
+    // Fetch vehicles and send them to the navigation.html iframe
     useEffect(() => {
         if (!user?.driverID) return;
 
         fetch(`http://localhost:8000/api/v1/vehicles/driver/${user.driverID}`)
             .then(r => r.json())
-            .then(setVehicles)
+            .then(data => {
+                setVehicles(data);
+                // Send vehicles to iframe so navigation.html can show them
+                const iframe = document.querySelector('iframe');
+                if (iframe?.contentWindow) {
+                    iframe.contentWindow.postMessage({ type: 'SET_VEHICLES', vehicles: data }, '*');
+                }
+            })
             .catch(console.error);
     }, [user]);
 
@@ -41,14 +52,14 @@ export default function MapStations({ user }) {
     async function confirmReservation() {
         if (!selectedVehicleId || !reservationData) return;
         setSubmitting(true);
-        console.log('charger:', reservationData.charger);
-        console.log('chargerID:', reservationData.charger.chargerID);
+        setErrorMsg('');
+
         const body = {
             driver_id:  user.driverID,
             charger_id: reservationData.charger.id || reservationData.charger.chargerID,
             vehicle_id: parseInt(selectedVehicleId),
-            startTime: reservationData.startTime,
-            endTime: reservationData.endTime,
+            startTime:  reservationData.startTime,
+            endTime:    reservationData.endTime,
         };
 
         try {
@@ -60,38 +71,50 @@ export default function MapStations({ user }) {
 
             if (!res.ok) {
                 const err = await res.json();
-                alert('Error: ' + (err.detail || 'Reservation failed.'));
+                setErrorMsg(err.detail || 'Reservation failed.');
                 return;
             }
 
             setModalOpen(false);
             setSelectedVehicleId('');
+            setErrorMsg('');
             alert('✅ Reservation created successfully!');
         } catch {
-            alert('Could not connect to server.');
+            setErrorMsg('Could not connect to server.');
         } finally {
             setSubmitting(false);
         }
     }
 
-    // Close modal and reset vehicle selection
+    // Close modal and reset all state
     function closeModal() {
         setModalOpen(false);
         setSelectedVehicleId('');
+        setErrorMsg('');
     }
 
     return (
         <div style={{
             position: 'relative',
             flex: 1,
-            minHeight: 0,        // required for iframe to fill height in flex layout
+            minHeight: 0,
             overflow: 'hidden',
         }}>
 
             {/* Navigation iframe — serves navigation.html from backend at /map */}
             <iframe
                 src="http://localhost:8000/map"
-                allow="geolocation"  // required to allow geolocation inside iframe
+                allow="geolocation"
+                ref={iframeRef}
+                onLoad={() => {
+                    // Re-send vehicles after iframe reloads
+                    if (vehicles.length && iframeRef.current) {
+                        iframeRef.current.contentWindow.postMessage(
+                            { type: 'SET_VEHICLES', vehicles },
+                            '*'
+                        );
+                    }
+                }}
                 style={{
                     position: 'absolute',
                     top: 0, left: 0,
@@ -112,7 +135,7 @@ export default function MapStations({ user }) {
                     alignItems: 'center',
                     justifyContent: 'center',
                     zIndex: 1000,
-                    left: '260px', // offset to account for sidebar width
+                    left: '260px',
                 }}>
                     <div style={{
                         background: '#111827',
@@ -123,17 +146,42 @@ export default function MapStations({ user }) {
                         color: '#e8f0fe',
                         fontFamily: 'DM Sans, sans-serif',
                         boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+                        position: 'relative',
                     }}>
 
+                        {/* Close button */}
+                        <button
+                            onClick={closeModal}
+                            style={{
+                                position: 'absolute',
+                                top: '14px',
+                                right: '14px',
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#6b7fa3',
+                                fontSize: '18px',
+                                cursor: 'pointer',
+                                lineHeight: 1,
+                                padding: '4px',
+                                borderRadius: '4px',
+                                transition: 'color 0.2s',
+                            }}
+                            onMouseEnter={e => e.target.style.color = '#e8f0fe'}
+                            onMouseLeave={e => e.target.style.color = '#6b7fa3'}
+                            title="Close"
+                        >
+                            ✕
+                        </button>
+
                         {/* Station and charger header */}
-                        <h3 style={{ marginBottom: '4px', fontSize: '18px', fontWeight: 600 }}>
+                        <h3 style={{ marginBottom: '4px', fontSize: '18px', fontWeight: 600, paddingRight: '24px' }}>
                             {reservationData.stationName}
                         </h3>
                         <p style={{ color: '#6b7fa3', fontSize: '13px', marginBottom: '18px' }}>
-                            {reservationData.charger.connectorType} · {reservationData.charger.powerOutput} kW · Unit #{reservationData.charger.chargerID}
+                            {reservationData.charger.connectorType} · {reservationData.charger.powerOutput} kW · Unit #{reservationData.charger.chargerID || reservationData.charger.id}
                         </p>
 
-                        {/* Reservation summary — time, duration, cost pre-calculated in iframe */}
+                        {/* Reservation summary */}
                         <div style={{
                             background: 'rgba(0,229,255,0.06)',
                             border: '1px solid rgba(0,229,255,0.2)',
@@ -149,6 +197,38 @@ export default function MapStations({ user }) {
                             <div>💰 Estimated cost: <strong style={{ color: '#00ff9d' }}>{reservationData.estimatedCost}</strong></div>
                         </div>
 
+                        {/* Inline error message */}
+                        {errorMsg && (
+                            <div style={{
+                                background: '#2d1515',
+                                border: '1px solid #ef4444',
+                                borderRadius: '8px',
+                                padding: '10px 14px',
+                                marginBottom: '16px',
+                                fontSize: '13px',
+                                color: '#ef4444',
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                gap: '10px',
+                            }}>
+                                <span>⚠️ {errorMsg}</span>
+                                <button
+                                    onClick={() => setErrorMsg('')}
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: '#ef4444',
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        lineHeight: 1,
+                                        padding: '0 2px',
+                                        flexShrink: 0,
+                                    }}
+                                >✕</button>
+                            </div>
+                        )}
+
                         {/* Show login warning if user is not authenticated */}
                         {!user ? (
                             <p style={{ color: '#ff3b5c', fontSize: '13px', textAlign: 'center', padding: '10px 0' }}>
@@ -156,41 +236,23 @@ export default function MapStations({ user }) {
                             </p>
                         ) : (
                             <>
-                                {/* Vehicle selection dropdown */}
-                                <label style={{
-                                    display: 'block',
-                                    fontSize: '10px',
-                                    fontFamily: 'Space Mono, monospace',
-                                    color: '#6b7fa3',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.09em',
-                                    marginBottom: '6px',
-                                }}>
-                                    Select Vehicle
-                                </label>
-                                <select
-                                    value={selectedVehicleId}
-                                    onChange={e => setSelectedVehicleId(e.target.value)}
-                                    style={{
-                                        width: '100%',
-                                        marginBottom: '20px',
-                                        background: '#1a2235',
-                                        border: '1px solid #1e2d45',
-                                        borderRadius: '8px',
-                                        padding: '10px 12px',
-                                        color: '#e8f0fe',
-                                        fontSize: '13px',
-                                        outline: 'none',
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    <option value=''>Select a vehicle...</option>
-                                    {vehicles.map(v => (
-                                        <option key={v.vehicleID} value={v.vehicleID}>
-                                            {v.brand} {v.model} — {v.plateNumber}
-                                        </option>
-                                    ))}
-                                </select>
+                                {/* Show the vehicle already selected in the map — no re-selection needed */}
+                                {(() => {
+                                    const v = vehicles.find(v => String(v.vehicleID) === String(selectedVehicleId));
+                                    return v ? (
+                                        <div style={{
+                                            background: 'rgba(0,255,157,0.06)',
+                                            border: '1px solid rgba(0,255,157,0.2)',
+                                            borderRadius: '8px',
+                                            padding: '10px 14px',
+                                            marginBottom: '20px',
+                                            fontSize: '13px',
+                                            color: '#00ff9d',
+                                        }}>
+                                            🚗 {v.brand} {v.model} — {v.plateNumber}
+                                        </div>
+                                    ) : null;
+                                })()}
 
                                 {/* Cancel and confirm buttons */}
                                 <div style={{ display: 'flex', gap: '10px' }}>

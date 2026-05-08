@@ -372,7 +372,7 @@ export default function Analytics({user}) {
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const S = {
-  shell: {display: 'flex', flexDirection: 'column' },
+  shell: {display: 'flex', flexDirection: 'column', minHeight: '100vh', overflowY: 'auto', background: 'var(--bg-main)' },
 
   header: {
     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
