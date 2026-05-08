@@ -1,7 +1,4 @@
 // ── Reservations.jsx ──────────────────────────────────────────────────────────
-// Kullanıcının mevcut rezervasyonlarını listeler ve iptal etmesine izin verir.
-// Yeni rezervasyon için haritadan istasyon seçilir (MapStations.jsx üzerinden).
-
 import { useState, useEffect } from 'react'
 
 const API = 'http://localhost:8000'
@@ -19,19 +16,19 @@ export default function Reservations({ user }) {
     fetch(`${API}/api/stations/my-reservations/${driverID}`)
       .then(r => r.json())
       .then(data => { setReservations(Array.isArray(data) ? data : []); setLoading(false) })
-      .catch(() => { setError('Rezervasyonlar yüklenemedi.'); setLoading(false) })
+      .catch(() => { setError('Could not load reservations.'); setLoading(false) })
   }
 
   useEffect(() => { fetchReservations() }, [driverID])
 
   const handleCancel = async (reservationID) => {
-    if (!window.confirm('Bu rezervasyonu iptal etmek istiyor musunuz?')) return
+    if (!window.confirm('Are you sure you want to cancel this reservation?')) return
     try {
       const res = await fetch(`${API}/api/stations/reservations/${reservationID}`, { method: 'DELETE' })
       if (!res.ok) throw new Error()
       setReservations(prev => prev.filter(r => r.reservationID !== reservationID))
     } catch {
-      alert('İptal işlemi başarısız oldu.')
+      alert('Cancellation failed.')
     }
   }
 
@@ -41,8 +38,8 @@ export default function Reservations({ user }) {
         <div style={S.header}><h1 style={S.pageTitle}>📅 My Reservations</h1></div>
         <div style={S.loginWall}>
           <div style={S.loginIcon}>🔒</div>
-          <div style={S.loginMsg}>Rezervasyonlarınızı görmek için giriş yapmalısınız.</div>
-          <div style={S.loginSub}>Sol panelden giriş yapabilirsiniz.</div>
+          <div style={S.loginMsg}>You need to log in to view your reservations.</div>
+          <div style={S.loginSub}>You can log in from the left panel.</div>
         </div>
       </div>
     )
@@ -53,9 +50,9 @@ export default function Reservations({ user }) {
       <div style={S.header}>
         <div>
           <h1 style={S.pageTitle}>📅 My Reservations</h1>
-          <p style={S.pageSub}>Rezervasyon yapmak için haritadan bir istasyon seçin.</p>
+          <p style={S.pageSub}>Select a station from the map to make a reservation.</p>
         </div>
-        <button style={S.refreshBtn} onClick={fetchReservations}>🔄 Yenile</button>
+        <button style={S.refreshBtn} onClick={fetchReservations}>🔄 Refresh</button>
       </div>
 
       <div style={S.body}>
@@ -63,25 +60,25 @@ export default function Reservations({ user }) {
         <div style={S.infoCard}>
           <span style={S.infoIcon}>💡</span>
           <span style={S.infoText}>
-            Yeni rezervasyon yapmak için <strong style={{ color: 'var(--accent)' }}>Map & Stations</strong> sayfasına gidin,
-            bir istasyon seçin ve müsait şarj ünitesine tıklayın.
+            To make a new reservation, go to the <strong style={{ color: 'var(--accent)' }}>Map & Stations</strong> page,
+            select a station, and click on an available charger.
           </span>
         </div>
 
         <div style={S.card}>
           <div style={S.cardHeader}>
-            <span style={S.cardTitle}>🗓️ Rezervasyonlarım</span>
-            <span style={S.cardCount}>{reservations.length} rezervasyon</span>
+            <span style={S.cardTitle}>🗓️ My Reservations</span>
+            <span style={S.cardCount}>{reservations.length} reservations</span>
           </div>
 
           {error   && <div style={S.errorBox}>⚠️ {error}</div>}
-          {loading && <div style={S.empty}>Yükleniyor...</div>}
+          {loading && <div style={S.empty}>Loading...</div>}
 
           {!loading && reservations.length === 0 && (
             <div style={S.emptyState}>
               <div style={S.emptyIcon}>📭</div>
-              <div style={S.emptyMsg}>Henüz rezervasyonunuz yok.</div>
-              <div style={S.emptySub}>Haritadan bir istasyon seçerek başlayabilirsiniz.</div>
+              <div style={S.emptyMsg}>You don't have any reservations yet.</div>
+              <div style={S.emptySub}>You can start by selecting a station from the map.</div>
             </div>
           )}
 
@@ -90,18 +87,18 @@ export default function Reservations({ user }) {
               {reservations.map(r => (
                 <div key={r.reservationID} style={S.resItem}>
                   <div style={S.resLeft}>
-                    <div style={S.resTitle}>Rezervasyon #{r.reservationID}</div>
+                    <div style={S.resTitle}>Reservation #{r.reservationID}</div>
                     <div style={S.resMeta}>
                       📅 {new Date(r.startTime).toLocaleString('tr-TR')} → {new Date(r.endTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
                     </div>
-                    <div style={S.resMeta}>🔌 Ünite #{r.charger_id} &nbsp;·&nbsp; 🚘 Araç #{r.vehicle_id}</div>
+                    <div style={S.resMeta}>🔌 Unit #{r.charger_id} &nbsp;·&nbsp; 🚘 Vehicle #{r.vehicle_id}</div>
                   </div>
                   <div style={S.resRight}>
                     <div style={{ ...S.resBadge, backgroundColor: r.status === 'active' ? 'var(--accent-glow)' : '#1e1e1e', color: r.status === 'active' ? 'var(--accent)' : 'var(--text-secondary)' }}>
-                      {r.status === 'active' ? '● Aktif' : r.status}
+                      {r.status === 'active' ? '● Active' : r.status}
                     </div>
                     {r.status === 'active' && (
-                      <button style={S.cancelBtn} onClick={() => handleCancel(r.reservationID)}>İptal Et</button>
+                      <button style={S.cancelBtn} onClick={() => handleCancel(r.reservationID)}>Cancel</button>
                     )}
                   </div>
                 </div>

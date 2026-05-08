@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-// Backend API URL'si (Backend'in 8000 portunda çalıştığını varsayıyoruz)
+// Backend API URL
 const API_BASE = 'http://localhost:8000/api/v1/vehicles';
 const getDriverId = () => {
   const user = localStorage.getItem('ev_user');
@@ -12,7 +12,7 @@ export default function Vehicles() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Modal State'leri
+  // Modal States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [formData, setFormData] = useState({
@@ -23,14 +23,14 @@ export default function Vehicles() {
     connectorType: 'CCS'
   });
 
-  // 1. READ: Araçları Getir
+  // 1. READ: Fetch Vehicles
   const fetchVehicles = async () => {
     try {
       setLoading(true);
       const driverID = getDriverId();
       if (!driverID) { setError('Please sign in to view your vehicles'); setLoading(false); return; }
       const res = await fetch(`${API_BASE}/driver/${driverID}`);
-      if (!res.ok) throw new Error('Araçlar getirilirken bir hata oluştu');
+      if (!res.ok) throw new Error('An error occurred while fetching vehicles');
       const data = await res.json();
       setVehicles(data);
     } catch (err) {
@@ -44,13 +44,13 @@ export default function Vehicles() {
     fetchVehicles();
   }, []);
 
-  // Form Değişikliklerini Yakala
+  // Handle Form Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Yeni Ekle veya Güncelle Modalını Aç
+  // Open Modal for Add or Update
   const openModal = (vehicle = null) => {
     setError(null);
     if (vehicle) {
@@ -69,12 +69,12 @@ export default function Vehicles() {
     setIsModalOpen(true);
   };
 
-  // 2 & 3. CREATE / UPDATE: Formu Gönder
+  // 2 & 3. CREATE / UPDATE: Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     
-    // Gönderilecek veriyi hazırla (Sayısal değerleri dönüştür)
+    // Prepare payload (Convert numerical values)
     const payload = {
       ...formData,
       batteryCapacity: parseFloat(formData.batteryCapacity),
@@ -93,24 +93,24 @@ export default function Vehicles() {
 
       if (!res.ok) {
         const errData = await res.json();
-        throw new Error(errData.detail || 'Kayıt başarısız oldu.');
+        throw new Error(errData.detail || 'Registration failed.');
       }
 
       setIsModalOpen(false);
-      fetchVehicles(); // Listeyi yenile
+      fetchVehicles(); // Refresh list
     } catch (err) {
       setError(err.message);
     }
   };
 
-  // 4. DELETE: Aracı Sil
+  // 4. DELETE: Delete Vehicle
   const handleDelete = async (vehicleId) => {
-    if (!window.confirm("Bu aracı silmek istediğinize emin misiniz?")) return;
+    if (!window.confirm("Are you sure you want to delete this vehicle?")) return;
     
     try {
       const res = await fetch(`${API_BASE}/${vehicleId}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Silme işlemi başarısız oldu.');
-      fetchVehicles(); // Listeyi yenile
+      if (!res.ok) throw new Error('Deletion failed.');
+      fetchVehicles(); // Refresh list
     } catch (err) {
       alert(err.message);
     }
@@ -120,18 +120,18 @@ export default function Vehicles() {
     <div style={S.container} className="fade-up">
       <div style={S.header}>
         <div>
-          <h2 style={S.title}>🚘 Araç Yönetimi</h2>
-          <p style={S.subtitle}>Sisteme kayıtlı elektrikli araçlarınızı buradan yönetebilirsiniz.</p>
+          <h2 style={S.title}>🚘 Vehicle Management</h2>
+          <p style={S.subtitle}>You can manage your registered electric vehicles here.</p>
         </div>
-        <button style={S.addBtn} onClick={() => openModal()}>+ Yeni Araç Ekle</button>
+        <button style={S.addBtn} onClick={() => openModal()}>+ Add New Vehicle</button>
       </div>
 
       {error && !isModalOpen && <div style={S.errorBanner}>⚠ {error}</div>}
 
       {loading ? (
-        <div style={S.loading}>Araçlar yükleniyor...</div>
+        <div style={S.loading}>Loading vehicles...</div>
       ) : vehicles.length === 0 ? (
-        <div style={S.empty}>Henüz kayıtlı bir aracınız bulunmuyor.</div>
+        <div style={S.empty}>You do not have any registered vehicles yet.</div>
       ) : (
         <div style={S.grid}>
           {vehicles.map((v) => (
@@ -148,11 +148,11 @@ export default function Vehicles() {
               
               <div style={S.specs}>
                 <div style={S.specItem}>
-                  <span style={S.specLabel}>BATARYA</span>
+                  <span style={S.specLabel}>BATTERY</span>
                   <span style={S.specValue}>{v.batteryCapacity} kWh</span>
                 </div>
                 <div style={S.specItem}>
-                  <span style={S.specLabel}>SOKET</span>
+                  <span style={S.specLabel}>CONNECTOR</span>
                   <span style={S.specValue}>{v.connectorType}</span>
                 </div>
               </div>
@@ -161,36 +161,36 @@ export default function Vehicles() {
         </div>
       )}
 
-      {/* MODAL (Ekleme / Güncelleme Formu) */}
+      {/* MODAL (Add / Update Form) */}
       {isModalOpen && (
         <div style={S.modalOverlay}>
           <div style={S.modalContent} className="fade-up">
             <h3 style={{ marginBottom: '20px', color: 'var(--accent)' }}>
-              {editingId ? 'Aracı Güncelle' : 'Yeni Araç Ekle'}
+              {editingId ? 'Update Vehicle' : 'Add New Vehicle'}
             </h3>
             
             {error && <div style={{...S.errorBanner, marginBottom: '15px'}}>{error}</div>}
 
             <form onSubmit={handleSubmit} style={S.form}>
               <div style={S.inputGroup}>
-                <label style={S.label}>Marka</label>
-                <input required style={S.input} name="brand" value={formData.brand} onChange={handleChange} placeholder="Örn: Tesla" />
+                <label style={S.label}>Brand</label>
+                <input required style={S.input} name="brand" value={formData.brand} onChange={handleChange} placeholder="e.g. Tesla" />
               </div>
               <div style={S.inputGroup}>
                 <label style={S.label}>Model</label>
-                <input required style={S.input} name="model" value={formData.model} onChange={handleChange} placeholder="Örn: Model 3" />
+                <input required style={S.input} name="model" value={formData.model} onChange={handleChange} placeholder="e.g. Model 3" />
               </div>
               <div style={S.inputGroup}>
-                <label style={S.label}>Plaka Numarası</label>
-                <input required style={S.input} name="plateNumber" value={formData.plateNumber} onChange={handleChange} placeholder="Örn: 35 EV 1001" />
+                <label style={S.label}>Plate Number</label>
+                <input required style={S.input} name="plateNumber" value={formData.plateNumber} onChange={handleChange} placeholder="e.g. 35 EV 1001" />
               </div>
               <div style={S.row}>
                 <div style={S.inputGroup}>
-                  <label style={S.label}>Batarya (kWh)</label>
-                  <input required type="number" step="0.1" style={S.input} name="batteryCapacity" value={formData.batteryCapacity} onChange={handleChange} placeholder="Örn: 75.0" />
+                  <label style={S.label}>Battery (kWh)</label>
+                  <input required type="number" step="0.1" style={S.input} name="batteryCapacity" value={formData.batteryCapacity} onChange={handleChange} placeholder="e.g. 75.0" />
                 </div>
                 <div style={S.inputGroup}>
-                  <label style={S.label}>Soket Tipi</label>
+                  <label style={S.label}>Connector Type</label>
                   <select style={S.input} name="connectorType" value={formData.connectorType} onChange={handleChange}>
                     <option value="CCS">CCS</option>
                     <option value="Type 2">Type 2</option>
@@ -200,8 +200,8 @@ export default function Vehicles() {
               </div>
 
               <div style={S.modalActions}>
-                <button type="button" style={S.cancelBtn} onClick={() => setIsModalOpen(false)}>İptal</button>
-                <button type="submit" style={S.saveBtn}>{editingId ? 'Güncelle' : 'Kaydet'}</button>
+                <button type="button" style={S.cancelBtn} onClick={() => setIsModalOpen(false)}>Cancel</button>
+                <button type="submit" style={S.saveBtn}>{editingId ? 'Update' : 'Save'}</button>
               </div>
             </form>
           </div>
@@ -211,7 +211,7 @@ export default function Vehicles() {
   );
 }
 
-// ── Stiller (Senin cyberpunk/dark temana uyumlu) ──
+// ── Styles ──
 const S = {
   container: { padding: '32px', maxWidth: '1200px', margin: '0 auto', color: 'var(--text-primary)' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' },
@@ -234,7 +234,7 @@ const S = {
   empty: { textAlign: 'center', padding: '60px', background: 'var(--bg-panel)', borderRadius: 'var(--radius-lg)', color: 'var(--text-dim)' },
   errorBanner: { background: 'rgba(255,77,109,0.1)', border: '1px solid var(--red)', padding: '12px', borderRadius: 'var(--radius)', color: 'var(--red)', marginBottom: '20px' },
   
-  // Modal Stilleri
+  // Modal Styles
   modalOverlay: { 
   position: 'fixed', 
   top: 0, 

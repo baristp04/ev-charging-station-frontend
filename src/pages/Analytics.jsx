@@ -11,7 +11,7 @@ const fmt_tl  = (n) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2
 const fmt_kwh = (n) => new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(n) + ' kWh'
 const fmt_num = (n) => new Intl.NumberFormat('tr-TR').format(n)
 const fmt_date = (iso) => new Date(iso).toLocaleString('tr-TR', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })
-const method_label = { credit_card: 'Kredi Kartı', debit_card: 'Banka Kartı', wallet: 'Cüzdan' }
+const method_label = { credit_card: 'Credit Card', debit_card: 'Debit Card', wallet: 'Wallet' }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
@@ -42,10 +42,10 @@ function Header() {
 function DateRangeBar({ startDate, endDate, onStart, onEnd, onFetch, loading }) {
   return (
     <div style={S.dateBar} className="fade-up fade-up-1">
-      <div style={S.dateBarLabel}>RAPOR DÖNEMİ</div>
+      <div style={S.dateBarLabel}>REPORT PERIOD</div>
       <div style={S.dateBarControls}>
         <div style={S.dateField}>
-          <label style={S.dateLabel}>BAŞLANGIÇ</label>
+          <label style={S.dateLabel}>START DATE</label>
           <input
             type="date"
             value={startDate}
@@ -55,7 +55,7 @@ function DateRangeBar({ startDate, endDate, onStart, onEnd, onFetch, loading }) 
         </div>
         <div style={{ color: 'var(--text-dim)', fontSize: '1.2rem', alignSelf: 'flex-end', paddingBottom: '6px' }}>→</div>
         <div style={S.dateField}>
-          <label style={S.dateLabel}>BİTİŞ</label>
+          <label style={S.dateLabel}>END DATE</label>
           <input
             type="date"
             value={endDate}
@@ -65,7 +65,7 @@ function DateRangeBar({ startDate, endDate, onStart, onEnd, onFetch, loading }) 
         </div>
         <button onClick={onFetch} disabled={loading} style={S.fetchBtn}>
           {loading ? <span style={S.spinner} /> : null}
-          {loading ? 'YÜKLENİYOR...' : 'RAPORU GETIR'}
+          {loading ? 'LOADING...' : 'FETCH REPORT'}
         </button>
       </div>
     </div>
@@ -90,7 +90,7 @@ const CustomBarTooltip = ({ active, payload, label }) => {
       <div style={S.tooltipLabel}>{label}</div>
       {payload.map((p, i) => (
         <div key={i} style={{ color: p.color, fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
-          {p.name}: {p.name === 'Gelir (₺)' ? fmt_tl(p.value) : fmt_num(p.value)}
+          {p.name}: {p.name === 'Revenue (₺)' ? fmt_tl(p.value) : fmt_num(p.value)}
         </div>
       ))}
     </div>
@@ -103,7 +103,7 @@ function StationChart({ data }) {
     <div style={S.chartCard} className="fade-up fade-up-4">
       <div style={S.chartTitle}>
         <span style={S.chartTitleDot} />
-        İSTASYON BAZLI GELİR
+        REVENUE BY STATION
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <BarChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
@@ -121,7 +121,7 @@ function StationChart({ data }) {
             tickFormatter={v => (v / 1000).toFixed(0) + 'K'}
           />
           <Tooltip content={<CustomBarTooltip />} cursor={{ fill: 'rgba(0,229,255,0.05)' }} />
-          <Bar dataKey="total_revenue_tl" name="Gelir (₺)" radius={[4, 4, 0, 0]}>
+          <Bar dataKey="total_revenue_tl" name="Revenue (₺)" radius={[4, 4, 0, 0]}>
             {data.map((_, i) => (
               <Cell key={i} fill={i === 0 ? 'var(--accent)' : `rgba(0,229,255,${0.65 - i * 0.1})`} />
             ))}
@@ -133,7 +133,7 @@ function StationChart({ data }) {
           <div key={s.station_id} style={S.stationRow}>
             <div style={S.stationRank}>{String(i + 1).padStart(2, '0')}</div>
             <div style={S.stationName}>{s.station_name}</div>
-            <div style={S.stationSessions}>{fmt_num(s.session_count)} seans</div>
+            <div style={S.stationSessions}>{fmt_num(s.session_count)} sessions</div>
             <div style={{ ...S.stationRevenue, color: i === 0 ? 'var(--accent)' : 'var(--text-primary)' }}>
               {fmt_tl(s.total_revenue_tl)}
             </div>
@@ -152,7 +152,7 @@ function PeakHourChart({ data }) {
     <div style={S.chartCard} className="fade-up fade-up-5">
       <div style={S.chartTitle}>
         <span style={{ ...S.chartTitleDot, background: 'var(--green)' }} />
-        SAATLIK YOĞUNLUK ANALİZİ
+        HOURLY PEAK ANALYSIS
       </div>
       <ResponsiveContainer width="100%" height={240}>
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 10, bottom: 5 }}>
@@ -182,7 +182,7 @@ function PeakHourChart({ data }) {
                 <div style={S.tooltip}>
                   <div style={{ ...S.tooltipLabel, color: 'var(--green)' }}>{label}</div>
                   <div style={{ color: 'var(--green)', fontFamily: 'var(--font-mono)', fontSize: '0.85rem' }}>
-                    {payload[0].value} seans
+                    {payload[0].value} sessions
                   </div>
                   <div style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>
                     {fmt_tl(payload[0]?.payload?.total_revenue_tl ?? 0)}
@@ -207,15 +207,15 @@ function PeakHourChart({ data }) {
           return (
             <>
               <div style={S.peakItem}>
-                <span style={S.peakItemLabel}>En Yoğun Saat</span>
+                <span style={S.peakItemLabel}>Peak Hour</span>
                 <span style={{ ...S.peakItemValue, color: 'var(--green)' }}>{peak.hour}</span>
               </div>
               <div style={S.peakItem}>
-                <span style={S.peakItemLabel}>Pik Seans Sayısı</span>
+                <span style={S.peakItemLabel}>Peak Sessions</span>
                 <span style={{ ...S.peakItemValue, color: 'var(--green)' }}>{peak.session_count}</span>
               </div>
               <div style={S.peakItem}>
-                <span style={S.peakItemLabel}>Pik Saati Geliri</span>
+                <span style={S.peakItemLabel}>Peak Hour Revenue</span>
                 <span style={{ ...S.peakItemValue, color: 'var(--green)' }}>{fmt_tl(peak.total_revenue_tl)}</span>
               </div>
             </>
@@ -232,14 +232,14 @@ function TransactionsTable({ data }) {
     <div style={S.tableCard} className="fade-up fade-up-6">
       <div style={S.chartTitle}>
         <span style={{ ...S.chartTitleDot, background: 'var(--yellow)' }} />
-        SON İŞLEMLER
-        <span style={S.tableCount}>{data.length} kayıt</span>
+        RECENT TRANSACTIONS
+        <span style={S.tableCount}>{data.length} records</span>
       </div>
       <div style={S.tableWrapper}>
         <table style={S.table}>
           <thead>
             <tr>
-              {['ID', 'TARİH', 'İSTASYON', 'YÖNTEMİ', 'ENERJİ', 'TUTAR'].map(h => (
+              {['ID', 'DATE', 'STATION', 'METHOD', 'ENERGY', 'AMOUNT'].map(h => (
                 <th key={h} style={S.th}>{h}</th>
               ))}
             </tr>
@@ -274,7 +274,7 @@ function EmptyState() {
   return (
     <div style={S.empty}>
       <div style={S.emptyIcon}>◎</div>
-      <div>Seçili dönem için veri bulunamadı</div>
+      <div>No data found for the selected period</div>
     </div>
   )
 }
@@ -300,7 +300,7 @@ export default function Analytics() {
     try {
       const url = `${API_BASE}/api/analytics/revenue?start_date=${startDate}&end_date=${endDate}`
       const res = await fetch(url)
-      if (!res.ok) throw new Error(`Sunucu hatası: ${res.status}`)
+      if (!res.ok) throw new Error(`Server error: ${res.status}`)
       const json = await res.json()
       setData(json)
     } catch (e) {
@@ -332,10 +332,10 @@ export default function Analytics() {
 
         {s && (
           <div style={S.cards}>
-            <SummaryCard label="TOPLAM GELİR"  value={fmt_tl(s.total_revenue_tl)}          color="var(--accent)"  delay={2} />
-            <SummaryCard label="TOPLAM SEANS"   value={fmt_num(s.total_sessions)}           sub="tamamlanan seans" color="var(--green)"  delay={3} />
-            <SummaryCard label="ENERJİ TÜKETİMİ" value={fmt_kwh(s.total_energy_kwh)}       color="var(--yellow)" delay={4} />
-            <SummaryCard label="ORT. SEANS GELİRİ" value={fmt_tl(s.average_session_cost_tl)} color="#c084fc"      delay={5} />
+            <SummaryCard label="TOTAL REVENUE"  value={fmt_tl(s.total_revenue_tl)}          color="var(--accent)"  delay={2} />
+            <SummaryCard label="TOTAL SESSIONS"   value={fmt_num(s.total_sessions)}           sub="completed sessions" color="var(--green)"  delay={3} />
+            <SummaryCard label="ENERGY CONSUMPTION" value={fmt_kwh(s.total_energy_kwh)}       color="var(--yellow)" delay={4} />
+            <SummaryCard label="AVG. SESSION REVENUE" value={fmt_tl(s.average_session_cost_tl)} color="#c084fc"      delay={5} />
           </div>
         )}
 
@@ -351,7 +351,7 @@ export default function Analytics() {
         {!data && !loading && !error && (
           <div style={S.empty}>
             <div style={S.emptyIcon}>⚡</div>
-            <div>Raporu görüntülemek için tarih seçin ve getir butonuna basın.</div>
+            <div>Select a date range and click fetch to view the report.</div>
           </div>
         )}
       </main>

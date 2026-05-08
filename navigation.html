@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EV Charging — İstasyon Navigasyon</title>
+    <title>EV Charging — Station Navigation</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -643,6 +643,19 @@
             font-family: 'Space Mono', monospace;
         }
 
+        .nav-arrived {
+            margin: 16px 20px;
+            padding: 14px;
+            border-radius: 10px;
+            background: rgba(0,255,157,0.1);
+            border: 1px solid var(--accent2);
+            text-align: center;
+            color: var(--accent2);
+            font-weight: 600;
+            font-size: 14px;
+            display: none;
+        }
+
         /* ── Map Type Toggle ── */
         .map-type-toggle {
             position: absolute;
@@ -902,10 +915,10 @@
         EV CHARGE NETWORK
     </div>
     <div class="header-status">
-        <span><span class="status-dot green"></span>Müsait</span>
-        <span><span class="status-dot yellow"></span>Dolu</span>
-        <span><span class="status-dot red"></span>Çevrimdışı</span>
-        <span><span class="status-dot purple"></span>Bakımda</span>
+        <span><span class="status-dot green"></span>Available</span>
+        <span><span class="status-dot yellow"></span>Occupied</span>
+        <span><span class="status-dot red"></span>Offline</span>
+        <span><span class="status-dot purple"></span>Maintenance</span>
     </div>
 </header>
 
@@ -917,33 +930,33 @@
         <!-- Station List View -->
         <div id="listView" style="display:flex; flex-direction:column; height:100%;">
             <div class="panel-header">
-                <div class="panel-title">İstasyonlar</div>
+                <div class="panel-title">Stations</div>
                 <div class="search-box">
                     <span class="search-icon">🔍</span>
-                    <input type="text" id="searchInput" placeholder="İstasyon ara..." oninput="filterStations()">
+                    <input type="text" id="searchInput" placeholder="Search stations..." oninput="filterStations()">
                 </div>
             </div>
             <div class="filter-tabs">
-                <button class="filter-tab active" onclick="setFilter('all', this)">Tümü</button>
-                <button class="filter-tab" onclick="setFilter('available', this)">Müsait</button>
-                <button class="filter-tab" onclick="setFilter('occupied', this)">Dolu</button>
-                <button class="filter-tab" onclick="setFilter('offline', this)">Çevrimdışı</button>
-                <button class="filter-tab" onclick="setFilter('maintenance', this)">Bakımda</button>
+                <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
+                <button class="filter-tab" onclick="setFilter('available', this)">Available</button>
+                <button class="filter-tab" onclick="setFilter('occupied', this)">Occupied</button>
+                <button class="filter-tab" onclick="setFilter('offline', this)">Offline</button>
+                <button class="filter-tab" onclick="setFilter('maintenance', this)">Maintenance</button>
             </div>
             <div class="station-list" id="stationList">
                 <div class="loading-overlay" id="listLoading">
                     <div class="loading-spinner"></div>
-                    <div class="loading-text">İstasyonlar yükleniyor...</div>
+                    <div class="loading-text">Loading stations...</div>
                 </div>
             </div>
         </div>
 
         <!-- Detail View (route planning) -->
         <div id="detailView" class="detail-panel">
-            <div class="detail-back" onclick="showList()">← Geri</div>
+            <div class="detail-back" onclick="showList()">← Back</div>
             <div class="detail-content" id="detailContent"></div>
             <button class="navigate-btn" id="navigateBtn" onclick="startNavigation()" disabled>
-                🧭 Navigasyonu Başlat
+                🧭 Start Navigation
             </button>
         </div>
 
@@ -951,8 +964,8 @@
         <div id="navPanel" class="nav-panel">
             <div class="nav-header">
                 <div class="nav-header-top">
-                    <div class="nav-title">🧭 Navigasyon</div>
-                    <button class="nav-end-btn" onclick="endNavigation()">✕ Bitir</button>
+                    <div class="nav-title">🧭 Navigation</div>
+                    <button class="nav-end-btn" onclick="endNavigation()">✕ End</button>
                 </div>
                 <div class="nav-destination" id="navDestination"></div>
                 <div class="nav-summary">
@@ -965,7 +978,7 @@
 
         <!-- Reservation View (new) -->
         <div id="reservationView" class="reservation-view">
-            <div class="detail-back" onclick="backFromReservation()">← Geri</div>
+            <div class="detail-back" onclick="backFromReservation()">← Back</div>
             <div class="detail-content" id="reservationContent">
                 <!-- Dynamically populated by openReservationPanel() -->
             </div>
@@ -978,11 +991,11 @@
         <div id="map" style="width:100%; height:100%;"></div>
         <div class="loading-overlay" id="mapLoading">
             <div class="loading-spinner"></div>
-            <div class="loading-text">Harita yükleniyor...</div>
+            <div class="loading-text">Loading map...</div>
         </div>
         <div class="map-type-toggle">
-            <button class="map-type-btn active" id="btn-roadmap" onclick="setMapType('roadmap', this)">🗺️ Normal</button>
-            <button class="map-type-btn" id="btn-satellite" onclick="setMapType('satellite', this)">🛰️ Uydu</button>
+            <button class="map-type-btn active" id="btn-roadmap" onclick="setMapType('roadmap', this)">🗺️ Roadmap</button>
+            <button class="map-type-btn" id="btn-satellite" onclick="setMapType('satellite', this)">🛰️ Satellite</button>
             <button class="map-type-btn" id="btn-hybrid" onclick="setMapType('hybrid', this)">🌍 Hybrid</button>
         </div>
     </div>
@@ -1011,10 +1024,10 @@
     let selectedCharger = null;
 
     const STATUS_LABELS = {
-        available:   'Müsait',
-        occupied:    'Dolu',
-        offline:     'Çevrimdışı',
-        maintenance: 'Bakımda'
+        available:   'Available',
+        occupied:    'Occupied',
+        offline:     'Offline',
+        maintenance: 'Maintenance'
     };
 
     const STATUS_COLORS = {
@@ -1058,7 +1071,7 @@
                 userMarker = new google.maps.Marker({
                     position: userLocation,
                     map,
-                    title: 'Konumunuz',
+                    title: 'Your Location',
                     icon: {
                         path: google.maps.SymbolPath.CIRCLE,
                         scale: 9,
@@ -1070,7 +1083,7 @@
                     zIndex: 999
                 });
                 map.setCenter(userLocation);
-            }, () => showToast('Konum alınamadı'));
+            }, () => showToast('Could not get location'));
         }
 
         loadStations();
@@ -1100,7 +1113,7 @@
             document.getElementById('stationList').innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">⚠️</div>
-                    <div class="empty-text">API'ye bağlanılamadı.<br>Bağlantı yolunu kontrol edin.</div>
+                    <div class="empty-text">Could not connect to API.<br>Check connection path.</div>
                 </div>`;
         }
     }
@@ -1109,7 +1122,7 @@
     function renderStationList() {
         const list = document.getElementById('stationList');
         if (!filteredStations.length) {
-            list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔌</div><div class="empty-text">İstasyon bulunamadı.</div></div>`;
+            list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔌</div><div class="empty-text">No stations found.</div></div>`;
             return;
         }
 
@@ -1185,7 +1198,7 @@
         // Show reservation pill floating above the marker
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
-            content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Rezervasyon Yap</div>`,
+            content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
             position: { lat: station.latitude, lng: station.longitude },
             disableAutoPan: true,
             pixelOffset: new google.maps.Size(0, -32)
@@ -1219,7 +1232,7 @@
     // Show reservation pill above the station marker (same as marker click)
     if (reservationPill) reservationPill.close();
     reservationPill = new google.maps.InfoWindow({
-        content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Rezervasyon Yap</div>`,
+        content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
         position: { lat: selectedStation.latitude, lng: selectedStation.longitude },
         disableAutoPan: true,
         pixelOffset: new google.maps.Size(0, -32)
@@ -1249,23 +1262,23 @@
             <div class="detail-location">📍 ${station.location}</div>
             <span class="station-badge badge-${station.status}">${label}</span>
 
-            <div class="section-label">Ulaşım Modu</div>
+            <div class="section-label">Transport Mode</div>
             <div class="travel-modes">
-                <button class="travel-mode-btn active" id="mode-DRIVING" onclick="changeTravelMode('DRIVING', this)" title="Araç">🚗</button>
-                <button class="travel-mode-btn" id="mode-WALKING" onclick="changeTravelMode('WALKING', this)" title="Yürüyüş">🚶</button>
-                <button class="travel-mode-btn" id="mode-TRANSIT" onclick="changeTravelMode('TRANSIT', this)" title="Toplu Taşıma">🚌</button>
+                <button class="travel-mode-btn active" id="mode-DRIVING" onclick="changeTravelMode('DRIVING', this)" title="Driving">🚗</button>
+                <button class="travel-mode-btn" id="mode-WALKING" onclick="changeTravelMode('WALKING', this)" title="Walking">🚶</button>
+                <button class="travel-mode-btn" id="mode-TRANSIT" onclick="changeTravelMode('TRANSIT', this)" title="Transit">🚌</button>
             </div>
 
-            <div class="section-label">Rota Seçenekleri</div>
+            <div class="section-label">Route Options</div>
             <div id="routeOptions">
                 ${!userLocation
-                    ? '<div style="font-size:12px;color:var(--text-muted);">Konum izni verilmedi.</div>'
-                    : '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>'}
+                    ? '<div style="font-size:12px;color:var(--text-muted);">Location access denied.</div>'
+                    : '<div style="font-size:12px;color:var(--text-muted);">Calculating...</div>'}
             </div>
 
-            <div class="section-label">Şarj Cihazları</div>
+            <div class="section-label">Chargers</div>
             <div id="chargerList">
-                <div style="font-size:12px;color:var(--text-muted);">Yükleniyor...</div>
+                <div style="font-size:12px;color:var(--text-muted);">Loading...</div>
             </div>
         `;
 
@@ -1285,7 +1298,7 @@
             if (!el) return;
 
             if (!chargers.length) {
-                el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi yok.</div>';
+                el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">No charger info available.</div>';
                 return;
             }
 
@@ -1300,7 +1313,7 @@
                     <div>
                         <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
                         <div class="charger-detail" style="color:${statusColor};">
-                            Ünite #${c.chargerID} · ${statusLabel}
+                            Unit #${c.chargerID} · ${statusLabel}
                         </div>
                     </div>
                     <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
@@ -1308,7 +1321,7 @@
             }).join('');
         } catch {
             const el = document.getElementById('chargerList');
-            if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi alınamadı.</div>';
+            if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Could not get charger info.</div>';
         }
     }
 
@@ -1334,9 +1347,9 @@
             <div class="detail-location">📍 ${selectedStation.location}</div>
             <span class="station-badge badge-${selectedStation.status}" style="display:inline-block; margin-bottom:4px;">${label}</span>
 
-            <div class="section-label">Şarj Cihazları</div>
+            <div class="section-label">Chargers</div>
             <div id="resChargerList">
-                <div style="font-size:12px;color:var(--text-muted);">Yükleniyor...</div>
+                <div style="font-size:12px;color:var(--text-muted);">Loading...</div>
             </div>
 
             <div id="resForm" style="display:none;">
@@ -1344,31 +1357,31 @@
                     <div id="selectedChargerBanner" class="selected-charger-banner"></div>
 
                     <div class="res-field">
-                        <label>Kaç saat şarj etmek istiyorsunuz?</label>
+                        <label>How long do you want to charge?</label>
                         <select id="hoursSelect" onchange="calculateCost()">
-                            <option value="">Seçin...</option>
-                            <option value="0.5">30 dakika</option>
-                            <option value="1">1 saat</option>
-                            <option value="1.5">1,5 saat</option>
-                            <option value="2">2 saat (maksimum)</option>
+                            <option value="">Select...</option>
+                            <option value="0.5">30 mins</option>
+                            <option value="1">1 hour</option>
+                            <option value="1.5">1.5 hours</option>
+                            <option value="2">2 hours (max)</option>
                         </select>
                     </div>
 
                     <div class="res-field">
-                        <label>Randevu saati</label>
+                        <label>Appointment Time</label>
                         <input type="datetime-local" id="reservationTime" onchange="calculateCost()">
                     </div>
 
                     <div id="costDisplay" style="display:none;">
                         <div class="cost-box">
-                            <div class="cost-label">Tahmini Ücret</div>
+                            <div class="cost-label">Estimated Cost</div>
                             <div class="cost-amount" id="costAmount">—</div>
                             <div class="cost-detail" id="costDetail">—</div>
                         </div>
                     </div>
 
                     <button class="pay-btn" id="payBtn" onclick="proceedToPayment()" disabled>
-                        💳 Ödemeye Geç
+                        💳 Proceed to Payment
                     </button>
                 </div>
             </div>
@@ -1385,7 +1398,7 @@
                 renderResChargerList();
             } catch {
                 document.getElementById('resChargerList').innerHTML =
-                    '<div style="font-size:12px;color:var(--text-muted);">Şarj cihazı bilgisi alınamadı.</div>';
+                    '<div style="font-size:12px;color:var(--text-muted);">Could not get charger info.</div>';
             }
         }
     }
@@ -1396,7 +1409,7 @@
         if (!el) return;
 
         if (!currentChargers.length) {
-            el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Bu istasyonda şarj cihazı bulunamadı.</div>';
+            el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">No charger found at this station.</div>';
             return;
         }
 
@@ -1411,11 +1424,11 @@
             return `
             <div class="res-charger-card ${isAvailable ? '' : 'unavailable'}"
                  id="res-charger-${c.chargerID}"
-                 ${isAvailable ? `onclick="selectCharger(${c.chargerID})"` : `title="Bu ünite şu an ${statusLabel.toLowerCase()}"`}>
+                 ${isAvailable ? `onclick="selectCharger(${c.chargerID})"` : `title="This unit is currently ${statusLabel.toLowerCase()}"`}>
                 <div>
                     <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
                     <div class="charger-detail" style="color:${statusColor}; margin-top:3px;">
-                        Ünite #${c.chargerID} · ${statusLabel}
+                        Unit #${c.chargerID} · ${statusLabel}
                     </div>
                 </div>
                 <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
@@ -1435,7 +1448,7 @@
 
         // Update banner
         document.getElementById('selectedChargerBanner').innerHTML =
-            `⚡ Seçilen: ${selectedCharger.connectorType} · ${selectedCharger.powerOutput} kW · ${selectedCharger.pricePerKwh} ₺/kWh`;
+            `⚡ Selected: ${selectedCharger.connectorType} · ${selectedCharger.powerOutput} kW · ${selectedCharger.pricePerKwh} ₺/kWh`;
 
         // Show form and reset values
         const resForm = document.getElementById('resForm');
@@ -1471,9 +1484,9 @@
         const energyKwh = selectedCharger.powerOutput * hours;
         const cost = energyKwh * selectedCharger.pricePerKwh;
 
-        document.getElementById('costAmount').textContent = `${cost.toFixed(2)} ₺`;
+        document.getElementById('costAmount').textContent = `${new Intl.NumberFormat('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(cost)} ₺`;
         document.getElementById('costDetail').textContent =
-            `${selectedCharger.powerOutput} kW × ${hours} saat = ${energyKwh.toFixed(1)} kWh\n` +
+            `${selectedCharger.powerOutput} kW × ${hours} hr = ${energyKwh.toFixed(1)} kWh\n` +
             `${energyKwh.toFixed(1)} kWh × ${selectedCharger.pricePerKwh} ₺/kWh`;
         document.getElementById('costDisplay').style.display = 'block';
         document.getElementById('payBtn').disabled = false;
@@ -1487,7 +1500,7 @@
         const reservationTimeVal = document.getElementById('reservationTime').value;
 
         if (!hours || !reservationTimeVal) {
-            showToast('Lütfen tüm alanları doldurun.');
+            showToast('Please fill all fields.');
             return;
         }
 
@@ -1507,7 +1520,7 @@
             estimatedCost: costText
         }, '*');
 
-        showToast('Araç seçimi için yönlendiriliyorsunuz...');
+        showToast('Redirecting for vehicle selection...');
     }
 
     // ── Back from reservation view to detail view ─────────────────────────────
@@ -1544,7 +1557,7 @@
                 document.getElementById('navigateBtn').disabled = false;
             } else {
                 const el = document.getElementById('routeOptions');
-                if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Rota bulunamadı.</div>';
+                if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Route not found.</div>';
             }
         });
     }
@@ -1568,7 +1581,7 @@
                     <div class="route-duration">${r.legs[0].duration.text}</div>
                     <div class="route-distance">${r.legs[0].distance.text}</div>
                 </div>
-                <span class="route-badge">${i === 0 ? 'EN HIZLI' : 'ALT. ' + i}</span>
+                <span class="route-badge">${i === 0 ? 'FASTEST' : 'ALT. ' + i}</span>
             </div>`).join('');
     }
 
@@ -1576,7 +1589,7 @@
         selectedRouteIndex = index;
         document.querySelectorAll('.route-option').forEach((r, i) => {
             r.classList.toggle('selected', i === index);
-            r.querySelector('.route-badge').textContent = i === 0 ? 'EN HIZLI' : (i === index ? 'SEÇİLDİ' : `ALT. ${i}`);
+            r.querySelector('.route-badge').textContent = i === 0 ? 'FASTEST' : (i === index ? 'SELECTED' : `ALT. ${i}`);
         });
         directionsRenderer.setRouteIndex(index);
     }
@@ -1588,7 +1601,7 @@
         btn.classList.add('active');
         directionsRenderer.setDirections({ routes: [] });
         const el = document.getElementById('routeOptions');
-        if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Hesaplanıyor...</div>';
+        if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Calculating...</div>';
         calculateRoutes(mode);
     }
 
@@ -1618,14 +1631,14 @@
             <div class="nav-step" style="border-color:var(--accent2); background:rgba(0,255,157,0.05);">
                 <div class="step-icon">⚡</div>
                 <div class="step-body">
-                    <div class="step-instruction">${selectedStation.name} — Hedefiniz</div>
-                    <div class="step-distance">${leg.distance.text} toplam</div>
+                    <div class="step-instruction">${selectedStation.name} — Destination</div>
+                    <div class="step-distance">${leg.distance.text} total</div>
                 </div>
             </div>`;
 
         document.getElementById('detailView').classList.remove('active');
         document.getElementById('navPanel').classList.add('active');
-        showToast('Navigasyon başladı!');
+        showToast('Navigation started!');
     }
 
     function getStepIcon(instruction) {
@@ -1642,7 +1655,7 @@
     function endNavigation() {
         document.getElementById('navPanel').classList.remove('active');
         document.getElementById('detailView').classList.add('active');
-        showToast('Navigasyon sonlandırıldı.');
+        showToast('Navigation ended.');
     }
 
     // ── Filter / search ───────────────────────────────────────────────────────
@@ -1727,7 +1740,7 @@
             document.getElementById('mapLoading').innerHTML = `
                 <div style="text-align:center; color:var(--danger);">
                     <div style="font-size:28px; margin-bottom:12px;">⚠️</div>
-                    <div style="font-family:'Space Mono',monospace; font-size:12px;">Backend bağlantısı kurulamadı.<br>localhost:8000 çalışıyor mu?</div>
+                    <div style="font-family:'Space Mono',monospace; font-size:12px;">Backend connection failed.<br>Is localhost:8000 running?</div>
                 </div>`;
         }
     }
