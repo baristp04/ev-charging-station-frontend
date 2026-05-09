@@ -286,12 +286,12 @@ function ErrorBanner({ msg }) {
 // ── Main App ──────────────────────────────────────────────────────────────────
 export default function Analytics({user}) {
 
-  if (!user || !user.is_admin) {
+if (!user || !['analyst', 'specialist'].includes(user.role)) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', padding: '60px', textAlign: 'center' }}>
         <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🔒</div>
         <h2 style={{ color: 'var(--red)', fontFamily: 'var(--font-display)', letterSpacing: '2px' }}>ACCESS DENIED</h2>
-        <p style={{ color: 'var(--text-secondary)', marginTop: '10px' }}>You do not have administrative privileges to view this page.</p>
+        <p style={{ color: 'var(--text-secondary)', marginTop: '10px' }}>You do not have the required role (Analyst or Specialist) to view this page.</p>
       </div>
     )
   }

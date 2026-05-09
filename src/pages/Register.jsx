@@ -1,9 +1,3 @@
-// ── Register.jsx ──────────────────────────────────────────────────────────────
-// Full-page standalone registration screen.
-// Opened in a new tab via window.open('/register', '_blank') from AuthPanel.
-// On success, stores session and closes the tab to return to the main app.
-// Self-registration is restricted to EV Drivers only — staff accounts are created by administrators.
-
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -89,7 +83,7 @@ export default function Register() {
           email: form.email,
           phoneNumber: form.phoneNumber,
           password: form.password,
-          role: 'driver'  // Always driver — self-registration restricted to drivers only
+          role: 'driver'  // 🔥 GÜVENLİK: Herkes varsayılan olarak "driver" kaydedilir.
         })
       })
       const data = await res.json()

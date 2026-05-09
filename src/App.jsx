@@ -70,15 +70,28 @@ export default function App() {
           <NavLink to="/" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
             📍 Map & Stations
           </NavLink>
-          <NavLink to="/vehicles" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
-            🚘 My Vehicles
-          </NavLink>
-          <NavLink to="/reservations" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
-            📅 My Reservations
-          </NavLink>
 
-          {/* Analytics link — visible to admins only */}
-          {user?.is_admin && (
+          {/* SADECE SÜRÜCÜLER: Kendi araçları ve rezervasyonları */}
+          {user?.role === 'driver' && (
+            <>
+              <NavLink to="/vehicles" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+                🚘 My Vehicles
+              </NavLink>
+              <NavLink to="/reservations" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+                📅 My Reservations
+              </NavLink>
+            </>
+          )}
+
+          {/* SADECE TEKNİSYEN VE UZMANLAR: Bakım ekranı */}
+          {['technician', 'specialist'].includes(user?.role) && (
+            <NavLink to="/maintenance" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+              🔧 Station Maintenance
+            </NavLink>
+          )} 
+
+          {/* SADECE ANALİST VE UZMANLAR: Yönetim raporları */}
+          {['analyst', 'specialist'].includes(user?.role) && (
             <NavLink to="/analytics" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
               📊 Management Reports
             </NavLink>
