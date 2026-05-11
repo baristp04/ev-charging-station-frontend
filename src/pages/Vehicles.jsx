@@ -47,7 +47,13 @@ export default function Vehicles() {
   // Handle Form Changes
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Eğer değiştirilen alan plaka ise, anında büyük harfe (Türkçe karakter uyumlu) çevir
+    const finalValue = name === 'plateNumber' 
+      ? value.toLocaleUpperCase('tr-TR') 
+      : value;
+
+    setFormData(prev => ({ ...prev, [name]: finalValue }));
   };
 
   // Open Modal for Add or Update
@@ -69,11 +75,24 @@ export default function Vehicles() {
     setIsModalOpen(true);
   };
 
-  // 2 & 3. CREATE / UPDATE: Submit Form
+// 2 & 3. CREATE / UPDATE: Submit Form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     
+    // ── YENİ EKLENEN PLAKA DOĞRULAMA (VALIDATION) KISMI ──
+    // Regex Açıklaması: 
+    // ^(0[1-9]|[1-8][0-9]) : 01-89 arası il kodu
+    // \s?[A-Z]{1,3}        : Arada opsiyonel boşluk, 1 ile 3 adet arası büyük harf
+    // \s?\d{2,4}$          : Arada opsiyonel boşluk, 2 ile 4 adet arası rakam
+    const plateRegex = /^(0[1-9]|[1-8][0-9])\s?[A-Z]{1,3}\s?\d{2,4}$/;
+    
+    if (!plateRegex.test(formData.plateNumber)) {
+      setError("Please enter a valid Turkish license plate (e.g., 35 EV 1001 or 34ABC123).");
+      return; // Hata varsa fonksiyonu burada durdur ve API'ye istek atma
+    }
+    // ────────────────────────────────────────────────────────
+
     // Prepare payload (Convert numerical values)
     const payload = {
       ...formData,
@@ -184,19 +203,18 @@ export default function Vehicles() {
                 <label style={S.label}>Plate Number</label>
                 <input required style={S.input} name="plateNumber" value={formData.plateNumber} onChange={handleChange} placeholder="e.g. 35 EV 1001" />
               </div>
-              <div style={S.row}>
-                <div style={S.inputGroup}>
-                  <label style={S.label}>Battery (kWh)</label>
-                  <input required type="number" step="0.1" style={S.input} name="batteryCapacity" value={formData.batteryCapacity} onChange={handleChange} placeholder="e.g. 75.0" />
-                </div>
-                <div style={S.inputGroup}>
-                  <label style={S.label}>Connector Type</label>
-                  <select style={S.input} name="connectorType" value={formData.connectorType} onChange={handleChange}>
-                    <option value="CCS">CCS</option>
-                    <option value="Type 2">Type 2</option>
-                    <option value="CHAdeMO">CHAdeMO</option>
-                  </select>
-                </div>
+              <div style={S.inputGroup}>
+                <label style={S.label}>Battery (kWh)</label>
+                <input required type="number" step="0.1" style={S.input} name="batteryCapacity" value={formData.batteryCapacity} onChange={handleChange} placeholder="e.g. 75.0" />
+              </div>
+              
+              <div style={S.inputGroup}>
+                <label style={S.label}>Connector Type</label>
+                <select style={S.input} name="connectorType" value={formData.connectorType} onChange={handleChange}>
+                  <option value="CCS">CCS</option>
+                  <option value="Type 2">Type 2</option>
+                  <option value="CHAdeMO">CHAdeMO</option>
+                </select>
               </div>
 
               <div style={S.modalActions}>
