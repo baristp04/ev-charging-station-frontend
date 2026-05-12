@@ -11,6 +11,7 @@ import Reservations from './pages/Reservations'
 import Register from './pages/Register'
 import SignIn from './pages/SignIn'
 import AuthPanel from './components/AuthPanel'
+import Maintenance from './pages/Maintenance'
 
 export default function App() {
   const [user, setUser] = useState(null)
@@ -114,6 +115,7 @@ export default function App() {
           <Route path="/vehicles"     element={<Vehicles />} />
           <Route path="/reservations" element={<Reservations user={user} />} />
           <Route path="/analytics"    element={<Analytics user={user} />} />
+          <Route path="/maintenance"  element={<Maintenance user={user} />} />
           <Route path="/signin"       element={<SignIn />} />
           <Route path="/register"     element={<Register />} />
         </Routes>
