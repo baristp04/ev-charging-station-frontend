@@ -17,6 +17,7 @@ import { Toaster } from 'react-hot-toast';
 import Notifications from './pages/Notifications'
 import SessionTracking from './pages/SessionTracking'
 import Reporting from './pages/Reporting'
+import Maintenance from './pages/Maintenance'
 
 export default function App() {
   const [user, setUser] = useState(null)
@@ -141,6 +142,10 @@ export default function App() {
           <Route path="/session-tracking" element={<SessionTracking user={user} />} />
           <Route path="/notifications" element={<Notifications user={user} />} />
           <Route path="/reporting" element={<Reporting user={user} />} />
+          <Route path="/analytics"    element={<Analytics user={user} />} />
+          <Route path="/maintenance"  element={<Maintenance user={user} />} />
+          <Route path="/signin"       element={<SignIn />} />
+          <Route path="/register"     element={<Register />} />
         </Routes>
       </main>
     </div>
