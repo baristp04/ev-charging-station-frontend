@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const API_BASE = ''
+const API_BASE = 'http://localhost:8000'
 
 export default function Maintenance({ user }) {
   const [stations, setStations] = useState([])

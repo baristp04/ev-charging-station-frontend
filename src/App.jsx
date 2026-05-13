@@ -143,6 +143,7 @@ export default function App() {
           <Route path="/notifications" element={<Notifications user={user} />} />
           <Route path="/reporting" element={<Reporting user={user} />} />
           <Route path="/analytics"    element={<Analytics user={user} />} />
+          <Route path="/maintenance" element={<Maintenance user={user} />} />
           <Route path="/signin"       element={<SignIn />} />
           <Route path="/register"     element={<Register />} />
         </Routes>
