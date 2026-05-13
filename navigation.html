@@ -37,7 +37,6 @@
             flex-direction: column;
         }
 
-        /* ── Header ── */
         header {
             display: flex;
             align-items: center;
@@ -89,14 +88,12 @@
         .status-dot.red    { background: var(--red);    box-shadow: 0 0 6px var(--red); }
         .status-dot.purple { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
 
-        /* ── Main Layout ── */
         .main {
             display: flex;
             flex: 1;
             overflow: hidden;
         }
 
-        /* ── Side Panel ── */
         .panel {
             width: var(--panel-width);
             background: var(--surface);
@@ -121,7 +118,6 @@
             margin-bottom: 12px;
         }
 
-        /* ── Search ── */
         .search-box { position: relative; }
 
         .search-box input {
@@ -149,7 +145,6 @@
             pointer-events: none;
         }
 
-        /* ── Filter tabs ── */
         .filter-tabs {
             display: flex;
             gap: 6px;
@@ -184,7 +179,6 @@
             background: rgba(255,215,0,0.08);
         }
 
-        /* ── Station List ── */
         .station-list {
             flex: 1;
             overflow-y: auto;
@@ -273,7 +267,6 @@
             color: var(--text-muted);
         }
 
-        /* ── Star button on station card ── */
         .star-btn {
             position: absolute;
             right: 14px;
@@ -290,7 +283,6 @@
         .star-btn:hover { transform: translateY(-50%) scale(1.25); }
         .star-btn.active { color: #FFD700; }
 
-        /* ── Detail Panel ── */
         .detail-panel {
             display: none;
             flex-direction: column;
@@ -349,7 +341,6 @@
             margin-top: 16px;
         }
 
-        /* ── Travel Mode buttons ── */
         .travel-modes {
             display: flex;
             gap: 6px;
@@ -376,7 +367,6 @@
             background: rgba(0,229,255,0.08);
         }
 
-        /* ── Route option cards ── */
         .route-option {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -424,7 +414,7 @@
             text-transform: uppercase;
         }
 
-        /* ── Start Navigation button ── */
+        /* ── Navigate button ── */
         .navigate-btn {
             margin: 16px 20px;
             padding: 13px;
@@ -458,7 +448,6 @@
             box-shadow: none;
         }
 
-        /* ── Charger list in detail view ── */
         .charger-item {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -488,13 +477,11 @@
             font-family: 'Space Mono', monospace;
         }
 
-        /* ── Map container ── */
         #map {
             flex: 1;
             position: relative;
         }
 
-        /* ── Loading overlay ── */
         .loading-overlay {
             position: absolute;
             inset: 0;
@@ -524,7 +511,6 @@
             letter-spacing: 0.05em;
         }
 
-        /* ── Empty state ── */
         .empty-state {
             text-align: center;
             padding: 40px 20px;
@@ -534,7 +520,6 @@
         .empty-icon { font-size: 32px; margin-bottom: 10px; }
         .empty-text { font-size: 13px; line-height: 1.5; }
 
-        /* ── Map type toggle ── */
         .map-type-toggle {
             position: absolute;
             top: 12px;
@@ -576,7 +561,6 @@
             background: var(--surface2);
         }
 
-        /* ── Toast notification ── */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -596,7 +580,6 @@
 
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* ── Google Maps InfoWindow pill overrides ── */
         .gm-style .gm-style-iw-c {
             background: transparent !important;
             box-shadow: none !important;
@@ -613,7 +596,6 @@
         .gm-style button.gm-ui-hover-effect { display: none !important; }
         .gm-style .gm-style-iw-chr { display: none !important; }
 
-        /* ── Reservation pill button on map ── */
         .map-reservation-pill {
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: #0a0f1e;
@@ -637,14 +619,12 @@
             box-shadow: 0 6px 28px rgba(0,229,255,0.65);
         }
 
-        /* ── Reservation view ── */
         .reservation-view {
             display: none;
             flex-direction: column;
             height: 100%;
         }
 
-        /* ── Vehicle selection cards ── */
         .vehicle-card {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -691,7 +671,6 @@
             font-family: 'Space Mono', monospace;
         }
 
-        /* ── Continue button ── */
         .continue-btn {
             width: 100%;
             padding: 13px;
@@ -721,7 +700,6 @@
             box-shadow: none;
         }
 
-        /* ── Selectable charger cards in reservation flow ── */
         .res-charger-card {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -751,7 +729,6 @@
             cursor: not-allowed;
         }
 
-        /* ── Reservation form fields ── */
         .res-form-section {
             margin-top: 16px;
             padding-top: 16px;
@@ -788,7 +765,6 @@
         .res-field select:focus,
         .res-field input[type="datetime-local"]:focus { border-color: var(--accent); }
 
-        /* ── Estimated cost box ── */
         .cost-box {
             background: rgba(0,229,255,0.06);
             border: 1px solid rgba(0,229,255,0.2);
@@ -821,7 +797,6 @@
             line-height: 1.6;
         }
 
-        /* ── Proceed to payment button ── */
         .pay-btn {
             width: 100%;
             padding: 13px;
@@ -851,7 +826,6 @@
             box-shadow: none;
         }
 
-        /* ── Selected charger info banner ── */
         .selected-charger-banner {
             background: rgba(0,229,255,0.08);
             border: 1px solid rgba(0,229,255,0.25);
@@ -865,7 +839,6 @@
             gap: 8px;
         }
 
-        /* ── Selected vehicle info banner ── */
         .selected-vehicle-banner {
             background: rgba(0,255,157,0.08);
             border: 1px solid rgba(0,255,157,0.25);
@@ -879,25 +852,213 @@
             gap: 8px;
         }
 
-        /* ── Ferry / special transport warning banner ── */
-        .ferry-warning {
-            background: rgba(255,184,0,0.10);
-            border: 1px solid rgba(255,184,0,0.35);
-            border-radius: 8px;
-            padding: 9px 13px;
-            margin-bottom: 8px;
-            font-size: 11px;
-            color: var(--yellow);
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            line-height: 1.5;
+        /* ── In-App Navigation Panel ── */
+        .nav-panel {
+            display: none;
+            flex-direction: column;
+            height: 100%;
         }
 
-        .ferry-warning-icon {
-            font-size: 15px;
+        .nav-panel.active {
+            display: flex;
+        }
+
+        .nav-header {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--border);
             flex-shrink: 0;
-            margin-top: 1px;
+        }
+
+        .nav-header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .nav-destination {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .nav-stop-btn {
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(255,59,92,0.15);
+            border: 1px solid var(--red);
+            color: var(--red);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .nav-stop-btn:hover {
+            background: rgba(255,59,92,0.25);
+        }
+
+        .nav-stats {
+            display: flex;
+            gap: 12px;
+        }
+
+        .nav-stat {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 14px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-stat-value {
+            font-family: 'Space Mono', monospace;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .nav-stat-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .nav-steps {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+        }
+
+        .nav-steps::-webkit-scrollbar { width: 4px; }
+        .nav-steps::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+        .nav-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+        }
+
+        .nav-step:last-child {
+            border-bottom: none;
+        }
+
+        .nav-step.active-step {
+            background: rgba(0,229,255,0.05);
+            border-radius: 8px;
+            padding: 10px 10px;
+            margin: 0 -10px;
+            border-bottom: 1px solid rgba(0,229,255,0.2);
+        }
+
+        .nav-step-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .nav-step.active-step .nav-step-icon {
+            background: rgba(0,229,255,0.15);
+            border-color: var(--accent);
+        }
+
+        .nav-step-content {
+            flex: 1;
+        }
+
+        .nav-step-instruction {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.4;
+            margin-bottom: 3px;
+        }
+
+        .nav-step.active-step .nav-step-instruction {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .nav-step-distance {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* current step big banner */
+        .nav-current-step {
+            background: rgba(0,229,255,0.08);
+            border: 1px solid rgba(0,229,255,0.25);
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+
+        .nav-current-icon {
+            font-size: 28px;
+            flex-shrink: 0;
+        }
+
+        .nav-current-text {
+            flex: 1;
+        }
+
+        .nav-current-instruction {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            line-height: 1.4;
+            margin-bottom: 3px;
+        }
+
+        .nav-current-dist {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .nav-arrived-banner {
+            background: rgba(0,255,157,0.1);
+            border: 1px solid rgba(0,255,157,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .nav-arrived-icon { font-size: 36px; margin-bottom: 8px; }
+        .nav-arrived-title { font-size: 18px; font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
+        .nav-arrived-sub { font-size: 12px; color: var(--text-muted); }
+
+        .nav-mode-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'Space Mono', monospace;
         }
     </style>
 </head>
@@ -920,7 +1081,7 @@
 
     <div class="panel">
 
-        <!-- ── Station List View ── -->
+        <!-- Station List View -->
         <div id="listView" style="display:flex; flex-direction:column; height:100%;">
             <div class="panel-header">
                 <div class="panel-title">Stations</div>
@@ -945,25 +1106,49 @@
             </div>
         </div>
 
-        <!-- ── Detail View (shown after selecting a station) ── -->
+        <!-- Detail View -->
         <div id="detailView" class="detail-panel">
             <div class="detail-back" onclick="showList()">← Back</div>
             <div class="detail-content" id="detailContent"></div>
-            <!-- Start Navigation opens Google Maps with the selected route and travel mode -->
             <button class="navigate-btn" id="navigateBtn" onclick="startNavigation()" disabled>
                 🧭 Start Navigation
             </button>
         </div>
 
-        <!-- ── Reservation View ── -->
+        <!-- Reservation View -->
         <div id="reservationView" class="reservation-view">
             <div class="detail-back" id="resBackBtn" onclick="backFromReservation()">← Back</div>
             <div class="detail-content" id="reservationContent"></div>
         </div>
 
+        <!-- ── In-App Navigation View ── -->
+        <div id="navView" class="nav-panel">
+            <div class="nav-header">
+                <div class="nav-header-top">
+                    <div id="navDestination" class="nav-destination">Navigating...</div>
+                    <button class="nav-stop-btn" onclick="stopNavigation()">✕ Stop</button>
+                </div>
+                <div class="nav-stats">
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="navEta">—</div>
+                        <div class="nav-stat-label">ETA</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="navDuration">—</div>
+                        <div class="nav-stat-label">Duration</div>
+                    </div>
+                    <div class="nav-stat">
+                        <div class="nav-stat-value" id="navDistance">—</div>
+                        <div class="nav-stat-label">Distance</div>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-steps" id="navSteps"></div>
+        </div>
+
     </div>
 
-    <!-- ── Map Area ── -->
+    <!-- Map Area -->
     <div style="position:relative; flex:1; overflow:hidden;">
         <div id="map" style="width:100%; height:100%;"></div>
         <div class="loading-overlay" id="mapLoading">
@@ -982,53 +1167,37 @@
 <div class="toast" id="toast"></div>
 
 <script>
-    // ── API base URL ──────────────────────────────────────────────────────────
     const API_BASE = 'http://127.0.0.1:8000/api/navigation';
 
-    // ── Google Maps core objects ──────────────────────────────────────────────
     let map, userMarker;
-
-    // ── DirectionsRenderer is recreated on every route calculation.
-    //    Keeping a single instance and calling setDirections({ routes: [] })
-    //    causes the renderer to lose its travel-mode context, which is the
-    //    root cause of walking routes rendering as straight sea-crossing lines.
     let directionsRenderer = null;
 
-    // ── Station data ──────────────────────────────────────────────────────────
-    let allStations = [];       // full list fetched from API
-    let filteredStations = [];  // currently visible list after filter/search
+    let allStations = [];
+    let filteredStations = [];
 
-    // ── UI state ──────────────────────────────────────────────────────────────
     let selectedStation  = null;
     let currentFilter    = 'all';
-
-    // ── Travel mode: one of 'DRIVING' | 'WALKING' | 'TRANSIT'
-    //    Always stored as the Google Maps TravelMode key (uppercase).
     let currentTravelMode = 'DRIVING';
-
-    // ── Route state ───────────────────────────────────────────────────────────
-    let currentRoutes     = [];  // route alternatives returned by Directions API
-    let selectedRouteIndex = 0;  // index of the route the user picked
-
-    // ── User location (lat/lng object, filled after geolocation resolves) ─────
+    let currentRoutes     = [];
+    let selectedRouteIndex = 0;
     let userLocation = null;
 
-    // ── Reservation state ─────────────────────────────────────────────────────
-    let reservationPill = null;  // InfoWindow pill shown above a marker
-    let currentChargers = [];    // chargers for the currently selected station
+    let reservationPill = null;
+    let currentChargers = [];
     let selectedCharger = null;
 
-    // ── Vehicle state (populated by parent React app via postMessage) ─────────
     let userVehicles  = [];
     let selectedVehicle = null;
 
-    // ── Reservation flow step: 'vehicle' → 'charger' ─────────────────────────
     let resStep = 'vehicle';
-
-    // ── Favorites: Set of station IDs the user has starred ───────────────────
     let favoriteIds = new Set();
 
-    // ── Status label and color lookup tables ──────────────────────────────────
+    // Navigation state
+    let navSteps = [];
+    let navStepIndex = 0;
+    let navSimInterval = null;
+    let navRoute = null;
+
     const STATUS_LABELS = {
         available:   'Available',
         occupied:    'Occupied',
@@ -1043,28 +1212,22 @@
         maintenance: '#a855f7'
     };
 
-    // ── Driver ID (sent from parent React app via postMessage) ────────────────
     let currentDriverId = null;
 
-    // ── Listen for postMessages from the parent React app ────────────────────
     window.addEventListener('message', (e) => {
-        // Parent sends the signed-in user's vehicles for Step 1 of reservation
         if (e.data?.type === 'SET_VEHICLES') {
             userVehicles = e.data.vehicles || [];
         }
-        // Parent sends the driver ID so we can load/persist favorites
         if (e.data?.type === 'SET_DRIVER') {
             currentDriverId = e.data.driverID || null;
             if (currentDriverId) loadFavorites();
         }
     });
 
-    // ── Return the current driver's ID ────────────────────────────────────────
     function getDriverId() {
         return currentDriverId;
     }
 
-    // ── Load favorite stations from the backend ───────────────────────────────
     async function loadFavorites() {
         const driverID = getDriverId();
         if (!driverID) return;
@@ -1078,9 +1241,8 @@
         }
     }
 
-    // ── Toggle a station's favorite status and persist to the backend ─────────
     async function toggleFavorite(stationId, event) {
-        event.stopPropagation(); // prevent the card click handler from firing
+        event.stopPropagation();
         const driverID = getDriverId();
         if (!driverID) { showToast('Sign in to save favorites.'); return; }
 
@@ -1099,16 +1261,13 @@
                 });
                 if (res.ok) { favoriteIds.add(stationId); showToast('Added to favorites!'); }
             }
-            applyFilters(); // re-render the list so the star colour updates immediately
+            applyFilters();
         } catch (e) {
             console.error('Favorite toggle failed:', e);
             showToast('Could not update favorites.');
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ── Google Maps initialisation (called by the Maps JS script callback) ───
-    // ─────────────────────────────────────────────────────────────────────────
     function initMap() {
         document.getElementById('mapLoading').style.display = 'none';
 
@@ -1123,12 +1282,10 @@
             fullscreenControl: false,
         });
 
-        // Close the reservation pill when the user clicks the map background
         map.addListener('click', () => {
             if (reservationPill) reservationPill.close();
         });
 
-        // Request the user's GPS location
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -1153,17 +1310,7 @@
         loadStations();
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ── Create a fresh DirectionsRenderer and attach it to the map.
-    //    We intentionally recreate the renderer on every route calculation
-    //    instead of reusing a single instance.  Reusing and calling
-    //    setDirections({ routes: [] }) to "clear" it leaves the renderer in a
-    //    broken internal state where the travel mode from the previous request
-    //    leaks into the next one, causing walking routes to be drawn as the
-    //    straight-line (sea-crossing) DRIVING fallback.
-    // ─────────────────────────────────────────────────────────────────────────
     function createFreshRenderer() {
-        // Detach and discard the old renderer if one exists
         if (directionsRenderer) {
             directionsRenderer.setMap(null);
             directionsRenderer = null;
@@ -1179,7 +1326,6 @@
         });
     }
 
-    // ── Fetch all stations from the navigation API ────────────────────────────
     async function loadStations() {
         try {
             const res = await fetch(`${API_BASE}/stations`);
@@ -1203,7 +1349,6 @@
         }
     }
 
-    // ── Render the station list in the sidebar ────────────────────────────────
     function renderStationList() {
         const list = document.getElementById('stationList');
         if (!filteredStations.length) {
@@ -1239,7 +1384,6 @@
         }).join('');
     }
 
-    // ── Place a coloured circle marker for every station on the map ───────────
     let markers = [];
 
     function placeMarkers() {
@@ -1267,7 +1411,6 @@
         });
     }
 
-    // ── Handle marker click: centre map, show detail panel + reservation pill ─
     function markerClick(id) {
         const station = allStations.find(s => (s.id || s.stationID) === id);
         if (!station) return;
@@ -1279,15 +1422,12 @@
         map.setCenter({ lat: station.latitude, lng: station.longitude });
         map.setZoom(15);
 
-        // Scroll the matching sidebar card into view and highlight it
         document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
         const card = document.getElementById(`card-${id}`);
         if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
-        // Prefetch chargers in the background so Step 2 of reservation is instant
         preloadChargers(id);
 
-        // Show the "Make Reservation" pill above the marker
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
             content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
@@ -1297,12 +1437,10 @@
         });
         reservationPill.open(map);
 
-        // Open the detail panel and calculate routes with the current travel mode
         showDetail(station);
         if (userLocation) calculateRoutes(currentTravelMode);
     }
 
-    // ── Pre-fetch chargers for a station in the background ────────────────────
     async function preloadChargers(stationId) {
         try {
             const res  = await fetch(`${API_BASE}/stations/${stationId}`);
@@ -1313,12 +1451,10 @@
         }
     }
 
-    // ── Handle sidebar station card click ─────────────────────────────────────
     async function selectStation(id) {
         selectedStation = allStations.find(s => (s.id || s.stationID) === id);
         if (!selectedStation) return;
 
-        // Highlight the clicked card
         document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
         const card = document.getElementById(`card-${id}`);
         if (card) card.classList.add('selected');
@@ -1326,7 +1462,6 @@
         map.setCenter({ lat: selectedStation.latitude, lng: selectedStation.longitude });
         map.setZoom(14);
 
-        // Show the reservation pill on the map
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
             content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
@@ -1341,10 +1476,10 @@
         if (userLocation) await calculateRoutes(currentTravelMode);
     }
 
-    // ── Build and display the station detail panel ────────────────────────────
     function showDetail(station) {
         document.getElementById('listView').style.display = 'none';
         document.getElementById('reservationView').style.display = 'none';
+        document.getElementById('navView').classList.remove('active');
         document.getElementById('detailView').classList.add('active');
 
         const id    = station.id || station.stationID;
@@ -1381,7 +1516,6 @@
         loadChargers(id);
     }
 
-    // ── Fetch and render the charger list in the detail panel ─────────────────
     async function loadChargers(stationId) {
         try {
             const res     = await fetch(`${API_BASE}/stations/${stationId}`);
@@ -1421,39 +1555,17 @@
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ── calculateRoutes
-    //    Requests route alternatives from the Google Maps Directions API for
-    //    the given travel mode and renders them on the map.
-    //
-    //    Key fixes vs the original implementation:
-    //      1. A brand-new DirectionsRenderer is created on every call via
-    //         createFreshRenderer().  This prevents the internal travel-mode
-    //         state of a reused renderer from corrupting subsequent requests.
-    //      2. provideRouteAlternatives is disabled for WALKING and TRANSIT.
-    //         The Directions API frequently returns unusual alternatives for
-    //         these modes (including sea-crossing lines) when alternatives are
-    //         requested for areas with sparse routing data.
-    //      3. The TravelMode enum is looked up at call-time using
-    //         google.maps.TravelMode[mode], guaranteeing the correct value is
-    //         passed regardless of how the mode string arrived.
-    // ─────────────────────────────────────────────────────────────────────────
     async function calculateRoutes(mode) {
         if (!userLocation || !selectedStation) return;
 
-        // Validate that the requested mode is a recognised TravelMode key
         const travelMode = google.maps.TravelMode[mode];
         if (!travelMode) {
             console.error('Unknown travel mode:', mode);
             return;
         }
 
-        // Always start with a clean renderer so no state leaks between modes
         createFreshRenderer();
 
-        // Only request route alternatives for DRIVING — for WALKING and
-        // TRANSIT the API can return sea-crossing or otherwise nonsensical
-        // alternatives when the road network is sparse.
         const wantAlternatives = (mode === 'DRIVING');
 
         const directionsService = new google.maps.DirectionsService();
@@ -1462,20 +1574,22 @@
             {
                 origin:      userLocation,
                 destination: { lat: selectedStation.latitude, lng: selectedStation.longitude },
-                travelMode,                          // enum value, not a raw string
-                provideRouteAlternatives: wantAlternatives
+                travelMode,
+                provideRouteAlternatives: wantAlternatives,
+                language: 'en'
             },
             (result, status) => {
                 if (status === google.maps.DirectionsStatus.OK) {
                     currentRoutes      = result.routes;
                     selectedRouteIndex = 0;
+                    navRoute           = result;
                     renderRouteOptions(result.routes);
                     directionsRenderer.setDirections(result);
                     directionsRenderer.setRouteIndex(0);
                     document.getElementById('navigateBtn').disabled = false;
                 } else {
-                    // No route found for this mode (e.g. transit not available in the area)
                     currentRoutes = [];
+                    navRoute = null;
                     const el = document.getElementById('routeOptions');
                     if (el) {
                         el.innerHTML = `
@@ -1490,10 +1604,6 @@
         );
     }
 
-    // ── Format seconds into a human-readable English duration string ─────────
-    // We cannot rely on the Google Maps duration.text field because it uses
-    // the browser locale — Turkish browsers get "dakika" instead of "min".
-    // Instead we format duration.value (seconds) ourselves in English.
     function formatDuration(seconds) {
         const h = Math.floor(seconds / 3600);
         const m = Math.round((seconds % 3600) / 60);
@@ -1502,15 +1612,11 @@
         return `${h} hr ${m} min`;
     }
 
-    // ── Format meters into a human-readable English distance string ───────────
     function formatDistance(meters) {
         if (meters >= 1000) return `${(meters / 1000).toFixed(1)} km`;
         return `${meters} m`;
     }
 
-    // ── Detect whether a route contains a ferry/boat leg ────────────────────
-    // Google Maps marks ferry steps with travel_mode 'FERRY' or includes
-    // ferry-related keywords in the html_instructions field.
     function routeHasFerry(route) {
         const steps = route.legs?.[0]?.steps || [];
         return steps.some(step => {
@@ -1527,12 +1633,10 @@
         });
     }
 
-    // ── Render route alternative cards below the travel-mode buttons ──────────
     function renderRouteOptions(routes) {
         const el = document.getElementById('routeOptions');
         if (!el) return;
 
-        // Remove duplicates that have identical duration values
         const seen   = new Set();
         const unique = routes.filter(r => {
             const key = r.legs[0].duration.value;
@@ -1542,7 +1646,6 @@
         });
         unique.sort((a, b) => a.legs[0].duration.value - b.legs[0].duration.value);
 
-        // Show a warning banner once if any route uses a ferry crossing
         const anyFerry = unique.some(r => routeHasFerry(r));
         const ferryBanner = anyFerry ? `
             <div style="
@@ -1560,8 +1663,6 @@
                 <span style="font-size:15px;flex-shrink:0;margin-top:1px;">&#x26F4;&#xFE0F;</span>
                 <span>
                     This route includes a <strong>ferry crossing</strong>.
-                    The line on the map crosses the bay — this is the walking
-                    route provided by Google Maps for this area.
                     Use <em>Start Navigation</em> for full turn-by-turn directions.
                 </span>
             </div>` : '';
@@ -1582,7 +1683,6 @@
         }).join('');
     }
 
-    // ── Select a specific route alternative ───────────────────────────────────
     function selectRoute(index, el) {
         selectedRouteIndex = index;
         document.querySelectorAll('.route-option').forEach((r, i) => {
@@ -1593,69 +1693,215 @@
         directionsRenderer.setRouteIndex(index);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ── changeTravelMode
-    //    Updates the active travel mode, resets the UI, and triggers a fresh
-    //    route calculation.  The old renderer is torn down inside
-    //    calculateRoutes → createFreshRenderer so the map is never left in a
-    //    state where the polyline from the previous mode is still visible.
-    // ─────────────────────────────────────────────────────────────────────────
     function changeTravelMode(mode, btn) {
         currentTravelMode = mode;
 
-        // Update the active button highlight
         document.querySelectorAll('.travel-mode-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
 
-        // Show a calculating placeholder while the API request is in flight
         const el = document.getElementById('routeOptions');
         if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Calculating...</div>';
 
         document.getElementById('navigateBtn').disabled = true;
 
-        // calculateRoutes handles tearing down the old renderer internally
         calculateRoutes(mode);
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // ── startNavigation
-    //    Opens Google Maps in a new tab with the correct origin, destination,
-    //    and travel mode so the user gets proper turn-by-turn navigation.
-    //    Google Maps' own routing engine handles walking paths, transit lines,
-    //    and road networks — we never try to replicate that logic here.
+    // ── startNavigation — in-app turn-by-turn navigation panel
     // ─────────────────────────────────────────────────────────────────────────
     function startNavigation() {
-        if (!selectedStation) {
-            showToast('No station selected.');
-            return;
+        if (!selectedStation) { showToast('No station selected.'); return; }
+        if (!userLocation)    { showToast('Location not available.'); return; }
+        if (!navRoute)        { showToast('No route calculated yet.'); return; }
+
+        const route = navRoute.routes[selectedRouteIndex] || navRoute.routes[0];
+        const leg   = route.legs[0];
+
+        // Parse steps from the Google Directions result
+        navSteps = leg.steps.map(step => ({
+            instruction: stripHtml(step.html_instructions || step.instructions || ''),
+            distance:    step.distance?.text || '',
+            distanceVal: step.distance?.value || 0,
+            mode:        step.travel_mode || currentTravelMode,
+            endLat:      step.end_location?.lat() ?? null,
+            endLng:      step.end_location?.lng() ?? null
+        }));
+
+        navStepIndex = 0;
+
+        // Calculate ETA
+        const durationSec = leg.duration.value;
+        const etaDate = new Date(Date.now() + durationSec * 1000);
+        const etaStr  = etaDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+
+        // Switch to nav view
+        document.getElementById('listView').style.display     = 'none';
+        document.getElementById('detailView').classList.remove('active');
+        document.getElementById('reservationView').style.display = 'none';
+        document.getElementById('navView').classList.add('active');
+
+        // Fill header stats
+        document.getElementById('navDestination').textContent = selectedStation.name;
+        document.getElementById('navEta').textContent      = etaStr;
+        document.getElementById('navDuration').textContent  = formatDuration(durationSec);
+        document.getElementById('navDistance').textContent  = formatDistance(leg.distance.value);
+
+        renderNavSteps();
+        showToast('Navigation started!');
+
+        // Watch real GPS — advance steps when user is close to the next waypoint
+        if (navSimInterval !== null) {
+            navigator.geolocation.clearWatch(navSimInterval);
+            navSimInterval = null;
         }
-        if (!userLocation) {
-            showToast('Location not available. Please allow location access.');
-            return;
-        }
-
-        const origin = `${userLocation.lat},${userLocation.lng}`;
-        const dest   = `${selectedStation.latitude},${selectedStation.longitude}`;
-
-        // Map internal TravelMode keys to the Google Maps URL travelmode parameter
-        const modeMap = {
-            DRIVING: 'driving',
-            WALKING: 'walking',
-            TRANSIT: 'transit'
-        };
-        const travelmode = modeMap[currentTravelMode] || 'driving';
-
-        const mapsUrl =
-            `https://www.google.com/maps/dir/?api=1` +
-            `&origin=${encodeURIComponent(origin)}` +
-            `&destination=${encodeURIComponent(dest)}` +
-            `&travelmode=${travelmode}`;
-
-        window.open(mapsUrl, '_blank');
-        showToast('Opening Google Maps...');
+        navSimInterval = navigator.geolocation.watchPosition(pos => {
+            userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            if (userMarker) userMarker.setPosition(userLocation);
+            advanceStepIfNeeded();
+        }, null, { enableHighAccuracy: true, maximumAge: 3000 });
     }
 
-    // ── Open the reservation flow panel ───────────────────────────────────────
+    // ── Check if user is close enough to advance to the next nav step ─────────
+    function advanceStepIfNeeded() {
+        if (!navSteps.length || navStepIndex >= navSteps.length) return;
+
+        const step = navSteps[navStepIndex];
+        if (!step || !step.endLat) return; // no position data for this step
+
+        const dist = haversineMeters(
+            userLocation.lat, userLocation.lng,
+            step.endLat, step.endLng
+        );
+
+        // Advance when within 25 m of the step's end point
+        if (dist <= 25) {
+            if (navStepIndex < navSteps.length - 1) {
+                navStepIndex++;
+                renderNavSteps();
+            } else {
+                if (navSimInterval !== null) {
+                    navigator.geolocation.clearWatch(navSimInterval);
+                    navSimInterval = null;
+                }
+                renderArrived();
+            }
+        }
+    }
+
+    // ── Haversine distance in metres between two lat/lng points ───────────────
+    function haversineMeters(lat1, lng1, lat2, lng2) {
+        const R = 6371000;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLng = (lng2 - lng1) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 +
+                  Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    // ── Strip HTML tags from Google's instruction strings ─────────────────────
+    function stripHtml(html) {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || '';
+    }
+
+    // ── Get a directional emoji for a step instruction ────────────────────────
+    function stepIcon(instruction) {
+        const t = instruction.toLowerCase();
+        if (t.includes('arrive') || t.includes('destination')) return '🏁';
+        if (t.includes('ferry') || t.includes('vapur') || t.includes('feribot')) return '⛴️';
+        if (t.includes('bus') || t.includes('transit') || t.includes('otobüs')) return '🚌';
+        if (t.includes('subway') || t.includes('metro')) return '🚇';
+        if (t.includes('train') || t.includes('tren')) return '🚆';
+        if (t.includes('right') || t.includes('sağ'))  return '↪️';
+        if (t.includes('left')  || t.includes('sol'))  return '↩️';
+        if (t.includes('u-turn') || t.includes('u dönüşü')) return '🔄';
+        if (t.includes('roundabout') || t.includes('dönel')) return '🔵';
+        if (t.includes('ramp') || t.includes('rampa'))  return '↗️';
+        if (t.includes('merge') || t.includes('birleş')) return '🔀';
+        if (t.includes('walk') || t.includes('yürü'))   return '🚶';
+        return '⬆️';
+    }
+
+    // ── Render the step list in the nav panel ─────────────────────────────────
+    function renderNavSteps() {
+        const container = document.getElementById('navSteps');
+        if (!container) return;
+
+        let html = '';
+
+        // Current step big banner
+        const current = navSteps[navStepIndex];
+        if (current) {
+            html += `
+                <div class="nav-current-step">
+                    <div class="nav-current-icon">${stepIcon(current.instruction)}</div>
+                    <div class="nav-current-text">
+                        <div class="nav-current-instruction">${current.instruction}</div>
+                        <div class="nav-current-dist">${current.distance}</div>
+                    </div>
+                </div>`;
+        }
+
+        // Mode badge
+        const modeLabel = { DRIVING: '🚗 Driving', WALKING: '🚶 Walking', TRANSIT: '🚌 Transit' };
+        html += `<div style="margin-bottom:10px;"><span class="nav-mode-badge">${modeLabel[currentTravelMode] || currentTravelMode}</span></div>`;
+
+        // All steps list
+        html += navSteps.map((step, i) => `
+            <div class="nav-step ${i === navStepIndex ? 'active-step' : ''}">
+                <div class="nav-step-icon">${i < navStepIndex ? '✓' : stepIcon(step.instruction)}</div>
+                <div class="nav-step-content">
+                    <div class="nav-step-instruction">${step.instruction}</div>
+                    <div class="nav-step-distance">${step.distance}</div>
+                </div>
+            </div>`).join('');
+
+        container.innerHTML = html;
+
+        // Scroll the active step into view
+        const activeEl = container.querySelector('.active-step');
+        if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // ── Show the arrived banner when all steps are done ───────────────────────
+    function renderArrived() {
+        const container = document.getElementById('navSteps');
+        if (!container) return;
+        container.innerHTML = `
+            <div class="nav-arrived-banner">
+                <div class="nav-arrived-icon">🏁</div>
+                <div class="nav-arrived-title">You have arrived!</div>
+                <div class="nav-arrived-sub">${selectedStation?.name || 'Charging station'}</div>
+            </div>
+            <button class="navigate-btn" style="margin:0 0 12px;" onclick="stopNavigation()">
+                ✕ End Navigation
+            </button>`;
+        showToast('You have arrived!');
+    }
+
+    // ── Stop navigation and return to detail view ─────────────────────────────
+    function stopNavigation() {
+        if (navSimInterval !== null) {
+            navigator.geolocation.clearWatch(navSimInterval);
+            navSimInterval = null;
+        }
+        navStepIndex   = 0;
+        navSteps       = [];
+
+        document.getElementById('navView').classList.remove('active');
+
+        if (selectedStation) {
+            showDetail(selectedStation);
+            if (userLocation) calculateRoutes(currentTravelMode);
+        } else {
+            showList();
+        }
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+
     async function openReservationPanel() {
         if (!selectedStation) return;
         if (reservationPill) reservationPill.close();
@@ -1666,9 +1912,9 @@
 
         document.getElementById('listView').style.display = 'none';
         document.getElementById('detailView').classList.remove('active');
+        document.getElementById('navView').classList.remove('active');
         document.getElementById('reservationView').style.display = 'flex';
 
-        // Use cached chargers; fetch fresh if the cache is empty
         if (!currentChargers.length) {
             const id = selectedStation.id || selectedStation.stationID;
             try {
@@ -1681,7 +1927,6 @@
         renderVehicleStep();
     }
 
-    // ── Step 1: render the vehicle selection UI ───────────────────────────────
     function renderVehicleStep() {
         const label = STATUS_LABELS[selectedStation.status] || selectedStation.status;
 
@@ -1701,7 +1946,6 @@
         `;
     }
 
-    // ── Render vehicle cards for Step 1 ──────────────────────────────────────
     function renderVehicleCards() {
         if (!userVehicles.length) {
             return `<div class="empty-state">
@@ -1720,7 +1964,6 @@
         `).join('');
     }
 
-    // ── Handle vehicle card selection ─────────────────────────────────────────
     function selectVehicle(vehicleId) {
         selectedVehicle = userVehicles.find(v => v.vehicleID === vehicleId);
         if (!selectedVehicle) return;
@@ -1731,7 +1974,6 @@
         if (btn) btn.disabled = false;
     }
 
-    // ── Step 2: render the charger selection UI ───────────────────────────────
     function goToChargerStep() {
         if (!selectedVehicle) return;
         resStep = 'charger';
@@ -1795,7 +2037,6 @@
         renderResChargerList();
     }
 
-    // ── Render charger cards for Step 2, filtered by vehicle connector type ───
     function renderResChargerList() {
         const el = document.getElementById('resChargerList');
         if (!el) return;
@@ -1842,7 +2083,6 @@
         }).join('');
     }
 
-    // ── Select a charger and reveal the booking form ──────────────────────────
     function selectCharger(chargerId) {
         selectedCharger = currentChargers.find(c => (c.id || c.chargerID) === chargerId);
         if (!selectedCharger || selectedCharger.status !== 'available') return;
@@ -1863,7 +2103,6 @@
         document.getElementById('costDisplay').style.display = 'none';
         document.getElementById('payBtn').disabled = true;
 
-        // Set the minimum selectable datetime to right now (local time)
         const now = new Date();
         now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
         document.getElementById('reservationTime').min = now.toISOString().slice(0, 16);
@@ -1871,7 +2110,6 @@
         resForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // ── Live cost calculation ─────────────────────────────────────────────────
     function calculateCost() {
         if (!selectedCharger) return;
         const hours = parseFloat(document.getElementById('hoursSelect').value);
@@ -1900,7 +2138,6 @@
         document.getElementById('payBtn').disabled = false;
     }
 
-    // ── Send reservation data to the parent MapStations.jsx via postMessage ───
     function proceedToPayment() {
         if (!selectedStation || !selectedCharger) return;
         const hours            = parseFloat(document.getElementById('hoursSelect').value);
@@ -1927,10 +2164,8 @@
         showToast('Confirming reservation...');
     }
 
-    // ── Back button logic inside the reservation view ─────────────────────────
     function backFromReservation() {
         if (resStep === 'charger') {
-            // Return to vehicle step, restoring the previously selected vehicle highlight
             resStep = 'vehicle';
             selectedCharger = null;
             renderVehicleStep();
@@ -1945,7 +2180,6 @@
             return;
         }
 
-        // From the vehicle step, return to the station detail view
         if (reservationPill) reservationPill.close();
         document.getElementById('reservationView').style.display = 'none';
         selectedCharger = null;
@@ -1959,7 +2193,6 @@
         }
     }
 
-    // ── Filter tab click handler ──────────────────────────────────────────────
     function setFilter(filter, btn) {
         currentFilter = filter;
         document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
@@ -1967,10 +2200,8 @@
         applyFilters();
     }
 
-    // ── Search input handler ──────────────────────────────────────────────────
     function filterStations() { applyFilters(); }
 
-    // ── Apply the active filter and search query to the station list ──────────
     function applyFilters() {
         const q = document.getElementById('searchInput').value.toLowerCase();
 
@@ -1987,14 +2218,14 @@
         renderStationList();
     }
 
-    // ── Return to the station list view ───────────────────────────────────────
     function showList() {
+        if (navSimInterval !== null) { navigator.geolocation.clearWatch(navSimInterval); navSimInterval = null; }
         if (reservationPill) reservationPill.close();
-        document.getElementById('listView').style.display = 'flex';
+        document.getElementById('listView').style.display   = 'flex';
         document.getElementById('detailView').classList.remove('active');
         document.getElementById('reservationView').style.display = 'none';
+        document.getElementById('navView').classList.remove('active');
 
-        // Tear down the renderer so no stale route polyline remains on the map
         if (directionsRenderer) {
             directionsRenderer.setMap(null);
             directionsRenderer = null;
@@ -2004,10 +2235,11 @@
         selectedCharger = null;
         selectedVehicle = null;
         currentChargers = [];
+        navRoute        = null;
+        navSteps        = [];
         document.getElementById('navigateBtn').disabled = true;
     }
 
-    // ── Map type toggle (roadmap / satellite / hybrid) ────────────────────────
     function setMapType(type, btn) {
         map.setMapTypeId(type);
         document.querySelectorAll('.map-type-btn').forEach(b => b.classList.remove('active'));
@@ -2015,7 +2247,6 @@
         map.setOptions({ styles: type === 'roadmap' ? darkMapStyle() : [] });
     }
 
-    // ── Show a brief toast notification ──────────────────────────────────────
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -2023,7 +2254,6 @@
         setTimeout(() => t.classList.remove('show'), 2800);
     }
 
-    // ── Dark map style definition ─────────────────────────────────────────────
     function darkMapStyle() {
         return [
             { elementType: 'geometry',              stylers: [{ color: '#0a0f1e' }] },
@@ -2039,14 +2269,13 @@
         ];
     }
 
-    // ── Fetch the Google Maps API key from the backend and inject the script ──
     async function loadGoogleMaps() {
         try {
             const response = await fetch('http://localhost:8000/api/config');
             const config   = await response.json();
             const apiKey   = config.google_maps_api_key || '';
             const script   = document.createElement('script');
-            script.src     = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places,geometry`;
+            script.src     = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=places,geometry&language=en`;
             script.async   = true;
             script.defer   = true;
             document.body.appendChild(script);
@@ -2062,7 +2291,6 @@
         }
     }
 
-    // Boot the app once the DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', loadGoogleMaps);
     } else {
