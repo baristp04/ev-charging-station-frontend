@@ -177,6 +177,14 @@
             background: rgba(0,229,255,0.08);
         }
 
+        /* Favorites tab gets a gold tint when active */
+        .filter-tab.favorites-tab.active,
+        .filter-tab.favorites-tab:hover {
+            border-color: #FFD700;
+            color: #FFD700;
+            background: rgba(255,215,0,0.08);
+        }
+
         /* ── Station List ── */
         .station-list {
             flex: 1;
@@ -225,6 +233,7 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 8px;
+            padding-right: 32px; /* space for star button */
         }
 
         .station-name {
@@ -265,11 +274,22 @@
             color: var(--text-muted);
         }
 
-        .meta-item {
-            display: flex;
-            align-items: center;
-            gap: 3px;
+        /* ── Star icon on station card ── */
+        .star-btn {
+            position: absolute;
+            right: 14px;
+            top: 55%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            cursor: pointer;
+            color: #555;
+            transition: color 0.2s, transform 0.15s;
+            user-select: none;
+            line-height: 1;
+            z-index: 1;
         }
+        .star-btn:hover { transform: translateY(-50%) scale(1.25); }
+        .star-btn.active { color: #FFD700; }
 
         /* ── Detail Panel ── */
         .detail-panel {
@@ -1015,6 +1035,8 @@
                 <button class="filter-tab" onclick="setFilter('occupied', this)">Occupied</button>
                 <button class="filter-tab" onclick="setFilter('offline', this)">Offline</button>
                 <button class="filter-tab" onclick="setFilter('maintenance', this)">Maintenance</button>
+                <!-- Favorites filter tab -->
+                <button class="filter-tab favorites-tab" onclick="setFilter('favorites', this)">⭐ Favorites</button>
             </div>
             <div class="station-list" id="stationList">
                 <div class="loading-overlay" id="listLoading">
@@ -1099,6 +1121,9 @@
     // Reservation flow step: 'vehicle' | 'charger'
     let resStep = 'vehicle';
 
+    // Favorites state — Set of favorited station IDs
+    let favoriteIds = new Set();
+
     const STATUS_LABELS = {
         available:   'Available',
         occupied:    'Occupied',
@@ -1114,11 +1139,80 @@
     };
 
     // ── Listen for messages from parent React app ─────────────────────────────
+    let currentDriverId = null;
+
     window.addEventListener('message', (e) => {
         if (e.data?.type === 'SET_VEHICLES') {
             userVehicles = e.data.vehicles || [];
         }
+        if (e.data?.type === 'SET_DRIVER') {
+        currentDriverId = e.data.driverID || null;
+        if (currentDriverId) loadFavorites();
+        }
     });
+
+    // ── Get driver ID from parent localStorage via postMessage ────────────────
+    function getDriverId() {
+        return currentDriverId;
+    }
+
+    // ── Load favorites from backend ───────────────────────────────────────────
+    async function loadFavorites() {
+        const driverID = getDriverId();
+        if (!driverID) return;
+
+        try {
+            const res = await fetch(`http://localhost:8000/api/favorites/${driverID}`);
+            if (!res.ok) return;
+            const data = await res.json();
+            favoriteIds = new Set(data.map(s => s.stationID || s.id));
+        } catch (e) {
+            console.error('Could not load favorites:', e);
+        }
+    }
+
+    // ── Toggle favorite for a station ─────────────────────────────────────────
+    async function toggleFavorite(stationId, event) {
+        // Prevent the card click (selectStation) from firing
+        event.stopPropagation();
+
+        const driverID = getDriverId();
+        if (!driverID) {
+            showToast('Sign in to save favorites.');
+            return;
+        }
+
+        try {
+            if (favoriteIds.has(stationId)) {
+                // Remove from favorites
+                const res = await fetch(
+                    `http://localhost:8000/api/favorites/${driverID}/${stationId}`,
+                    { method: 'DELETE' }
+                );
+                if (res.ok) {
+                    favoriteIds.delete(stationId);
+                    showToast('Removed from favorites.');
+                }
+            } else {
+                // Add to favorites
+                const res = await fetch('http://localhost:8000/api/favorites/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ driver_id: driverID, station_id: stationId })
+                });
+                if (res.ok) {
+                    favoriteIds.add(stationId);
+                    showToast('Added to favorites!');
+                }
+            }
+
+            // Re-render list to update star color (and re-apply filter if on favorites tab)
+            applyFilters();
+        } catch (e) {
+            console.error('Favorite toggle failed:', e);
+            showToast('Could not update favorites.');
+        }
+    }
 
     // ── Google Maps init ──────────────────────────────────────────────────────
     function initMap() {
@@ -1183,6 +1277,7 @@
             filteredStations = [...allStations];
 
             document.getElementById('listLoading').style.display = 'none';
+
             renderStationList();
             placeMarkers();
         } catch (e) {
@@ -1200,13 +1295,18 @@
     function renderStationList() {
         const list = document.getElementById('stationList');
         if (!filteredStations.length) {
-            list.innerHTML = `<div class="empty-state"><div class="empty-icon">🔌</div><div class="empty-text">No stations found.</div></div>`;
+            // Show a friendlier message when Favorites filter is active but empty
+            const emptyMsg = currentFilter === 'favorites'
+                ? 'No favorite stations yet.<br>Click ★ on a station to save it.'
+                : 'No stations found.';
+            list.innerHTML = `<div class="empty-state"><div class="empty-icon">${currentFilter === 'favorites' ? '⭐' : '🔌'}</div><div class="empty-text">${emptyMsg}</div></div>`;
             return;
         }
 
         list.innerHTML = filteredStations.map(s => {
             const label = STATUS_LABELS[s.status] || s.status;
             const id = s.id || s.stationID;
+            const isFav = favoriteIds.has(id);
             return `
             <div class="station-card ${s.status}" id="card-${id}" onclick="selectStation(${id})">
                 <div class="station-card-top">
@@ -1217,6 +1317,12 @@
                 <div class="station-meta">
                     <span class="meta-item">🌍 ${s.latitude.toFixed(4)}, ${s.longitude.toFixed(4)}</span>
                 </div>
+                <!-- Star icon for favorites -->
+                <span
+                    class="star-btn ${isFav ? 'active' : ''}"
+                    onclick="toggleFavorite(${id}, event)"
+                    title="${isFav ? 'Remove from favorites' : 'Add to favorites'}"
+                >★</span>
             </div>`;
         }).join('');
     }
@@ -1551,9 +1657,7 @@
             const cid = c.id || c.chargerID;
             const isCompatible = !vehicleConnector || c.connectorType === vehicleConnector;
             const isAvailable = c.status === 'available';
-            // Charger is selectable only if compatible AND available
             const isSelectable = isCompatible && isAvailable;
-            // Dimmed if incompatible OR unavailable
             const isDimmed = !isSelectable;
 
             const statusLabel = STATUS_LABELS[c.status] || c.status;
@@ -1562,7 +1666,6 @@
                 : c.status === 'maintenance' ? 'var(--purple)'
                 : 'var(--red)';
 
-            // Tooltip explains why it's unavailable
             let tooltip = '';
             if (!isCompatible) tooltip = `Incompatible with your ${vehicleConnector}`;
             else if (!isAvailable) tooltip = `This unit is currently ${statusLabel.toLowerCase()}`;
@@ -1659,7 +1762,7 @@
             stationId: selectedStation.id || selectedStation.stationID,
             stationName: selectedStation.name,
             charger: selectedCharger,
-            vehicleId: selectedVehicle.vehicleID,  // pre-selected vehicle
+            vehicleId: selectedVehicle.vehicleID,
             startTime,
             endTime,
             hours,
@@ -1672,11 +1775,9 @@
     // ── Back from reservation ─────────────────────────────────────────────────
     function backFromReservation() {
         if (resStep === 'charger') {
-            // Go back to vehicle selection step
             resStep = 'vehicle';
             selectedCharger = null;
             renderVehicleStep();
-            // Re-select previously chosen vehicle
             if (selectedVehicle) {
                 const card = document.getElementById(`vcard-${selectedVehicle.vehicleID}`);
                 if (card) {
@@ -1688,7 +1789,6 @@
             return;
         }
 
-        // Back from vehicle step → detail or list
         if (reservationPill) reservationPill.close();
         document.getElementById('reservationView').style.display = 'none';
         selectedCharger = null;
@@ -1832,11 +1932,22 @@
 
     function applyFilters() {
         const q = document.getElementById('searchInput').value.toLowerCase();
+
         filteredStations = allStations.filter(s => {
-            const matchStatus = currentFilter === 'all' || s.status === currentFilter;
+            const id = s.id || s.stationID;
+
+            // Favorites filter: only show stations the user has starred
+            if (currentFilter === 'favorites') {
+                if (!favoriteIds.has(id)) return false;
+            } else {
+                const matchStatus = currentFilter === 'all' || s.status === currentFilter;
+                if (!matchStatus) return false;
+            }
+
             const matchSearch = !q || s.name.toLowerCase().includes(q) || s.location.toLowerCase().includes(q);
-            return matchStatus && matchSearch;
+            return matchSearch;
         });
+
         renderStationList();
     }
 

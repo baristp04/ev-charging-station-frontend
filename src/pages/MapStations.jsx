@@ -43,6 +43,8 @@ export default function MapStations({ user }) {
                 const iframe = document.querySelector('iframe');
                 if (iframe?.contentWindow) {
                     iframe.contentWindow.postMessage({ type: 'SET_VEHICLES', vehicles: data }, '*');
+                    iframe.contentWindow.postMessage({ type: 'SET_DRIVER', driverID: user.driverID }, '*');
+
                 }
             })
             .catch(console.error);
@@ -111,9 +113,12 @@ export default function MapStations({ user }) {
                     // Re-send vehicles after iframe reloads
                     if (vehicles.length && iframeRef.current) {
                         iframeRef.current.contentWindow.postMessage(
-                            { type: 'SET_VEHICLES', vehicles },
-                            '*'
-                        );
+                            { type: 'SET_VEHICLES', vehicles },'*');
+                    }
+                    // Send driver ID to iframe
+                    if (user?.driverID && iframeRef.current) {
+                        iframeRef.current.contentWindow.postMessage(
+                            { type: 'SET_DRIVER', driverID: user.driverID },'*');
                     }
                 }}
                 style={{
