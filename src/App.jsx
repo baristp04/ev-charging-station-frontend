@@ -23,25 +23,42 @@ export default function App() {
   const [user, setUser] = useState(null)
   const location = useLocation()
 
+// 1. Sayfa ilk yüklendiğinde / yenilendiğinde çalışır
   useEffect(() => {
-    const saved = localStorage.getItem('ev_user')
+    const saved = localStorage.getItem('ev_user') || sessionStorage.getItem('ev_user')
     if (saved) {
       const parsed = JSON.parse(saved)
-      if (parsed.expiry && Date.now() > parsed.expiry) {
+      
+      if (parsed.sessionOnly) {
+        // KURYE MANTIĞI: Veriyi sessionStorage'a taşı, localStorage'ı temizle
+        sessionStorage.setItem('ev_user', saved)
         localStorage.removeItem('ev_user')
+        setUser(parsed)
+      } else if (parsed.expiry && Date.now() > parsed.expiry) {
+        localStorage.removeItem('ev_user')
+        sessionStorage.removeItem('ev_user')
+        setUser(null)
       } else {
         setUser(parsed)
       }
     }
   }, [])
 
+  // 2. Diğer sekmeden (SignIn) giriş yapıldığında anında tetiklenir
   useEffect(() => {
     const handleStorage = () => {
-      const saved = localStorage.getItem('ev_user')
+      const saved = localStorage.getItem('ev_user') || sessionStorage.getItem('ev_user')
       if (saved) {
         const parsed = JSON.parse(saved)
-        if (parsed.expiry && Date.now() > parsed.expiry) {
+        
+        if (parsed.sessionOnly) {
+          // KURYE MANTIĞI: Veriyi sessionStorage'a taşı, localStorage'ı temizle
+          sessionStorage.setItem('ev_user', saved)
           localStorage.removeItem('ev_user')
+          setUser(parsed)
+        } else if (parsed.expiry && Date.now() > parsed.expiry) {
+          localStorage.removeItem('ev_user')
+          sessionStorage.removeItem('ev_user')
           setUser(null)
         } else {
           setUser(parsed)
@@ -124,7 +141,13 @@ export default function App() {
           <AuthPanel
             user={user}
             onLogin={userData => setUser(userData)}
-            onLogout={() => setUser(null)}
+            onLogout={() => {
+              // 1. Tarayıcı hafızasını tamamen temizle
+              localStorage.removeItem('ev_user');
+              sessionStorage.removeItem('ev_user');
+              // 2. React state'ini sıfırla
+              setUser(null);
+            }}
           />
         </div>
       </nav>

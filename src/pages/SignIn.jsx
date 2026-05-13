@@ -39,12 +39,16 @@ export default function SignIn() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.detail || 'Invalid email or password.')
 
-      // remember me off → 1 sec expiry, on → 7 days expiry
-      const expiry = remember
-        ? Date.now() + 7 * 24 * 60 * 60 * 1000
-        : Date.now() + 1 * 1 * 1000
-
-      localStorage.setItem('ev_user', JSON.stringify({ ...data, expiry }))
+      // YENİ MANTIK: Remember seçiliyse LocalStorage, değilse SessionStorage
+       if (remember) {
+        // 7 günlük ömür biç (Kalıcı olacak)
+        const expiry = Date.now() + 7 * 24 * 60 * 60 * 1000;
+        localStorage.setItem('ev_user', JSON.stringify({ ...data, expiry }));
+      } else {
+        // Ana sekmenin veriyi alıp geçici belleğe (sessionStorage) taşıması için
+        // içine 'sessionOnly: true' notu ekliyoruz.
+        localStorage.setItem('ev_user', JSON.stringify({ ...data, sessionOnly: true }));
+      }
 
       // Close this tab; main tab picks up the change via storage event
       window.close()
