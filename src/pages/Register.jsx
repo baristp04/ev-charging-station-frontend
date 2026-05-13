@@ -89,15 +89,8 @@ export default function Register() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.detail || 'Registration failed.')
 
-      // remember me off → 10 min expiry, on → 7 days expiry
-      const expiry = remember
-        ? Date.now() + 7 * 24 * 60 * 60 * 1000
-        : Date.now() + 10 * 60 * 1000
-
-      localStorage.setItem('ev_user', JSON.stringify({ ...data, expiry }))
-
       setSuccess(true)
-      setTimeout(() => { window.close(); navigate('/') }, 1500)
+      setTimeout(() => { navigate('/signin') }, 1500)
     } catch (err) {
       setApiError(err.message)
     } finally {
@@ -106,14 +99,14 @@ export default function Register() {
   }
 
   // ── Success screen ────────────────────────────────────────────────────────
-  if (success) {
+if (success) {
     return (
       <div style={S.page}>
         <div style={S.card}>
           <div style={{ textAlign: 'center', padding: '40px 0' }}>
             <div style={{ fontSize: '3rem', marginBottom: '16px' }}>✅</div>
             <div style={S.title}>Account Created!</div>
-            <div style={S.subtitle}>Redirecting you to the app...</div>
+            <div style={S.subtitle}>Redirecting to Sign In...</div> {/* GÜNCELLENDİ */}
           </div>
         </div>
       </div>

@@ -50,8 +50,6 @@ export default function SignIn() {
         localStorage.setItem('ev_user', JSON.stringify({ ...data, sessionOnly: true }));
       }
 
-      // Close this tab; main tab picks up the change via storage event
-      window.close()
       // Fallback if window.close() is blocked by the browser
       navigate('/')
     } catch (err) {

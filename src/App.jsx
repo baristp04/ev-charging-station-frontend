@@ -24,17 +24,12 @@ export default function App() {
   const location = useLocation()
 
 // 1. Sayfa ilk yüklendiğinde / yenilendiğinde çalışır
-  useEffect(() => {
+useEffect(() => {
     const saved = localStorage.getItem('ev_user') || sessionStorage.getItem('ev_user')
+    
     if (saved) {
       const parsed = JSON.parse(saved)
-      
-      if (parsed.sessionOnly) {
-        // KURYE MANTIĞI: Veriyi sessionStorage'a taşı, localStorage'ı temizle
-        sessionStorage.setItem('ev_user', saved)
-        localStorage.removeItem('ev_user')
-        setUser(parsed)
-      } else if (parsed.expiry && Date.now() > parsed.expiry) {
+      if (parsed.expiry && Date.now() > parsed.expiry) {
         localStorage.removeItem('ev_user')
         sessionStorage.removeItem('ev_user')
         setUser(null)
@@ -42,7 +37,7 @@ export default function App() {
         setUser(parsed)
       }
     }
-  }, [])
+  }, [location.pathname]) // ── BURASI DEĞİŞTİ: URL değiştikçe kullanıcıyı kontrol et ──
 
   // 2. Diğer sekmeden (SignIn) giriş yapıldığında anında tetiklenir
   useEffect(() => {

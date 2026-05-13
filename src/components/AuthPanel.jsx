@@ -3,7 +3,11 @@
 // Sign In and Register both open as full-page standalone tabs.
 // Logged-in view shows user info and a sign out button.
 
+import { useNavigate } from 'react-router-dom';
+
 export default function AuthPanel({ user, onLogin, onLogout }) {
+
+  const navigate = useNavigate();
 
   // ── Logout ──────────────────────────────────────────────────────────────────
   const handleLogout = () => {
@@ -31,10 +35,10 @@ export default function AuthPanel({ user, onLogin, onLogout }) {
   // ── Default: open full-page tabs ────────────────────────────────────────────
   return (
     <div style={S.panel}>
-      <button style={S.primaryBtn} onClick={() => window.open('/signin', '_blank')}>
+      <button style={S.primaryBtn} onClick={() => navigate('/signin')}>
         Sign In
       </button>
-      <button style={S.secondaryBtn} onClick={() => window.open('/register', '_blank')}>
+      <button style={S.secondaryBtn} onClick={() => navigate('/register')}>
         Create Account
       </button>
     </div>
