@@ -2,27 +2,31 @@
 // Root layout. Manages user session state and renders sidebar + main content.
 // /signin and /register render as standalone full-page routes (no sidebar).
 
+// ── App.jsx ───────────────────────────────────────────────────────────────────
 import { useState, useEffect } from 'react'
 import { Routes, Route, NavLink, useLocation } from 'react-router-dom'
 import Analytics from './pages/Analytics'
 import MapStations from './pages/MapStations'
 import Vehicles from './pages/Vehicles'
 import Reservations from './pages/Reservations'
+import Wallet from './pages/Wallet.jsx' 
 import Register from './pages/Register'
 import SignIn from './pages/SignIn'
 import AuthPanel from './components/AuthPanel'
+import { Toaster } from 'react-hot-toast';
+import Notifications from './pages/Notifications'
+import SessionTracking from './pages/SessionTracking'
+import Reporting from './pages/Reporting'
 
 export default function App() {
   const [user, setUser] = useState(null)
   const location = useLocation()
 
-  // Restore session on mount — clear if expiry has passed
   useEffect(() => {
     const saved = localStorage.getItem('ev_user')
     if (saved) {
       const parsed = JSON.parse(saved)
       if (parsed.expiry && Date.now() > parsed.expiry) {
-        // Session expired — clear and force logout
         localStorage.removeItem('ev_user')
       } else {
         setUser(parsed)
@@ -30,8 +34,6 @@ export default function App() {
     }
   }, [])
 
-  // Listen for localStorage changes from other tabs (sign-in/register tab → main tab)
-  // Note: storage event only fires for localStorage, not sessionStorage
   useEffect(() => {
     const handleStorage = () => {
       const saved = localStorage.getItem('ev_user')
@@ -51,12 +53,23 @@ export default function App() {
     return () => window.removeEventListener('storage', handleStorage)
   }, [])
 
-  // Standalone pages — render without sidebar layout
   if (location.pathname === '/signin')   return <SignIn />
   if (location.pathname === '/register') return <Register />
 
   return (
     <div style={S.layout}>
+
+      {/* ⚡ TOASTER BURAYA EKLENDİ ⚡ */}
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          style: {
+            background: '#1e293b',
+            color: '#fff',
+            border: '1px solid var(--border)'
+          }
+        }} 
+      ></Toaster>
 
       {/* ── Sidebar ── */}
       <nav style={S.sidebar}>
@@ -65,13 +78,11 @@ export default function App() {
           <div style={S.logoText}>EV CHARGE</div>
         </div>
 
-        {/* Navigation links — always visible regardless of auth state */}
         <div style={S.navMenu}>
           <NavLink to="/" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
             📍 Map & Stations
           </NavLink>
 
-          {/* SADECE SÜRÜCÜLER: Kendi araçları ve rezervasyonları */}
           {user?.role === 'driver' && (
             <>
               <NavLink to="/vehicles" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
@@ -80,17 +91,27 @@ export default function App() {
               <NavLink to="/reservations" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
                 📅 My Reservations
               </NavLink>
+              <NavLink to="/wallet" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+                💳 My Wallet
+              </NavLink>
+              <NavLink to="/session-tracking" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+                ⚡ Active Session
+              </NavLink>
+              <NavLink to="/notifications" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+                🔔 Notifications
+              </NavLink>
+              <NavLink to="/reporting" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
+                🛠️ Report Issue
+              </NavLink>
             </>
           )}
 
-          {/* SADECE TEKNİSYEN VE UZMANLAR: Bakım ekranı */}
           {['technician', 'specialist'].includes(user?.role) && (
             <NavLink to="/maintenance" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
               🔧 Station Maintenance
             </NavLink>
           )} 
 
-          {/* SADECE ANALİST VE UZMANLAR: Yönetim raporları */}
           {['analyst', 'specialist'].includes(user?.role) && (
             <NavLink to="/analytics" style={({ isActive }) => isActive ? { ...S.navItem, ...S.navItemActive } : S.navItem}>
               📊 Management Reports
@@ -110,15 +131,18 @@ export default function App() {
       {/* ── Main Content ── */}
       <main style={S.content}>
         <Routes>
-          <Route path="/"             element={<MapStations user={user} />} />
-          <Route path="/vehicles"     element={<Vehicles />} />
+          <Route path="/" element={<MapStations user={user} />} />
+          <Route path="/vehicles" element={<Vehicles />} />
           <Route path="/reservations" element={<Reservations user={user} />} />
-          <Route path="/analytics"    element={<Analytics user={user} />} />
-          <Route path="/signin"       element={<SignIn />} />
-          <Route path="/register"     element={<Register />} />
+          <Route path="/wallet" element={<Wallet user={user} />} /> {/* YENİ: Wallet Route */}
+          <Route path="/analytics" element={<Analytics user={user} />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/session-tracking" element={<SessionTracking user={user} />} />
+          <Route path="/notifications" element={<Notifications user={user} />} />
+          <Route path="/reporting" element={<Reporting user={user} />} />
         </Routes>
       </main>
-
     </div>
   )
 }

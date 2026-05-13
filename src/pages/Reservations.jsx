@@ -146,7 +146,7 @@ export default function Reservations({ user }) {
 }
 
 const S = {
-  shell: { display: 'flex', flexDirection: 'column', overflowY: 'auto', height: '100%', backgroundColor: 'var(--bg-base)' },  header:     { padding: '32px 40px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' },
+  shell: { display: 'flex', flexDirection: 'column', overflowY: 'auto', height: '100%', backgroundColor: 'var(--bg-base)' },
   header:     { padding: '32px 40px 24px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' },
   pageTitle:  { margin: 0, fontSize: '1.6rem', fontWeight: 700, color: 'var(--text-primary)' },
   pageSub:    { margin: '6px 0 0', color: 'var(--text-secondary)', fontSize: '0.9rem' },

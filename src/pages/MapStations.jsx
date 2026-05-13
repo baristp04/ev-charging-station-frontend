@@ -3,12 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 export default function MapStations({ user }) {
     const iframeRef = useRef(null);
 
-    const [modalOpen, setModalOpen]                 = useState(false);
-    const [reservationData, setReservationData]     = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [reservationData, setReservationData] = useState(null);
     const [selectedVehicleId, setSelectedVehicleId] = useState('');
-    const [vehicles, setVehicles]                   = useState([]);
-    const [submitting, setSubmitting]               = useState(false);
-    const [errorMsg, setErrorMsg]                   = useState('');
+    const [vehicles, setVehicles] = useState([]);
+    const [submitting, setSubmitting] = useState(false);
+    const [errorMsg, setErrorMsg] = useState('');
 
     // Listen for postMessage events sent from navigation.html iframe
     useEffect(() => {
@@ -55,18 +55,18 @@ export default function MapStations({ user }) {
         setErrorMsg('');
 
         const body = {
-            driver_id:  user.driverID,
+            driver_id: user.driverID,
             charger_id: reservationData.charger.id || reservationData.charger.chargerID,
             vehicle_id: parseInt(selectedVehicleId),
-            startTime:  reservationData.startTime,
-            endTime:    reservationData.endTime,
+            startTime: reservationData.startTime,
+            endTime: reservationData.endTime,
         };
 
         try {
             const res = await fetch('http://localhost:8000/api/stations/reserve', {
-                method:  'POST',
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body:    JSON.stringify(body),
+                body: JSON.stringify(body),
             });
 
             if (!res.ok) {
@@ -79,6 +79,7 @@ export default function MapStations({ user }) {
             setSelectedVehicleId('');
             setErrorMsg('');
             alert('✅ Reservation created successfully!');
+            
         } catch {
             setErrorMsg('Could not connect to server.');
         } finally {
