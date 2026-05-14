@@ -8,21 +8,21 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
         :root {
-            --bg: #0a0f1e;
-            --surface: #111827;
-            --surface2: #1a2235;
-            --border: #1e2d45;
-            --accent: #00e5ff;
-            --accent2: #00ff9d;
-            --warn: #ffb800;
-            --danger: #ff3b5c;
-            --text: #e8f0fe;
-            --text-muted: #6b7fa3;
-            --green: #00ff9d;
-            --yellow: #ffb800;
-            --red: #ff3b5c;
-            --purple: #a855f7;
-            --panel-width: 380px;
+            --bg:           #0a0f1e;
+            --surface:      #111827;
+            --surface2:     #1a2235;
+            --border:       #1e2d45;
+            --accent:       #00e5ff;
+            --accent2:      #00ff9d;
+            --warn:         #ffb800;
+            --danger:       #ff3b5c;
+            --text:         #e8f0fe;
+            --text-muted:   #6b7fa3;
+            --green:        #00ff9d;
+            --yellow:       #ffb800;
+            --red:          #ff3b5c;
+            --purple:       #a855f7;
+            --panel-width:  380px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -37,63 +37,14 @@
             flex-direction: column;
         }
 
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            height: 56px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            z-index: 100;
-            flex-shrink: 0;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-family: 'Space Mono', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            color: var(--accent);
-        }
-
-        .logo-icon {
-            width: 28px; height: 28px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
-        }
-
-        .header-status {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        .status-dot {
-            width: 7px; height: 7px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 5px;
-        }
-
-        .status-dot.green  { background: var(--green);  box-shadow: 0 0 6px var(--green); }
-        .status-dot.yellow { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-        .status-dot.red    { background: var(--red);    box-shadow: 0 0 6px var(--red); }
-        .status-dot.purple { background: var(--purple); box-shadow: 0 0 6px var(--purple); }
-
         .main {
             display: flex;
             flex: 1;
             overflow: hidden;
+            position: relative;
         }
 
+        /* ── Side Panel ── */
         .panel {
             width: var(--panel-width);
             background: var(--surface);
@@ -102,8 +53,64 @@
             flex-direction: column;
             overflow: hidden;
             flex-shrink: 0;
+            transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        .panel.collapsed {
+            width: 0;
+            border-right: none;
+        }
+
+        /* ── Panel toggle button — hidden until map is ready ── */
+        .panel-toggle {
+            position: absolute;
+            top: 50%;
+            left: var(--panel-width);
+            transform: translateY(-50%);
+            z-index: 500;
+            width: 20px;
+            height: 52px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-left: none;
+            border-radius: 0 10px 10px 0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-size: 14px;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, opacity 0.3s;
+            user-select: none;
+
+            /* Hidden until the map finishes loading */
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Shown by JS once initMap() completes */
+        .panel-toggle.ready {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .panel-toggle:hover { background: var(--surface2); }
+
+        .panel-toggle.collapsed {
+            left: 0;
+            border-left: none;
+            border-right: 1px solid var(--border);
+            border-radius: 0 10px 10px 0;
+        }
+
+        .panel-toggle-arrow {
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            line-height: 1;
+        }
+
+        .panel-toggle.collapsed .panel-toggle-arrow { transform: rotate(180deg); }
+
+        /* ── Panel inner sections ── */
         .panel-header {
             padding: 18px 20px 14px;
             border-bottom: 1px solid var(--border);
@@ -138,7 +145,8 @@
 
         .search-icon {
             position: absolute;
-            left: 11px; top: 50%;
+            left: 11px;
+            top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
             font-size: 14px;
@@ -166,17 +174,18 @@
             font-family: 'DM Sans', sans-serif;
         }
 
-        .filter-tab.active, .filter-tab:hover {
+        .filter-tab.active,
+        .filter-tab:hover {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(0,229,255,0.08);
+            background: rgba(0, 229, 255, 0.08);
         }
 
         .filter-tab.favorites-tab.active,
         .filter-tab.favorites-tab:hover {
             border-color: #FFD700;
             color: #FFD700;
-            background: rgba(255,215,0,0.08);
+            background: rgba(255, 215, 0, 0.08);
         }
 
         .station-list {
@@ -189,6 +198,7 @@
         .station-list::-webkit-scrollbar-track { background: transparent; }
         .station-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+        /* ── Station cards ── */
         .station-card {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -211,14 +221,15 @@
             transition: background 0.2s;
         }
 
-        .station-card.available::before    { background: var(--green); }
-        .station-card.occupied::before     { background: var(--yellow); }
-        .station-card.offline::before      { background: var(--red); }
-        .station-card.maintenance::before  { background: var(--purple); }
+        .station-card.available::before   { background: var(--green); }
+        .station-card.occupied::before    { background: var(--yellow); }
+        .station-card.offline::before     { background: var(--red); }
+        .station-card.maintenance::before { background: var(--purple); }
 
-        .station-card:hover, .station-card.selected {
+        .station-card:hover,
+        .station-card.selected {
             border-color: var(--accent);
-            background: rgba(0,229,255,0.05);
+            background: rgba(0, 229, 255, 0.05);
         }
 
         .station-card-top {
@@ -246,10 +257,10 @@
             flex-shrink: 0;
         }
 
-        .badge-available    { background: rgba(0,255,157,0.15);   color: var(--green); }
-        .badge-occupied     { background: rgba(255,184,0,0.15);   color: var(--yellow); }
-        .badge-offline      { background: rgba(255,59,92,0.15);   color: var(--red); }
-        .badge-maintenance  { background: rgba(168,85,247,0.15);  color: var(--purple); }
+        .badge-available   { background: rgba(0, 255, 157, 0.15); color: var(--green); }
+        .badge-occupied    { background: rgba(255, 184, 0, 0.15); color: var(--yellow); }
+        .badge-offline     { background: rgba(255, 59, 92, 0.15); color: var(--red); }
+        .badge-maintenance { background: rgba(168, 85, 247, 0.15); color: var(--purple); }
 
         .station-location {
             font-size: 12px;
@@ -280,9 +291,11 @@
             line-height: 1;
             z-index: 1;
         }
+
         .star-btn:hover { transform: translateY(-50%) scale(1.25); }
         .star-btn.active { color: #FFD700; }
 
+        /* ── Detail panel ── */
         .detail-panel {
             display: none;
             flex-direction: column;
@@ -341,11 +354,8 @@
             margin-top: 16px;
         }
 
-        .travel-modes {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 4px;
-        }
+        /* ── Travel mode buttons ── */
+        .travel-modes { display: flex; gap: 6px; margin-bottom: 4px; }
 
         .travel-mode-btn {
             flex: 1;
@@ -361,12 +371,14 @@
             font-family: 'DM Sans', sans-serif;
         }
 
-        .travel-mode-btn.active, .travel-mode-btn:hover {
+        .travel-mode-btn.active,
+        .travel-mode-btn:hover {
             border-color: var(--accent);
             color: var(--accent);
-            background: rgba(0,229,255,0.08);
+            background: rgba(0, 229, 255, 0.08);
         }
 
+        /* ── Route options ── */
         .route-option {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -380,13 +392,14 @@
             align-items: center;
         }
 
-        .route-option:hover, .route-option.selected {
+        .route-option:hover,
+        .route-option.selected {
             border-color: var(--accent);
-            background: rgba(0,229,255,0.05);
+            background: rgba(0, 229, 255, 0.05);
         }
 
         .route-option.selected .route-badge {
-            background: rgba(0,229,255,0.15);
+            background: rgba(0, 229, 255, 0.15);
             color: var(--accent);
         }
 
@@ -437,7 +450,7 @@
 
         .navigate-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(0,229,255,0.3);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.3);
         }
 
         .navigate-btn:disabled {
@@ -448,6 +461,7 @@
             box-shadow: none;
         }
 
+        /* ── Charger items ── */
         .charger-item {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -459,16 +473,8 @@
             align-items: center;
         }
 
-        .charger-type {
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .charger-detail {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
+        .charger-type  { font-size: 13px; font-weight: 500; }
+        .charger-detail { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
         .charger-price {
             font-size: 13px;
@@ -477,11 +483,10 @@
             font-family: 'Space Mono', monospace;
         }
 
-        #map {
-            flex: 1;
-            position: relative;
-        }
+        /* ── Map area ── */
+        #map { flex: 1; position: relative; }
 
+        /* ── Loading overlay (covers the map while Google Maps initialises) ── */
         .loading-overlay {
             position: absolute;
             inset: 0;
@@ -495,7 +500,8 @@
         }
 
         .loading-spinner {
-            width: 36px; height: 36px;
+            width: 36px;
+            height: 36px;
             border: 3px solid var(--border);
             border-top-color: var(--accent);
             border-radius: 50%;
@@ -511,15 +517,12 @@
             letter-spacing: 0.05em;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-        }
+        /* ── Empty state ── */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+        .empty-icon  { font-size: 32px; margin-bottom: 10px; }
+        .empty-text  { font-size: 13px; line-height: 1.5; }
 
-        .empty-icon { font-size: 32px; margin-bottom: 10px; }
-        .empty-text { font-size: 13px; line-height: 1.5; }
-
+        /* ── Map type toggle (top-right corner) ── */
         .map-type-toggle {
             position: absolute;
             top: 12px;
@@ -527,7 +530,7 @@
             z-index: 9999;
             display: flex;
             gap: 4px;
-            background: rgba(10,15,30,0.85);
+            background: rgba(10, 15, 30, 0.85);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 5px;
@@ -561,6 +564,7 @@
             background: var(--surface2);
         }
 
+        /* ── Toast notification ── */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -580,6 +584,7 @@
 
         .toast.show { transform: translateX(-50%) translateY(0); }
 
+        /* ── Google Maps InfoWindow overrides ── */
         .gm-style .gm-style-iw-c {
             background: transparent !important;
             box-shadow: none !important;
@@ -596,6 +601,7 @@
         .gm-style button.gm-ui-hover-effect { display: none !important; }
         .gm-style .gm-style-iw-chr { display: none !important; }
 
+        /* ── Reservation pill shown on map marker ── */
         .map-reservation-pill {
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: #0a0f1e;
@@ -606,7 +612,7 @@
             cursor: pointer;
             font-family: 'DM Sans', sans-serif;
             white-space: nowrap;
-            box-shadow: 0 4px 24px rgba(0,229,255,0.5);
+            box-shadow: 0 4px 24px rgba(0, 229, 255, 0.5);
             transition: transform 0.2s, box-shadow 0.2s;
             user-select: none;
             letter-spacing: 0.03em;
@@ -614,17 +620,20 @@
             align-items: center;
             gap: 6px;
         }
+
         .map-reservation-pill:hover {
             transform: scale(1.05);
-            box-shadow: 0 6px 28px rgba(0,229,255,0.65);
+            box-shadow: 0 6px 28px rgba(0, 229, 255, 0.65);
         }
 
+        /* ── Reservation flow panel ── */
         .reservation-view {
             display: none;
             flex-direction: column;
             height: 100%;
         }
 
+        /* ── Vehicle cards ── */
         .vehicle-card {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -638,39 +647,28 @@
             align-items: center;
         }
 
-        .vehicle-card:hover {
-            border-color: var(--accent);
-            background: rgba(0,229,255,0.05);
-        }
+        .vehicle-card:hover { border-color: var(--accent); background: rgba(0, 229, 255, 0.05); }
 
         .vehicle-card.selected {
             border-color: var(--accent) !important;
-            background: rgba(0,229,255,0.1) !important;
+            background: rgba(0, 229, 255, 0.1) !important;
             box-shadow: 0 0 0 1px var(--accent);
         }
 
-        .vehicle-card-name {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .vehicle-card-detail {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 3px;
-        }
+        .vehicle-card-name   { font-size: 13px; font-weight: 600; color: var(--text); }
+        .vehicle-card-detail { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
 
         .vehicle-connector-badge {
             font-size: 10px;
             font-weight: 600;
             padding: 3px 8px;
             border-radius: 8px;
-            background: rgba(0,229,255,0.12);
+            background: rgba(0, 229, 255, 0.12);
             color: var(--accent);
             font-family: 'Space Mono', monospace;
         }
 
+        /* ── Continue / Pay buttons ── */
         .continue-btn {
             width: 100%;
             padding: 13px;
@@ -689,7 +687,7 @@
 
         .continue-btn:hover:not(:disabled) {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(0,229,255,0.3);
+            box-shadow: 0 6px 20px rgba(0, 229, 255, 0.3);
         }
 
         .continue-btn:disabled {
@@ -700,6 +698,7 @@
             box-shadow: none;
         }
 
+        /* ── Charger cards in reservation flow ── */
         .res-charger-card {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -715,26 +714,19 @@
 
         .res-charger-card:hover:not(.unavailable) {
             border-color: var(--accent);
-            background: rgba(0,229,255,0.05);
+            background: rgba(0, 229, 255, 0.05);
         }
 
         .res-charger-card.selected {
             border-color: var(--accent) !important;
-            background: rgba(0,229,255,0.1) !important;
+            background: rgba(0, 229, 255, 0.1) !important;
             box-shadow: 0 0 0 1px var(--accent);
         }
 
-        .res-charger-card.unavailable {
-            opacity: 0.4;
-            cursor: not-allowed;
-        }
+        .res-charger-card.unavailable { opacity: 0.4; cursor: not-allowed; }
 
-        .res-form-section {
-            margin-top: 16px;
-            padding-top: 16px;
-            border-top: 1px solid var(--border);
-        }
-
+        /* ── Reservation form fields ── */
+        .res-form-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
         .res-field { margin-bottom: 14px; }
 
         .res-field label {
@@ -765,9 +757,10 @@
         .res-field select:focus,
         .res-field input[type="datetime-local"]:focus { border-color: var(--accent); }
 
+        /* ── Cost estimate box ── */
         .cost-box {
-            background: rgba(0,229,255,0.06);
-            border: 1px solid rgba(0,229,255,0.2);
+            background: rgba(0, 229, 255, 0.06);
+            border: 1px solid rgba(0, 229, 255, 0.2);
             border-radius: 10px;
             padding: 16px;
             margin-bottom: 14px;
@@ -791,11 +784,7 @@
             margin-bottom: 6px;
         }
 
-        .cost-detail {
-            font-size: 11px;
-            color: var(--text-muted);
-            line-height: 1.6;
-        }
+        .cost-detail { font-size: 11px; color: var(--text-muted); line-height: 1.6; }
 
         .pay-btn {
             width: 100%;
@@ -815,7 +804,7 @@
 
         .pay-btn:hover:not(:disabled) {
             transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(0,255,157,0.3);
+            box-shadow: 0 6px 20px rgba(0, 255, 157, 0.3);
         }
 
         .pay-btn:disabled {
@@ -826,9 +815,10 @@
             box-shadow: none;
         }
 
+        /* ── Selected item banners ── */
         .selected-charger-banner {
-            background: rgba(0,229,255,0.08);
-            border: 1px solid rgba(0,229,255,0.25);
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.25);
             border-radius: 8px;
             padding: 10px 14px;
             margin-bottom: 12px;
@@ -840,8 +830,8 @@
         }
 
         .selected-vehicle-banner {
-            background: rgba(0,255,157,0.08);
-            border: 1px solid rgba(0,255,157,0.25);
+            background: rgba(0, 255, 157, 0.08);
+            border: 1px solid rgba(0, 255, 157, 0.25);
             border-radius: 8px;
             padding: 10px 14px;
             margin-bottom: 12px;
@@ -852,22 +842,11 @@
             gap: 8px;
         }
 
-        /* ── In-App Navigation Panel ── */
-        .nav-panel {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-        }
+        /* ── In-App Navigation panel ── */
+        .nav-panel { display: none; flex-direction: column; height: 100%; }
+        .nav-panel.active { display: flex; }
 
-        .nav-panel.active {
-            display: flex;
-        }
-
-        .nav-header {
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
+        .nav-header { padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 
         .nav-header-top {
             display: flex;
@@ -876,17 +855,12 @@
             margin-bottom: 10px;
         }
 
-        .nav-destination {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text);
-            flex: 1;
-        }
+        .nav-destination { font-size: 15px; font-weight: 600; color: var(--text); flex: 1; }
 
         .nav-stop-btn {
             padding: 6px 14px;
             border-radius: 20px;
-            background: rgba(255,59,92,0.15);
+            background: rgba(255, 59, 92, 0.15);
             border: 1px solid var(--red);
             color: var(--red);
             font-size: 12px;
@@ -896,14 +870,9 @@
             transition: all 0.2s;
         }
 
-        .nav-stop-btn:hover {
-            background: rgba(255,59,92,0.25);
-        }
+        .nav-stop-btn:hover { background: rgba(255, 59, 92, 0.25); }
 
-        .nav-stats {
-            display: flex;
-            gap: 12px;
-        }
+        .nav-stats { display: flex; gap: 12px; }
 
         .nav-stat {
             background: var(--surface2);
@@ -929,15 +898,11 @@
             letter-spacing: 0.06em;
         }
 
-        .nav-steps {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px 16px;
-        }
-
+        .nav-steps { flex: 1; overflow-y: auto; padding: 12px 16px; }
         .nav-steps::-webkit-scrollbar { width: 4px; }
         .nav-steps::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+        /* ── Turn-by-turn step items ── */
         .nav-step {
             display: flex;
             gap: 12px;
@@ -947,16 +912,14 @@
             position: relative;
         }
 
-        .nav-step:last-child {
-            border-bottom: none;
-        }
+        .nav-step:last-child { border-bottom: none; }
 
         .nav-step.active-step {
-            background: rgba(0,229,255,0.05);
+            background: rgba(0, 229, 255, 0.05);
             border-radius: 8px;
-            padding: 10px 10px;
+            padding: 10px;
             margin: 0 -10px;
-            border-bottom: 1px solid rgba(0,229,255,0.2);
+            border-bottom: 1px solid rgba(0, 229, 255, 0.2);
         }
 
         .nav-step-icon {
@@ -973,36 +936,19 @@
         }
 
         .nav-step.active-step .nav-step-icon {
-            background: rgba(0,229,255,0.15);
+            background: rgba(0, 229, 255, 0.15);
             border-color: var(--accent);
         }
 
-        .nav-step-content {
-            flex: 1;
-        }
+        .nav-step-content { flex: 1; }
+        .nav-step-instruction { font-size: 13px; color: var(--text); line-height: 1.4; margin-bottom: 3px; }
+        .nav-step.active-step .nav-step-instruction { color: var(--accent); font-weight: 600; }
+        .nav-step-distance { font-size: 11px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
 
-        .nav-step-instruction {
-            font-size: 13px;
-            color: var(--text);
-            line-height: 1.4;
-            margin-bottom: 3px;
-        }
-
-        .nav-step.active-step .nav-step-instruction {
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        .nav-step-distance {
-            font-size: 11px;
-            color: var(--text-muted);
-            font-family: 'Space Mono', monospace;
-        }
-
-        /* current step big banner */
+        /* ── Current-step highlight card ── */
         .nav-current-step {
-            background: rgba(0,229,255,0.08);
-            border: 1px solid rgba(0,229,255,0.25);
+            background: rgba(0, 229, 255, 0.08);
+            border: 1px solid rgba(0, 229, 255, 0.25);
             border-radius: 10px;
             padding: 14px 16px;
             margin-bottom: 12px;
@@ -1012,41 +958,24 @@
             flex-shrink: 0;
         }
 
-        .nav-current-icon {
-            font-size: 28px;
-            flex-shrink: 0;
-        }
+        .nav-current-icon { font-size: 28px; flex-shrink: 0; }
+        .nav-current-text { flex: 1; }
+        .nav-current-instruction { font-size: 14px; font-weight: 600; color: var(--accent); line-height: 1.4; margin-bottom: 3px; }
+        .nav-current-dist  { font-size: 12px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
 
-        .nav-current-text {
-            flex: 1;
-        }
-
-        .nav-current-instruction {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--accent);
-            line-height: 1.4;
-            margin-bottom: 3px;
-        }
-
-        .nav-current-dist {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-family: 'Space Mono', monospace;
-        }
-
+        /* ── Arrival banner ── */
         .nav-arrived-banner {
-            background: rgba(0,255,157,0.1);
-            border: 1px solid rgba(0,255,157,0.3);
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid rgba(0, 255, 157, 0.3);
             border-radius: 10px;
             padding: 20px;
             text-align: center;
             margin: 20px 0;
         }
 
-        .nav-arrived-icon { font-size: 36px; margin-bottom: 8px; }
+        .nav-arrived-icon  { font-size: 36px; margin-bottom: 8px; }
         .nav-arrived-title { font-size: 18px; font-weight: 700; color: var(--accent2); margin-bottom: 4px; }
-        .nav-arrived-sub { font-size: 12px; color: var(--text-muted); }
+        .nav-arrived-sub   { font-size: 12px; color: var(--text-muted); }
 
         .nav-mode-badge {
             display: inline-flex;
@@ -1066,9 +995,10 @@
 
 <div class="main">
 
-    <div class="panel">
+    <!-- ── Side Panel ── -->
+    <div class="panel collapsed" id="sidePanel">
 
-        <!-- Station List View -->
+        <!-- Station list view -->
         <div id="listView" style="display:flex; flex-direction:column; height:100%;">
             <div class="panel-header">
                 <div class="panel-title">Stations</div>
@@ -1078,11 +1008,11 @@
                 </div>
             </div>
             <div class="filter-tabs">
-                <button class="filter-tab active" onclick="setFilter('all', this)">All</button>
-                <button class="filter-tab" onclick="setFilter('available', this)">Available</button>
-                <button class="filter-tab" onclick="setFilter('occupied', this)">Occupied</button>
-                <button class="filter-tab" onclick="setFilter('offline', this)">Offline</button>
-                <button class="filter-tab" onclick="setFilter('maintenance', this)">Maintenance</button>
+                <button class="filter-tab active"       onclick="setFilter('all', this)">All</button>
+                <button class="filter-tab"              onclick="setFilter('available', this)">Available</button>
+                <button class="filter-tab"              onclick="setFilter('occupied', this)">Occupied</button>
+                <button class="filter-tab"              onclick="setFilter('offline', this)">Offline</button>
+                <button class="filter-tab"              onclick="setFilter('maintenance', this)">Maintenance</button>
                 <button class="filter-tab favorites-tab" onclick="setFilter('favorites', this)">⭐ Favorites</button>
             </div>
             <div class="station-list" id="stationList">
@@ -1093,7 +1023,7 @@
             </div>
         </div>
 
-        <!-- Detail View -->
+        <!-- Station detail view -->
         <div id="detailView" class="detail-panel">
             <div class="detail-back" onclick="showList()">← Back</div>
             <div class="detail-content" id="detailContent"></div>
@@ -1102,13 +1032,13 @@
             </button>
         </div>
 
-        <!-- Reservation View -->
+        <!-- Reservation flow view -->
         <div id="reservationView" class="reservation-view">
             <div class="detail-back" id="resBackBtn" onclick="backFromReservation()">← Back</div>
             <div class="detail-content" id="reservationContent"></div>
         </div>
 
-        <!-- ── In-App Navigation View ── -->
+        <!-- In-app navigation view -->
         <div id="navView" class="nav-panel">
             <div class="nav-header">
                 <div class="nav-header-top">
@@ -1135,17 +1065,25 @@
 
     </div>
 
-    <!-- Map Area -->
+    <!-- ── Panel toggle — rendered but invisible until map is ready ── -->
+    <div class="panel-toggle collapsed" id="panelToggle" onclick="togglePanel()">
+        <span class="panel-toggle-arrow">‹</span>
+    </div>
+
+    <!-- ── Map area ── -->
     <div style="position:relative; flex:1; overflow:hidden;">
         <div id="map" style="width:100%; height:100%;"></div>
+
+        <!-- Covers the map until Google Maps finishes initialising -->
         <div class="loading-overlay" id="mapLoading">
             <div class="loading-spinner"></div>
             <div class="loading-text">Loading map...</div>
         </div>
+
         <div class="map-type-toggle">
-            <button class="map-type-btn active" id="btn-roadmap" onclick="setMapType('roadmap', this)">🗺️ Roadmap</button>
-            <button class="map-type-btn" id="btn-satellite" onclick="setMapType('satellite', this)">🛰️ Satellite</button>
-            <button class="map-type-btn" id="btn-hybrid" onclick="setMapType('hybrid', this)">🌍 Hybrid</button>
+            <button class="map-type-btn active" id="btn-roadmap"   onclick="setMapType('roadmap', this)">🗺️ Roadmap</button>
+            <button class="map-type-btn"        id="btn-satellite" onclick="setMapType('satellite', this)">🛰️ Satellite</button>
+            <button class="map-type-btn"        id="btn-hybrid"    onclick="setMapType('hybrid', this)">🌍 Hybrid</button>
         </div>
     </div>
 
@@ -1159,31 +1097,31 @@
     let map, userMarker;
     let directionsRenderer = null;
 
-    let allStations = [];
+    let allStations      = [];
     let filteredStations = [];
 
-    let selectedStation  = null;
-    let currentFilter    = 'all';
-    let currentTravelMode = 'DRIVING';
-    let currentRoutes     = [];
+    let selectedStation    = null;
+    let currentFilter      = 'all';
+    let currentTravelMode  = 'DRIVING';
+    let currentRoutes      = [];
     let selectedRouteIndex = 0;
-    let userLocation = null;
+    let userLocation       = null;
 
     let reservationPill = null;
     let currentChargers = [];
     let selectedCharger = null;
 
-    let userVehicles  = [];
+    let userVehicles    = [];
     let selectedVehicle = null;
 
-    let resStep = 'vehicle';
+    let resStep     = 'vehicle';
     let favoriteIds = new Set();
 
     // Navigation state
-    let navSteps = [];
-    let navStepIndex = 0;
+    let navSteps       = [];
+    let navStepIndex   = 0;
     let navSimInterval = null;
-    let navRoute = null;
+    let navRoute       = null;
 
     const STATUS_LABELS = {
         available:   'Available',
@@ -1201,6 +1139,19 @@
 
     let currentDriverId = null;
 
+    // ── Panel toggle ──────────────────────────────────────────────────────────
+    function togglePanel() {
+        const panel     = document.getElementById('sidePanel');
+        const toggle    = document.getElementById('panelToggle');
+        const collapsed = panel.classList.toggle('collapsed');
+        toggle.classList.toggle('collapsed', collapsed);
+        // Trigger map resize after CSS transition so tiles fill correctly
+        setTimeout(() => {
+            if (map) google.maps.event.trigger(map, 'resize');
+        }, 360);
+    }
+
+    // ── postMessage listeners (from parent React app) ─────────────────────────
     window.addEventListener('message', (e) => {
         if (e.data?.type === 'SET_VEHICLES') {
             userVehicles = e.data.vehicles || [];
@@ -1211,10 +1162,9 @@
         }
     });
 
-    function getDriverId() {
-        return currentDriverId;
-    }
+    function getDriverId() { return currentDriverId; }
 
+    // ── Favorites ─────────────────────────────────────────────────────────────
     async function loadFavorites() {
         const driverID = getDriverId();
         if (!driverID) return;
@@ -1255,8 +1205,16 @@
         }
     }
 
+    // ── Map initialisation ────────────────────────────────────────────────────
     function initMap() {
+        // Hide the map loading overlay
         document.getElementById('mapLoading').style.display = 'none';
+
+        // Show the panel toggle now that the map is ready
+        document.getElementById('panelToggle').classList.add('ready');
+
+        // Notify parent React app that the iframe is fully ready
+        window.parent.postMessage({ type: 'MAP_READY' }, '*');
 
         map = new google.maps.Map(document.getElementById('map'), {
             center: { lat: 38.4192, lng: 27.1287 },
@@ -1273,6 +1231,7 @@
             if (reservationPill) reservationPill.close();
         });
 
+        // Request user's geolocation
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -1281,12 +1240,16 @@
                     map,
                     title: 'Your Location',
                     icon: {
-                        path: google.maps.SymbolPath.CIRCLE,
-                        scale: 9,
-                        fillColor: '#00e5ff',
-                        fillOpacity: 1,
-                        strokeColor: '#ffffff',
-                        strokeWeight: 2.5
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44">
+                                <circle cx="22" cy="22" r="10" fill="#00e5ff" stroke="#ffffff" stroke-width="2.5"/>
+                                <rect x="8" y="34" width="28" height="14" rx="7" fill="#00e5ff"/>
+                                <text x="22" y="44" text-anchor="middle" fill="#0a0f1e"
+                                    font-size="8" font-weight="700" font-family="DM Sans, sans-serif">YOU</text>
+                            </svg>
+                        `),
+                        scaledSize: new google.maps.Size(44, 48),
+                        anchor: new google.maps.Point(22, 22)
                     },
                     zIndex: 999
                 });
@@ -1297,6 +1260,7 @@
         loadStations();
     }
 
+    // ── Directions renderer ───────────────────────────────────────────────────
     function createFreshRenderer() {
         if (directionsRenderer) {
             directionsRenderer.setMap(null);
@@ -1306,20 +1270,21 @@
             map,
             suppressMarkers: false,
             polylineOptions: {
-                strokeColor: '#00e5ff',
-                strokeWeight: 4,
+                strokeColor:   '#00e5ff',
+                strokeWeight:  4,
                 strokeOpacity: 0.85
             }
         });
     }
 
+    // ── Station loading & rendering ───────────────────────────────────────────
     async function loadStations() {
         try {
             const res = await fetch(`${API_BASE}/stations`);
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
 
-            allStations = Array.isArray(data) ? data : [];
+            allStations      = Array.isArray(data) ? data : [];
             filteredStations = [...allStations];
 
             document.getElementById('listLoading').style.display = 'none';
@@ -1351,7 +1316,7 @@
         }
 
         list.innerHTML = filteredStations.map(s => {
-            const id = s.id || s.stationID;
+            const id    = s.id || s.stationID;
             const label = STATUS_LABELS[s.status] || s.status;
             const isFav = favoriteIds.has(id);
             return `
@@ -1371,6 +1336,7 @@
         }).join('');
     }
 
+    // ── Map markers ───────────────────────────────────────────────────────────
     let markers = [];
 
     function placeMarkers() {
@@ -1385,12 +1351,12 @@
                 map,
                 title: s.name,
                 icon: {
-                    path: google.maps.SymbolPath.CIRCLE,
-                    scale: 11,
-                    fillColor: color,
-                    fillOpacity: 0.95,
-                    strokeColor: '#0a0f1e',
-                    strokeWeight: 2.5
+                    path:          google.maps.SymbolPath.CIRCLE,
+                    scale:         11,
+                    fillColor:     color,
+                    fillOpacity:   0.95,
+                    strokeColor:   '#0a0f1e',
+                    strokeWeight:  2.5
                 }
             });
             marker.addListener('click', () => markerClick(id));
@@ -1398,6 +1364,7 @@
         });
     }
 
+    // ── Marker click — opens detail + reservation pill ────────────────────────
     function markerClick(id) {
         const station = allStations.find(s => (s.id || s.stationID) === id);
         if (!station) return;
@@ -1417,10 +1384,10 @@
 
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
-            content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
-            position: { lat: station.latitude, lng: station.longitude },
+            content:       `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
+            position:      { lat: station.latitude, lng: station.longitude },
             disableAutoPan: true,
-            pixelOffset: new google.maps.Size(0, -32)
+            pixelOffset:   new google.maps.Size(0, -32)
         });
         reservationPill.open(map);
 
@@ -1438,6 +1405,7 @@
         }
     }
 
+    // ── Station card click ────────────────────────────────────────────────────
     async function selectStation(id) {
         selectedStation = allStations.find(s => (s.id || s.stationID) === id);
         if (!selectedStation) return;
@@ -1451,10 +1419,10 @@
 
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
-            content: `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
-            position: { lat: selectedStation.latitude, lng: selectedStation.longitude },
+            content:       `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
+            position:      { lat: selectedStation.latitude, lng: selectedStation.longitude },
             disableAutoPan: true,
-            pixelOffset: new google.maps.Size(0, -32)
+            pixelOffset:   new google.maps.Size(0, -32)
         });
         reservationPill.open(map);
 
@@ -1463,8 +1431,9 @@
         if (userLocation) await calculateRoutes(currentTravelMode);
     }
 
+    // ── Show station detail panel ─────────────────────────────────────────────
     function showDetail(station) {
-        document.getElementById('listView').style.display = 'none';
+        document.getElementById('listView').style.display        = 'none';
         document.getElementById('reservationView').style.display = 'none';
         document.getElementById('navView').classList.remove('active');
         document.getElementById('detailView').classList.add('active');
@@ -1505,8 +1474,8 @@
 
     async function loadChargers(stationId) {
         try {
-            const res     = await fetch(`${API_BASE}/stations/${stationId}`);
-            const data    = await res.json();
+            const res      = await fetch(`${API_BASE}/stations/${stationId}`);
+            const data     = await res.json();
             const chargers = data.chargers || [];
             currentChargers = chargers;
 
@@ -1542,28 +1511,25 @@
         }
     }
 
+    // ── Route calculation ─────────────────────────────────────────────────────
     async function calculateRoutes(mode) {
         if (!userLocation || !selectedStation) return;
 
         const travelMode = google.maps.TravelMode[mode];
-        if (!travelMode) {
-            console.error('Unknown travel mode:', mode);
-            return;
-        }
+        if (!travelMode) { console.error('Unknown travel mode:', mode); return; }
 
         createFreshRenderer();
 
-        const wantAlternatives = (mode === 'DRIVING');
-
+        const wantAlternatives  = (mode === 'DRIVING');
         const directionsService = new google.maps.DirectionsService();
 
         directionsService.route(
             {
-                origin:      userLocation,
-                destination: { lat: selectedStation.latitude, lng: selectedStation.longitude },
+                origin:                   userLocation,
+                destination:              { lat: selectedStation.latitude, lng: selectedStation.longitude },
                 travelMode,
                 provideRouteAlternatives: wantAlternatives,
-                language: 'en'
+                language:                 'en'
             },
             (result, status) => {
                 if (status === google.maps.DirectionsStatus.OK) {
@@ -1576,7 +1542,7 @@
                     document.getElementById('navigateBtn').disabled = false;
                 } else {
                     currentRoutes = [];
-                    navRoute = null;
+                    navRoute      = null;
                     const el = document.getElementById('routeOptions');
                     if (el) {
                         el.innerHTML = `
@@ -1604,6 +1570,7 @@
         return `${meters} m`;
     }
 
+    // Returns true if the route contains a ferry leg
     function routeHasFerry(route) {
         const steps = route.legs?.[0]?.steps || [];
         return steps.some(step => {
@@ -1624,6 +1591,7 @@
         const el = document.getElementById('routeOptions');
         if (!el) return;
 
+        // De-duplicate routes by duration and sort fastest first
         const seen   = new Set();
         const unique = routes.filter(r => {
             const key = r.legs[0].duration.value;
@@ -1633,7 +1601,7 @@
         });
         unique.sort((a, b) => a.legs[0].duration.value - b.legs[0].duration.value);
 
-        const anyFerry = unique.some(r => routeHasFerry(r));
+        const anyFerry    = unique.some(r => routeHasFerry(r));
         const ferryBanner = anyFerry ? `
             <div style="
                 background:rgba(255,184,0,0.10);
@@ -1670,7 +1638,7 @@
         }).join('');
     }
 
-    function selectRoute(index, el) {
+    function selectRoute(index) {
         selectedRouteIndex = index;
         document.querySelectorAll('.route-option').forEach((r, i) => {
             r.classList.toggle('selected', i === index);
@@ -1682,21 +1650,15 @@
 
     function changeTravelMode(mode, btn) {
         currentTravelMode = mode;
-
         document.querySelectorAll('.travel-mode-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-
         const el = document.getElementById('routeOptions');
         if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Calculating...</div>';
-
         document.getElementById('navigateBtn').disabled = true;
-
         calculateRoutes(mode);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // ── startNavigation — in-app turn-by-turn navigation panel
-    // ─────────────────────────────────────────────────────────────────────────
+    // ── In-app navigation ─────────────────────────────────────────────────────
     function startNavigation() {
         if (!selectedStation) { showToast('No station selected.'); return; }
         if (!userLocation)    { showToast('Location not available.'); return; }
@@ -1705,7 +1667,6 @@
         const route = navRoute.routes[selectedRouteIndex] || navRoute.routes[0];
         const leg   = route.legs[0];
 
-        // Parse steps from the Google Directions result
         navSteps = leg.steps.map(step => ({
             instruction: stripHtml(step.html_instructions || step.instructions || ''),
             distance:    step.distance?.text || '',
@@ -1717,31 +1678,25 @@
 
         navStepIndex = 0;
 
-        // Calculate ETA
         const durationSec = leg.duration.value;
-        const etaDate = new Date(Date.now() + durationSec * 1000);
-        const etaStr  = etaDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const etaDate     = new Date(Date.now() + durationSec * 1000);
+        const etaStr      = etaDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 
-        // Switch to nav view
-        document.getElementById('listView').style.display     = 'none';
+        document.getElementById('listView').style.display        = 'none';
         document.getElementById('detailView').classList.remove('active');
         document.getElementById('reservationView').style.display = 'none';
         document.getElementById('navView').classList.add('active');
 
-        // Fill header stats
         document.getElementById('navDestination').textContent = selectedStation.name;
-        document.getElementById('navEta').textContent      = etaStr;
-        document.getElementById('navDuration').textContent  = formatDuration(durationSec);
-        document.getElementById('navDistance').textContent  = formatDistance(leg.distance.value);
+        document.getElementById('navEta').textContent         = etaStr;
+        document.getElementById('navDuration').textContent    = formatDuration(durationSec);
+        document.getElementById('navDistance').textContent    = formatDistance(leg.distance.value);
 
         renderNavSteps();
         showToast('Navigation started!');
 
-        // Watch real GPS — advance steps when user is close to the next waypoint
-        if (navSimInterval !== null) {
-            navigator.geolocation.clearWatch(navSimInterval);
-            navSimInterval = null;
-        }
+        // Watch real GPS position and advance steps automatically
+        if (navSimInterval !== null) { navigator.geolocation.clearWatch(navSimInterval); navSimInterval = null; }
         navSimInterval = navigator.geolocation.watchPosition(pos => {
             userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
             if (userMarker) userMarker.setPosition(userLocation);
@@ -1749,76 +1704,62 @@
         }, null, { enableHighAccuracy: true, maximumAge: 3000 });
     }
 
-    // ── Check if user is close enough to advance to the next nav step ─────────
+    // Advances to the next nav step when within 25 m of the step's end point
     function advanceStepIfNeeded() {
         if (!navSteps.length || navStepIndex >= navSteps.length) return;
-
         const step = navSteps[navStepIndex];
-        if (!step || !step.endLat) return; // no position data for this step
+        if (!step || !step.endLat) return;
 
-        const dist = haversineMeters(
-            userLocation.lat, userLocation.lng,
-            step.endLat, step.endLng
-        );
+        const dist = haversineMeters(userLocation.lat, userLocation.lng, step.endLat, step.endLng);
 
-        // Advance when within 25 m of the step's end point
         if (dist <= 25) {
             if (navStepIndex < navSteps.length - 1) {
                 navStepIndex++;
                 renderNavSteps();
             } else {
-                if (navSimInterval !== null) {
-                    navigator.geolocation.clearWatch(navSimInterval);
-                    navSimInterval = null;
-                }
+                if (navSimInterval !== null) { navigator.geolocation.clearWatch(navSimInterval); navSimInterval = null; }
                 renderArrived();
             }
         }
     }
 
-    // ── Haversine distance in metres between two lat/lng points ───────────────
     function haversineMeters(lat1, lng1, lat2, lng2) {
-        const R = 6371000;
+        const R    = 6371000;
         const dLat = (lat2 - lat1) * Math.PI / 180;
         const dLng = (lng2 - lng1) * Math.PI / 180;
-        const a = Math.sin(dLat/2)**2 +
-                  Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLng/2)**2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        const a    = Math.sin(dLat / 2) ** 2 +
+                     Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    // ── Strip HTML tags from Google's instruction strings ─────────────────────
     function stripHtml(html) {
         const tmp = document.createElement('div');
         tmp.innerHTML = html;
         return tmp.textContent || tmp.innerText || '';
     }
 
-    // ── Get a directional emoji for a step instruction ────────────────────────
     function stepIcon(instruction) {
         const t = instruction.toLowerCase();
-        if (t.includes('arrive') || t.includes('destination')) return '🏁';
+        if (t.includes('arrive') || t.includes('destination'))               return '🏁';
         if (t.includes('ferry') || t.includes('vapur') || t.includes('feribot')) return '⛴️';
         if (t.includes('bus') || t.includes('transit') || t.includes('otobüs')) return '🚌';
-        if (t.includes('subway') || t.includes('metro')) return '🚇';
-        if (t.includes('train') || t.includes('tren')) return '🚆';
-        if (t.includes('right') || t.includes('sağ'))  return '↪️';
-        if (t.includes('left')  || t.includes('sol'))  return '↩️';
-        if (t.includes('u-turn') || t.includes('u dönüşü')) return '🔄';
-        if (t.includes('roundabout') || t.includes('dönel')) return '🔵';
-        if (t.includes('ramp') || t.includes('rampa'))  return '↗️';
-        if (t.includes('merge') || t.includes('birleş')) return '🔀';
-        if (t.includes('walk') || t.includes('yürü'))   return '🚶';
+        if (t.includes('subway') || t.includes('metro'))                     return '🚇';
+        if (t.includes('train') || t.includes('tren'))                       return '🚆';
+        if (t.includes('right') || t.includes('sağ'))                        return '↪️';
+        if (t.includes('left')  || t.includes('sol'))                        return '↩️';
+        if (t.includes('u-turn') || t.includes('u dönüşü'))                  return '🔄';
+        if (t.includes('roundabout') || t.includes('dönel'))                 return '🔵';
+        if (t.includes('ramp') || t.includes('rampa'))                       return '↗️';
+        if (t.includes('merge') || t.includes('birleş'))                     return '🔀';
+        if (t.includes('walk') || t.includes('yürü'))                        return '🚶';
         return '⬆️';
     }
 
-    // ── Render the step list in the nav panel ─────────────────────────────────
     function renderNavSteps() {
         const container = document.getElementById('navSteps');
         if (!container) return;
 
         let html = '';
-
-        // Current step big banner
         const current = navSteps[navStepIndex];
         if (current) {
             html += `
@@ -1831,11 +1772,9 @@
                 </div>`;
         }
 
-        // Mode badge
         const modeLabel = { DRIVING: '🚗 Driving', WALKING: '🚶 Walking', TRANSIT: '🚌 Transit' };
         html += `<div style="margin-bottom:10px;"><span class="nav-mode-badge">${modeLabel[currentTravelMode] || currentTravelMode}</span></div>`;
 
-        // All steps list
         html += navSteps.map((step, i) => `
             <div class="nav-step ${i === navStepIndex ? 'active-step' : ''}">
                 <div class="nav-step-icon">${i < navStepIndex ? '✓' : stepIcon(step.instruction)}</div>
@@ -1847,12 +1786,10 @@
 
         container.innerHTML = html;
 
-        // Scroll the active step into view
         const activeEl = container.querySelector('.active-step');
         if (activeEl) activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    // ── Show the arrived banner when all steps are done ───────────────────────
     function renderArrived() {
         const container = document.getElementById('navSteps');
         if (!container) return;
@@ -1868,17 +1805,11 @@
         showToast('You have arrived!');
     }
 
-    // ── Stop navigation and return to detail view ─────────────────────────────
     function stopNavigation() {
-        if (navSimInterval !== null) {
-            navigator.geolocation.clearWatch(navSimInterval);
-            navSimInterval = null;
-        }
-        navStepIndex   = 0;
-        navSteps       = [];
-
+        if (navSimInterval !== null) { navigator.geolocation.clearWatch(navSimInterval); navSimInterval = null; }
+        navStepIndex = 0;
+        navSteps     = [];
         document.getElementById('navView').classList.remove('active');
-
         if (selectedStation) {
             showDetail(selectedStation);
             if (userLocation) calculateRoutes(currentTravelMode);
@@ -1887,17 +1818,16 @@
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-
+    // ── Reservation flow ──────────────────────────────────────────────────────
     async function openReservationPanel() {
         if (!selectedStation) return;
         if (reservationPill) reservationPill.close();
 
         selectedCharger = null;
         selectedVehicle = null;
-        resStep = 'vehicle';
+        resStep         = 'vehicle';
 
-        document.getElementById('listView').style.display = 'none';
+        document.getElementById('listView').style.display        = 'none';
         document.getElementById('detailView').classList.remove('active');
         document.getElementById('navView').classList.remove('active');
         document.getElementById('reservationView').style.display = 'flex';
@@ -1916,7 +1846,6 @@
 
     function renderVehicleStep() {
         const label = STATUS_LABELS[selectedStation.status] || selectedStation.status;
-
         document.getElementById('reservationContent').innerHTML = `
             <div class="detail-station-name">${selectedStation.name}</div>
             <div class="detail-location">📍 ${selectedStation.location}</div>
@@ -1926,8 +1855,7 @@
             <div class="section-label">Step 1 of 2 — Select Your Vehicle</div>
             <div id="vehicleList">${renderVehicleCards()}</div>
 
-            <button class="continue-btn" id="continueToChargerBtn"
-                    onclick="goToChargerStep()" disabled>
+            <button class="continue-btn" id="continueToChargerBtn" onclick="goToChargerStep()" disabled>
                 Continue →
             </button>
         `;
@@ -1963,7 +1891,7 @@
 
     function goToChargerStep() {
         if (!selectedVehicle) return;
-        resStep = 'charger';
+        resStep         = 'charger';
         selectedCharger = null;
 
         const label = STATUS_LABELS[selectedStation.status] || selectedStation.status;
@@ -2085,14 +2013,18 @@
 
         const resForm = document.getElementById('resForm');
         resForm.style.display = 'block';
-        document.getElementById('hoursSelect').value = '';
-        document.getElementById('reservationTime').value = '';
+        document.getElementById('hoursSelect').value         = '';
+        document.getElementById('reservationTime').value     = '';
         document.getElementById('costDisplay').style.display = 'none';
-        document.getElementById('payBtn').disabled = true;
+        document.getElementById('payBtn').disabled           = true;
 
+        // Set minimum datetime to now (local time) to prevent past-time reservations
         const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('reservationTime').min = now.toISOString().slice(0, 16);
+        const pad = n => String(n).padStart(2, '0');
+        const localMin =
+            `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` +
+            `T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        document.getElementById('reservationTime').min = localMin;
 
         resForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -2105,6 +2037,24 @@
         if (!hours || !time) {
             document.getElementById('costDisplay').style.display = 'none';
             document.getElementById('payBtn').disabled = true;
+            return;
+        }
+
+        const selectedTime = new Date(time);
+        const now          = new Date();
+
+        if (selectedTime < now) {
+            document.getElementById('costDisplay').style.display = 'none';
+            document.getElementById('payBtn').disabled = true;
+            showToast('⚠️ Cannot reserve a past time slot.');
+            return;
+        }
+
+        const maxTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        if (selectedTime > maxTime) {
+            document.getElementById('costDisplay').style.display = 'none';
+            document.getElementById('payBtn').disabled = true;
+            showToast('⚠️ Cannot reserve more than 24 hours in advance.');
             return;
         }
 
@@ -2122,15 +2072,22 @@
             `${energyKwh.toFixed(1)} kWh × ${selectedCharger.pricePerKwh} ₺/kWh`;
 
         document.getElementById('costDisplay').style.display = 'block';
-        document.getElementById('payBtn').disabled = false;
+        document.getElementById('payBtn').disabled           = false;
     }
 
+    // Sends reservation details to parent React app via postMessage
     function proceedToPayment() {
         if (!selectedStation || !selectedCharger) return;
-        const hours            = parseFloat(document.getElementById('hoursSelect').value);
+        const hours              = parseFloat(document.getElementById('hoursSelect').value);
         const reservationTimeVal = document.getElementById('reservationTime').value;
 
         if (!hours || !reservationTimeVal) { showToast('Please fill all fields.'); return; }
+
+        const selectedTime = new Date(reservationTimeVal);
+        if (selectedTime < new Date()) {
+            showToast('⚠️ Cannot reserve a past time slot.');
+            return;
+        }
 
         const startTime = new Date(reservationTimeVal).toISOString();
         const endTime   = new Date(new Date(reservationTimeVal).getTime() + hours * 3600000).toISOString();
@@ -2153,9 +2110,10 @@
 
     function backFromReservation() {
         if (resStep === 'charger') {
-            resStep = 'vehicle';
+            resStep         = 'vehicle';
             selectedCharger = null;
             renderVehicleStep();
+            // Restore previously selected vehicle highlight
             if (selectedVehicle) {
                 const card = document.getElementById(`vcard-${selectedVehicle.vehicleID}`);
                 if (card) {
@@ -2180,6 +2138,7 @@
         }
     }
 
+    // ── Filter & search ───────────────────────────────────────────────────────
     function setFilter(filter, btn) {
         currentFilter = filter;
         document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
@@ -2191,7 +2150,6 @@
 
     function applyFilters() {
         const q = document.getElementById('searchInput').value.toLowerCase();
-
         filteredStations = allStations.filter(s => {
             const id = s.id || s.stationID;
             if (currentFilter === 'favorites') {
@@ -2201,22 +2159,18 @@
             }
             return !q || s.name.toLowerCase().includes(q) || s.location.toLowerCase().includes(q);
         });
-
         renderStationList();
     }
 
     function showList() {
         if (navSimInterval !== null) { navigator.geolocation.clearWatch(navSimInterval); navSimInterval = null; }
         if (reservationPill) reservationPill.close();
-        document.getElementById('listView').style.display   = 'flex';
+        document.getElementById('listView').style.display        = 'flex';
         document.getElementById('detailView').classList.remove('active');
         document.getElementById('reservationView').style.display = 'none';
         document.getElementById('navView').classList.remove('active');
 
-        if (directionsRenderer) {
-            directionsRenderer.setMap(null);
-            directionsRenderer = null;
-        }
+        if (directionsRenderer) { directionsRenderer.setMap(null); directionsRenderer = null; }
 
         selectedStation = null;
         selectedCharger = null;
@@ -2227,6 +2181,7 @@
         document.getElementById('navigateBtn').disabled = true;
     }
 
+    // ── Map type toggle ───────────────────────────────────────────────────────
     function setMapType(type, btn) {
         map.setMapTypeId(type);
         document.querySelectorAll('.map-type-btn').forEach(b => b.classList.remove('active'));
@@ -2234,6 +2189,7 @@
         map.setOptions({ styles: type === 'roadmap' ? darkMapStyle() : [] });
     }
 
+    // ── Toast helper ──────────────────────────────────────────────────────────
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.textContent = msg;
@@ -2241,6 +2197,7 @@
         setTimeout(() => t.classList.remove('show'), 2800);
     }
 
+    // ── Dark map style ────────────────────────────────────────────────────────
     function darkMapStyle() {
         return [
             { elementType: 'geometry',              stylers: [{ color: '#0a0f1e' }] },
@@ -2256,6 +2213,7 @@
         ];
     }
 
+    // ── Bootstrap: fetch API key then inject Google Maps script ──────────────
     async function loadGoogleMaps() {
         try {
             const response = await fetch('http://localhost:8000/api/config');
