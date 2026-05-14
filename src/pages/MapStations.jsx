@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { formatLocalTime } from '../utils/dateUtils';
 
 export default function MapStations({ user }) {
     const iframeRef = useRef(null);
@@ -39,12 +40,11 @@ export default function MapStations({ user }) {
             .then(r => r.json())
             .then(data => {
                 setVehicles(data);
-                // Send vehicles to iframe so navigation.html can show them
+                // Send vehicles to iframe so navigation.html can show them in Step 1
                 const iframe = document.querySelector('iframe');
                 if (iframe?.contentWindow) {
                     iframe.contentWindow.postMessage({ type: 'SET_VEHICLES', vehicles: data }, '*');
                     iframe.contentWindow.postMessage({ type: 'SET_DRIVER', driverID: user.driverID }, '*');
-
                 }
             })
             .catch(console.error);
@@ -62,6 +62,10 @@ export default function MapStations({ user }) {
             vehicle_id: parseInt(selectedVehicleId),
             startTime: reservationData.startTime,
             endTime: reservationData.endTime,
+            // Strip currency symbol and parse to float before sending to backend
+            estimated_cost: parseFloat(
+                String(reservationData.estimatedCost).replace('₺', '').replace(',', '.').trim()
+            ),
         };
 
         try {
@@ -110,12 +114,12 @@ export default function MapStations({ user }) {
                 allow="geolocation"
                 ref={iframeRef}
                 onLoad={() => {
-                    // Re-send vehicles after iframe reloads
+                    // Re-send vehicles after iframe reloads so Step 1 is always populated
                     if (vehicles.length && iframeRef.current) {
                         iframeRef.current.contentWindow.postMessage(
                             { type: 'SET_VEHICLES', vehicles },'*');
                     }
-                    // Send driver ID to iframe
+                    // Send driver ID to iframe so favorites and driver-specific data can load
                     if (user?.driverID && iframeRef.current) {
                         iframeRef.current.contentWindow.postMessage(
                             { type: 'SET_DRIVER', driverID: user.driverID },'*');
@@ -131,7 +135,7 @@ export default function MapStations({ user }) {
                 title="EV Charging Map"
             />
 
-            {/* Reservation modal — opens after user clicks pay inside the iframe */}
+            {/* Reservation confirmation modal — opens after user clicks "Proceed to Payment" in the iframe */}
             {modalOpen && reservationData && (
                 <div style={{
                     position: 'fixed',
@@ -187,7 +191,7 @@ export default function MapStations({ user }) {
                             {reservationData.charger.connectorType} · {reservationData.charger.powerOutput} kW · Unit #{reservationData.charger.chargerID || reservationData.charger.id}
                         </p>
 
-                        {/* Reservation summary */}
+                        {/* Reservation summary — formatLocalTime converts UTC to Istanbul local time */}
                         <div style={{
                             background: 'rgba(0,229,255,0.06)',
                             border: '1px solid rgba(0,229,255,0.2)',
@@ -197,8 +201,8 @@ export default function MapStations({ user }) {
                             fontSize: '13px',
                             lineHeight: '1.9',
                         }}>
-                            <div>🕐 Start: <strong>{new Date(reservationData.startTime).toLocaleString('tr-TR')}</strong></div>
-                            <div>🕑 End: <strong>{new Date(reservationData.endTime).toLocaleString('tr-TR')}</strong></div>
+                            <div>🕐 Start: <strong>{formatLocalTime(reservationData.startTime)}</strong></div>
+                            <div>🕑 End: <strong>{formatLocalTime(reservationData.endTime)}</strong></div>
                             <div>⏱ Duration: <strong>{reservationData.hours} hour(s)</strong></div>
                             <div>💰 Estimated cost: <strong style={{ color: '#00ff9d' }}>{reservationData.estimatedCost}</strong></div>
                         </div>
@@ -242,7 +246,7 @@ export default function MapStations({ user }) {
                             </p>
                         ) : (
                             <>
-                                {/* Show the vehicle already selected in the map — no re-selection needed */}
+                                {/* Display the vehicle pre-selected in the map — no re-selection needed here */}
                                 {(() => {
                                     const v = vehicles.find(v => String(v.vehicleID) === String(selectedVehicleId));
                                     return v ? (
