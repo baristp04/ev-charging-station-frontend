@@ -2091,8 +2091,11 @@
         document.getElementById('payBtn').disabled = true;
 
         const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('reservationTime').min = now.toISOString().slice(0, 16);
+        const pad = n => String(n).padStart(2, '0');
+        const localMin =
+            `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}` +
+            `T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        document.getElementById('reservationTime').min = localMin;
 
         resForm.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
@@ -2105,6 +2108,25 @@
         if (!hours || !time) {
             document.getElementById('costDisplay').style.display = 'none';
             document.getElementById('payBtn').disabled = true;
+            return;
+        }
+
+        // Reject past time slots before calculating cost
+        const selectedTime = new Date(time);
+        const now = new Date();
+        if (selectedTime < now) {
+            document.getElementById('costDisplay').style.display = 'none';
+            document.getElementById('payBtn').disabled = true;
+            showToast('⚠️ Cannot reserve a past time slot.');
+            return;
+        }
+
+        // Reject time slots more than 24 hours in advance
+        const maxTime = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+        if (selectedTime > maxTime) {
+            document.getElementById('costDisplay').style.display = 'none';
+            document.getElementById('payBtn').disabled = true;
+            showToast('⚠️ Cannot reserve more than 24 hours in advance.');
             return;
         }
 
@@ -2132,6 +2154,12 @@
 
         if (!hours || !reservationTimeVal) { showToast('Please fill all fields.'); return; }
 
+        // Guard: block past time slots even if min attr was bypassed
+        const selectedTime = new Date(reservationTimeVal);
+        if (selectedTime < new Date()) {
+            showToast('⚠️ Cannot reserve a past time slot.');
+            return;
+        }
         const startTime = new Date(reservationTimeVal).toISOString();
         const endTime   = new Date(new Date(reservationTimeVal).getTime() + hours * 3600000).toISOString();
         const costText  = document.getElementById('costAmount').textContent;
