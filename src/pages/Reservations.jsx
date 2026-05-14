@@ -1,5 +1,6 @@
 // ── Reservations.jsx ──────────────────────────────────────────────────────────
 import { useState, useEffect } from 'react'
+import { formatLocalTime, formatLocalTimeOnly } from '../utils/dateUtils'
 
 const API = 'http://localhost:8000'
 
@@ -10,6 +11,7 @@ export default function Reservations({ user }) {
   const [filter, setFilter] = useState('all')
   const [visibleCount, setVisibleCount] = useState(4)
 
+  // Reset visible count whenever the filter changes
   useEffect(() => {
     setVisibleCount(4);
   }, [filter]);
@@ -38,11 +40,10 @@ export default function Reservations({ user }) {
     }
   }
 
-  // ── YENİ: Filtreleme ve Sıralama Mantığı ──
+  // Filter and sort: active first, then by most recent startTime
   const processedReservations = reservations
     .filter(r => filter === 'all' ? true : r.status === filter)
     .sort((a, b) => {
-      // 1. Öncelik sırası: Aktif olanlar her zaman en üstte (1 numara) olsun
       const statusPriority = { active: 1, completed: 2, expired: 3 };
       const priorityA = statusPriority[a.status] || 4;
       const priorityB = statusPriority[b.status] || 4;
@@ -51,11 +52,11 @@ export default function Reservations({ user }) {
         return priorityA - priorityB;
       }
       
-      // 2. Eğer ikisinin statüsü aynıysa (örneğin ikisi de completed), en yeni olan en üstte gözüksün
+      // If same status, show the most recent one first
       return new Date(b.startTime) - new Date(a.startTime);
     });
 
-    const displayedReservations = processedReservations.slice(0, visibleCount);
+  const displayedReservations = processedReservations.slice(0, visibleCount);
 
   if (!user) {
     return (
@@ -70,7 +71,7 @@ export default function Reservations({ user }) {
     )
   }
 
-  // Badge config per status
+  // Badge style config per reservation status
   const badgeStyle = (status) => {
     if (status === 'active')    return { backgroundColor: 'var(--accent-glow)', color: 'var(--accent)' }
     if (status === 'expired')   return { backgroundColor: 'rgba(255,184,0,0.12)', color: '#ffb800' }
@@ -86,7 +87,6 @@ export default function Reservations({ user }) {
   }
 
   return (
-    // ── EKSİK OLAN KAPSAYICILAR BURAYA EKLENDİ ──
     <div style={S.shell}>
       <div style={S.body}>
         
@@ -96,7 +96,7 @@ export default function Reservations({ user }) {
             <span style={S.cardCount}>{processedReservations.length} reservations</span>
           </div>
 
-          {/* ── YENİ: Filtreleme Butonları ── */}
+          {/* Filter buttons */}
           <div style={S.filterRow}>
             {['all', 'active', 'completed', 'expired'].map(f => (
               <button
@@ -112,7 +112,7 @@ export default function Reservations({ user }) {
           {error   && <div style={S.errorBox}>⚠️ {error}</div>}
           {loading && <div style={S.empty}>Loading...</div>}
 
-          {/* ── Yüklenen rezervasyon sayısı kontrolü ── */}
+          {/* Empty state */}
           {!loading && displayedReservations.length === 0 && (
             <div style={S.emptyState}>
               <div style={S.emptyIcon}>📭</div>
@@ -135,7 +135,8 @@ export default function Reservations({ user }) {
                         🏢 {r.stationName || '—'} &nbsp;·&nbsp; 📍 {r.stationLocation || '—'}
                       </div>
                       <div style={S.resMeta}>
-                        📅 {new Date(r.startTime).toLocaleString('tr-TR')} → {new Date(r.endTime).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })}
+                        {/* formatLocalTime converts UTC from DB to Istanbul local time */}
+                        📅 {formatLocalTime(r.startTime)} → {formatLocalTimeOnly(r.endTime)}
                       </div>
                       <div style={S.resMeta}>
                         🔌 {r.connectorType || `Unit #${r.charger_id}`} &nbsp;·&nbsp; 🚘 {r.vehicleBrand ? `${r.vehicleBrand} (${r.vehiclePlate})` : `Vehicle #${r.vehicle_id}`}
@@ -158,7 +159,7 @@ export default function Reservations({ user }) {
                 ))}
               </div>
 
-              {/* ── LOAD MORE BUTONU BURADA ── */}
+              {/* Load more button — shows 10 more each click */}
               {visibleCount < processedReservations.length && (
                 <div style={S.loadMoreWrapper}>
                   <button 
@@ -216,4 +217,4 @@ const S = {
   loginIcon:  { fontSize: '3rem', marginBottom: '8px' },
   loginMsg:   { fontWeight: 700, fontSize: '1.1rem', color: 'var(--text-primary)' },
   loginSub:   { color: 'var(--text-secondary)', fontSize: '0.9rem' },
-} 
+}

@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { formatLocalTime } from '../utils/dateUtils';
 
 const Notifications = ({ user }) => {
   const [notifs, setNotifs] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // ── YENİ: Ekranda gösterilecek maksimum bildirim sayısı ──
+  // Maximum number of notifications visible before "Load More"
   const [visibleCount, setVisibleCount] = useState(4);
 
-  // App.jsx'den gelen user objesinin içindeki ID'yi kullanmalıyız.
+  // Use driverID from the user object passed down from App.jsx
   const currentDriverID = user?.driverID || user?.id;
 
   useEffect(() => {
-    // Eğer kullanıcı giriş yapmamışsa veya ID henüz yüklenmemişse fetch atma
+    // Do not fetch if the user is not logged in or ID is not yet available
     if (!currentDriverID) {
       setLoading(false);
       return;
@@ -34,22 +35,20 @@ const Notifications = ({ user }) => {
     fetchNotifs();
   }, [currentDriverID]);
 
-  // Okundu işaretleme fonksiyonu
-// ── GÜNCELLENMİŞ: Optimistic UI Update ──
+  // Optimistic UI update — mark as read instantly, then sync with server
   const handleMarkRead = async (notificationID) => {
-    // 1. İYİMSER GÜNCELLEME:
-    // API cevabını BEKLEMEDEN ekranı anında (0 milisaniyede) güncelliyoruz.
+    // 1. Update UI immediately without waiting for the API response
     setNotifs(prev => prev.map(n => 
       n.notificationID === notificationID ? { ...n, isRead: true } : n
     ));
 
     try {
-      // 2. Arka planda sunucuya sessizce haber veriyoruz
+      // 2. Notify the server in the background
       const res = await fetch(`http://localhost:8000/api/notifications/read/${notificationID}`, {
         method: 'PUT'
       });
       
-      // 3. Eğer sunucuda bir şeyler ters giderse (örn: veritabanı çöktü), işlemi geri al!
+      // 3. Roll back the optimistic update if the server responds with an error
       if (!res.ok) {
         setNotifs(prev => prev.map(n => 
           n.notificationID === notificationID ? { ...n, isRead: false } : n
@@ -57,7 +56,7 @@ const Notifications = ({ user }) => {
         console.error("Failed to update notification on the server.");
       }
     } catch (err) {
-      // Eğer internet koptuysa işlemi geri al
+      // Roll back if the network request fails
       setNotifs(prev => prev.map(n => 
         n.notificationID === notificationID ? { ...n, isRead: false } : n
       ));
@@ -65,7 +64,7 @@ const Notifications = ({ user }) => {
     }
   };
 
-  // ── YENİ: Sadece görünür sayı kadarını al ──
+  // Slice the list to only show visibleCount items
   const displayedNotifs = notifs.slice(0, visibleCount);
 
   if (!user) {
@@ -78,11 +77,11 @@ const Notifications = ({ user }) => {
       maxWidth: '1000px', 
       margin: '0 auto', 
       color: 'white',
-      overflowY: 'auto', // Uzun listelerde kaydırma çubuğu çıkması için
+      overflowY: 'auto',
       height: '100%'
     }}>
       
-      {/* ÜST BAŞLIK KISMI */}
+      {/* Page header */}
       <div style={{ 
         marginBottom: '32px', 
         borderBottom: '1px solid #1e293b', 
@@ -110,7 +109,6 @@ const Notifications = ({ user }) => {
       ) : (
         <>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* GÜNCELLEME: notifs.map yerine displayedNotifs.map kullanıyoruz */}
             {displayedNotifs.map((n) => (
               <div 
                 key={n.notificationID} 
@@ -145,11 +143,12 @@ const Notifications = ({ user }) => {
                   {n.message}
                 </div>
 
+                {/* formatLocalTime converts UTC timestamp to Istanbul local time */}
                 <div style={{ fontSize: '12px', opacity: 0.4 }}>
-                  {new Date(n.sentAt).toLocaleString()}
+                  {formatLocalTime(n.sentAt)}
                 </div>
 
-                {/* OKUNDU BUTONU */}
+                {/* Mark as read button */}
                 <button
                   onClick={() => handleMarkRead(n.notificationID)}
                   disabled={n.isRead}
@@ -175,7 +174,7 @@ const Notifications = ({ user }) => {
             ))}
           </div>
 
-          {/* ── YENİ: LOAD MORE BUTONU ── */}
+          {/* Load more — reveals 10 additional notifications per click */}
           {visibleCount < notifs.length && (
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px', paddingBottom: '20px' }}>
               <button 
