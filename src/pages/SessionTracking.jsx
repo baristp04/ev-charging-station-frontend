@@ -7,7 +7,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import ConfirmModal from '../components/ConfirmModal'
 
 const API = 'http://localhost:8000'
-const POLL_INTERVAL = 5000 // poll every 5 seconds
+const POLL_INTERVAL = 200 // poll every 0.2 seconds
 
 export default function SessionTracking({ user }) {
   const [session, setSession]     = useState(null)   // live session data from /status
@@ -258,7 +258,7 @@ export default function SessionTracking({ user }) {
         {!isCompleted && (
           <div style={S.liveRow}>
             <span style={S.pulseDot} />
-            <span style={S.liveText}>Live · Updates every 5 seconds</span>
+            <span style={S.liveText}>Live · Updates every 0.2 seconds</span>
           </div>
         )}
 

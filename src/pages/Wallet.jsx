@@ -23,16 +23,26 @@ const Wallet = ({ user }) => { // User bilgisini prop olarak aldığını varsay
   });
 
   // 1. Verileri Çekme
+// 1. Verileri Çekme
   useEffect(() => {
+    // KORUMA 1: Eğer driverID henüz yüklenmediyse (sayfa yenilenme anı), işlemi durdur.
+    if (!driverID) return;
+
     const fetchData = async () => {
       try {
         const balanceRes = await fetch(`http://localhost:8000/api/wallet/balance/${driverID}`);
-        const driverData = await balanceRes.json();
-        setBalance(driverData.balance);
+        if (balanceRes.ok) {
+          const driverData = await balanceRes.json();
+          // KORUMA 2: Veri undefined gelirse 0'a eşitle
+          setBalance(driverData.balance || 0); 
+        }
 
         const cardsRes = await fetch(`http://localhost:8000/api/wallet/cards/${driverID}`);
-        const cardsData = await cardsRes.json();
-        setCards(cardsData);
+        if (cardsRes.ok) {
+          const cardsData = await cardsRes.json();
+          // KORUMA 3: Gelen veri dizi (array) değilse boş dizi ata ki .map() patlamasın
+          setCards(Array.isArray(cardsData) ? cardsData : []); 
+        }
       } catch (error) {
         console.error("Data fetch error:", error);
       } finally {
@@ -140,18 +150,25 @@ const Wallet = ({ user }) => { // User bilgisini prop olarak aldığını varsay
       <div style={{ backgroundColor: '#111827', border: '1px solid #1e293b', borderRadius: '32px', padding: '40px' }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '40px' }}>
           
-          {/* STEP 1 */}
-          <div style={{ gridColumn: 'span 4' }}>
-            <h4 style={{ color: '#22d3ee', fontSize: '11px', fontWeight: '900', textTransform: 'uppercase' }}>STEP 1: Amount</h4>
-            <div style={{ position: 'relative', marginTop: '20px' }}>
-              <span style={{ position: 'absolute', left: '16px', top: '14px', color: '#64748b' }}>₺</span>
-              <input 
-                type="number" value={amount} onChange={(e) => setAmount(e.target.value)}
-                placeholder="0.00"
-                style={{ width: '100%', backgroundColor: '#0f172a', border: '2px solid #0891b2', borderRadius: '16px', padding: '14px 32px', color: 'white', outline: 'none' }} 
-              />
-            </div>
+        {/* STEP 1 */}
+        <div style={{ gridColumn: 'span 4' }}>
+          <h4 style={{ color: '#22d3ee', fontSize: '11px', fontWeight: '900', textTransform: 'uppercase' }}>STEP 1: Amount</h4>
+          <div style={{ position: 'relative', marginTop: '20px' }}>
+            <span style={{ position: 'absolute', left: '16px', top: '14px', color: '#64748b' }}>₺</span>
+            <input 
+              type="number" 
+              value={amount} 
+              onChange={(e) => {
+                // En fazla 10 haneli giriş yapılabilmesini sağlar
+                if (e.target.value.length <= 5) {
+                  setAmount(e.target.value);
+                }
+              }}
+              placeholder="0.00"
+              style={{ width: '100%', backgroundColor: '#0f172a', border: '2px solid #0891b2', borderRadius: '16px', padding: '14px 32px', color: 'white', outline: 'none' }} 
+            />
           </div>
+        </div>
 
           {/* STEP 2 */}
           <div style={{ gridColumn: 'span 4', borderLeft: '1px solid #1e293b', paddingLeft: '40px' }}>
@@ -178,8 +195,19 @@ const Wallet = ({ user }) => { // User bilgisini prop olarak aldığını varsay
           <div style={{ gridColumn: 'span 4', borderLeft: '1px solid #1e293b', paddingLeft: '40px' }}>
             <h4 style={{ color: '#22d3ee', fontSize: '11px', fontWeight: '900', textTransform: 'uppercase' }}>STEP 4: Final Action</h4>
             <div style={{ backgroundColor: '#0f172a', padding: '24px', borderRadius: '24px', margin: '20px 0' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}><span>Amount:</span><span>₺{amount || '0'}</span></div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '900', fontSize: '22px', color: '#22d3ee', marginTop: '10px' }}><span>Total:</span><span>₺{amount || '0'}</span></div>
+              
+              {/* Güncellenen Kısım 1: Amount */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#94a3b8' }}>
+                <span style={{ flexShrink: 0, marginRight: '10px' }}>Amount:</span>
+                <span style={{ wordBreak: 'break-all', textAlign: 'right' }}>₺{amount || '0'}</span>
+              </div>
+              
+              {/* Güncellenen Kısım 2: Total */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '900', fontSize: '22px', color: '#22d3ee', marginTop: '10px' }}>
+                <span style={{ flexShrink: 0, marginRight: '10px' }}>Total:</span>
+                <span style={{ wordBreak: 'break-all', textAlign: 'right' }}>₺{amount || '0'}</span>
+              </div>
+
             </div>
             <button 
                 onClick={handleConfirmTopUp}
