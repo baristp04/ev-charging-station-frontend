@@ -82,13 +82,10 @@
             font-size: 14px;
             transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, opacity 0.3s;
             user-select: none;
-
-            /* Hidden until the map finishes loading */
             opacity: 0;
             pointer-events: none;
         }
 
-        /* Shown by JS once initMap() completes */
         .panel-toggle.ready {
             opacity: 1;
             pointer-events: auto;
@@ -110,7 +107,6 @@
 
         .panel-toggle.collapsed .panel-toggle-arrow { transform: rotate(180deg); }
 
-        /* ── Panel inner sections ── */
         .panel-header {
             padding: 18px 20px 14px;
             border-bottom: 1px solid var(--border);
@@ -198,7 +194,6 @@
         .station-list::-webkit-scrollbar-track { background: transparent; }
         .station-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-        /* ── Station cards ── */
         .station-card {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -295,7 +290,6 @@
         .star-btn:hover { transform: translateY(-50%) scale(1.25); }
         .star-btn.active { color: #FFD700; }
 
-        /* ── Detail panel ── */
         .detail-panel {
             display: none;
             flex-direction: column;
@@ -354,7 +348,6 @@
             margin-top: 16px;
         }
 
-        /* ── Travel mode buttons ── */
         .travel-modes { display: flex; gap: 6px; margin-bottom: 4px; }
 
         .travel-mode-btn {
@@ -378,7 +371,6 @@
             background: rgba(0, 229, 255, 0.08);
         }
 
-        /* ── Route options ── */
         .route-option {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -427,7 +419,6 @@
             text-transform: uppercase;
         }
 
-        /* ── Navigate button ── */
         .navigate-btn {
             margin: 16px 20px;
             padding: 13px;
@@ -461,7 +452,6 @@
             box-shadow: none;
         }
 
-        /* ── Charger items ── */
         .charger-item {
             background: var(--surface2);
             border: 1px solid var(--border);
@@ -483,10 +473,8 @@
             font-family: 'Space Mono', monospace;
         }
 
-        /* ── Map area ── */
         #map { flex: 1; position: relative; }
 
-        /* ── Loading overlay (covers the map while Google Maps initialises) ── */
         .loading-overlay {
             position: absolute;
             inset: 0;
@@ -517,12 +505,10 @@
             letter-spacing: 0.05em;
         }
 
-        /* ── Empty state ── */
         .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
         .empty-icon  { font-size: 32px; margin-bottom: 10px; }
         .empty-text  { font-size: 13px; line-height: 1.5; }
 
-        /* ── Map type toggle (top-right corner) ── */
         .map-type-toggle {
             position: absolute;
             top: 12px;
@@ -564,7 +550,6 @@
             background: var(--surface2);
         }
 
-        /* ── Toast notification ── */
         .toast {
             position: fixed;
             bottom: 24px;
@@ -584,7 +569,6 @@
 
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        /* ── Google Maps InfoWindow overrides ── */
         .gm-style .gm-style-iw-c {
             background: transparent !important;
             box-shadow: none !important;
@@ -601,7 +585,6 @@
         .gm-style button.gm-ui-hover-effect { display: none !important; }
         .gm-style .gm-style-iw-chr { display: none !important; }
 
-        /* ── Reservation pill shown on map marker ── */
         .map-reservation-pill {
             background: linear-gradient(135deg, var(--accent), var(--accent2));
             color: #0a0f1e;
@@ -626,14 +609,12 @@
             box-shadow: 0 6px 28px rgba(0, 229, 255, 0.65);
         }
 
-        /* ── Reservation flow panel ── */
         .reservation-view {
             display: none;
             flex-direction: column;
             height: 100%;
         }
 
-        /* ── Vehicle cards ── */
         .vehicle-card {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -668,7 +649,6 @@
             font-family: 'Space Mono', monospace;
         }
 
-        /* ── Continue / Pay buttons ── */
         .continue-btn {
             width: 100%;
             padding: 13px;
@@ -698,7 +678,6 @@
             box-shadow: none;
         }
 
-        /* ── Charger cards in reservation flow ── */
         .res-charger-card {
             background: var(--surface2);
             border: 1.5px solid var(--border);
@@ -725,7 +704,6 @@
 
         .res-charger-card.unavailable { opacity: 0.4; cursor: not-allowed; }
 
-        /* ── Reservation form fields ── */
         .res-form-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border); }
         .res-field { margin-bottom: 14px; }
 
@@ -757,7 +735,6 @@
         .res-field select:focus,
         .res-field input[type="datetime-local"]:focus { border-color: var(--accent); }
 
-        /* ── Cost estimate box ── */
         .cost-box {
             background: rgba(0, 229, 255, 0.06);
             border: 1px solid rgba(0, 229, 255, 0.2);
@@ -815,7 +792,6 @@
             box-shadow: none;
         }
 
-        /* ── Selected item banners ── */
         .selected-charger-banner {
             background: rgba(0, 229, 255, 0.08);
             border: 1px solid rgba(0, 229, 255, 0.25);
@@ -842,7 +818,6 @@
             gap: 8px;
         }
 
-        /* ── In-App Navigation panel ── */
         .nav-panel { display: none; flex-direction: column; height: 100%; }
         .nav-panel.active { display: flex; }
 
@@ -902,7 +877,6 @@
         .nav-steps::-webkit-scrollbar { width: 4px; }
         .nav-steps::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-        /* ── Turn-by-turn step items ── */
         .nav-step {
             display: flex;
             gap: 12px;
@@ -945,7 +919,6 @@
         .nav-step.active-step .nav-step-instruction { color: var(--accent); font-weight: 600; }
         .nav-step-distance { font-size: 11px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
 
-        /* ── Current-step highlight card ── */
         .nav-current-step {
             background: rgba(0, 229, 255, 0.08);
             border: 1px solid rgba(0, 229, 255, 0.25);
@@ -963,7 +936,6 @@
         .nav-current-instruction { font-size: 14px; font-weight: 600; color: var(--accent); line-height: 1.4; margin-bottom: 3px; }
         .nav-current-dist  { font-size: 12px; color: var(--text-muted); font-family: 'Space Mono', monospace; }
 
-        /* ── Arrival banner ── */
         .nav-arrived-banner {
             background: rgba(0, 255, 157, 0.1);
             border: 1px solid rgba(0, 255, 157, 0.3);
@@ -995,10 +967,8 @@
 
 <div class="main">
 
-    <!-- ── Side Panel ── -->
     <div class="panel collapsed" id="sidePanel">
 
-        <!-- Station list view -->
         <div id="listView" style="display:flex; flex-direction:column; height:100%;">
             <div class="panel-header">
                 <div class="panel-title">Stations</div>
@@ -1008,11 +978,11 @@
                 </div>
             </div>
             <div class="filter-tabs">
-                <button class="filter-tab active"       onclick="setFilter('all', this)">All</button>
-                <button class="filter-tab"              onclick="setFilter('available', this)">Available</button>
-                <button class="filter-tab"              onclick="setFilter('occupied', this)">Occupied</button>
-                <button class="filter-tab"              onclick="setFilter('offline', this)">Offline</button>
-                <button class="filter-tab"              onclick="setFilter('maintenance', this)">Maintenance</button>
+                <button class="filter-tab active"        onclick="setFilter('all', this)">All</button>
+                <button class="filter-tab"               onclick="setFilter('available', this)">Available</button>
+                <button class="filter-tab"               onclick="setFilter('occupied', this)">Occupied</button>
+                <button class="filter-tab"               onclick="setFilter('offline', this)">Offline</button>
+                <button class="filter-tab"               onclick="setFilter('maintenance', this)">Maintenance</button>
                 <button class="filter-tab favorites-tab" onclick="setFilter('favorites', this)">⭐ Favorites</button>
             </div>
             <div class="station-list" id="stationList">
@@ -1023,7 +993,6 @@
             </div>
         </div>
 
-        <!-- Station detail view -->
         <div id="detailView" class="detail-panel">
             <div class="detail-back" onclick="showList()">← Back</div>
             <div class="detail-content" id="detailContent"></div>
@@ -1032,13 +1001,11 @@
             </button>
         </div>
 
-        <!-- Reservation flow view -->
         <div id="reservationView" class="reservation-view">
             <div class="detail-back" id="resBackBtn" onclick="backFromReservation()">← Back</div>
             <div class="detail-content" id="reservationContent"></div>
         </div>
 
-        <!-- In-app navigation view -->
         <div id="navView" class="nav-panel">
             <div class="nav-header">
                 <div class="nav-header-top">
@@ -1065,16 +1032,13 @@
 
     </div>
 
-    <!-- ── Panel toggle — rendered but invisible until map is ready ── -->
     <div class="panel-toggle collapsed" id="panelToggle" onclick="togglePanel()">
         <span class="panel-toggle-arrow">‹</span>
     </div>
 
-    <!-- ── Map area ── -->
     <div style="position:relative; flex:1; overflow:hidden;">
         <div id="map" style="width:100%; height:100%;"></div>
 
-        <!-- Covers the map until Google Maps finishes initialising -->
         <div class="loading-overlay" id="mapLoading">
             <div class="loading-spinner"></div>
             <div class="loading-text">Loading map...</div>
@@ -1117,7 +1081,6 @@
     let resStep     = 'vehicle';
     let favoriteIds = new Set();
 
-    // Navigation state
     let navSteps       = [];
     let navStepIndex   = 0;
     let navSimInterval = null;
@@ -1145,10 +1108,22 @@
         const toggle    = document.getElementById('panelToggle');
         const collapsed = panel.classList.toggle('collapsed');
         toggle.classList.toggle('collapsed', collapsed);
-        // Trigger map resize after CSS transition so tiles fill correctly
         setTimeout(() => {
             if (map) google.maps.event.trigger(map, 'resize');
         }, 360);
+    }
+
+    // ── Ensure panel is open — called when a station is selected ──────────────
+    function ensurePanelOpen() {
+        const panel  = document.getElementById('sidePanel');
+        const toggle = document.getElementById('panelToggle');
+        if (panel.classList.contains('collapsed')) {
+            panel.classList.remove('collapsed');
+            toggle.classList.remove('collapsed');
+            setTimeout(() => {
+                if (map) google.maps.event.trigger(map, 'resize');
+            }, 360);
+        }
     }
 
     // ── postMessage listeners (from parent React app) ─────────────────────────
@@ -1207,13 +1182,8 @@
 
     // ── Map initialisation ────────────────────────────────────────────────────
     function initMap() {
-        // Hide the map loading overlay
         document.getElementById('mapLoading').style.display = 'none';
-
-        // Show the panel toggle now that the map is ready
         document.getElementById('panelToggle').classList.add('ready');
-
-        // Notify parent React app that the iframe is fully ready
         window.parent.postMessage({ type: 'MAP_READY' }, '*');
 
         map = new google.maps.Map(document.getElementById('map'), {
@@ -1231,7 +1201,6 @@
             if (reservationPill) reservationPill.close();
         });
 
-        // Request user's geolocation
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(pos => {
                 userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -1364,7 +1333,7 @@
         });
     }
 
-    // ── Marker click — opens detail + reservation pill ────────────────────────
+    // ── Marker click — opens panel + detail + reservation pill ────────────────
     function markerClick(id) {
         const station = allStations.find(s => (s.id || s.stationID) === id);
         if (!station) return;
@@ -1372,6 +1341,9 @@
         selectedStation = station;
         currentChargers = [];
         selectedCharger = null;
+
+        // Open the side panel if it is collapsed
+        ensurePanelOpen();
 
         map.setCenter({ lat: station.latitude, lng: station.longitude });
         map.setZoom(15);
@@ -1384,10 +1356,10 @@
 
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
-            content:       `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
-            position:      { lat: station.latitude, lng: station.longitude },
+            content:        `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
+            position:       { lat: station.latitude, lng: station.longitude },
             disableAutoPan: true,
-            pixelOffset:   new google.maps.Size(0, -32)
+            pixelOffset:    new google.maps.Size(0, -32)
         });
         reservationPill.open(map);
 
@@ -1410,6 +1382,9 @@
         selectedStation = allStations.find(s => (s.id || s.stationID) === id);
         if (!selectedStation) return;
 
+        // Open the side panel if it is collapsed
+        ensurePanelOpen();
+
         document.querySelectorAll('.station-card').forEach(c => c.classList.remove('selected'));
         const card = document.getElementById(`card-${id}`);
         if (card) card.classList.add('selected');
@@ -1419,10 +1394,10 @@
 
         if (reservationPill) reservationPill.close();
         reservationPill = new google.maps.InfoWindow({
-            content:       `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
-            position:      { lat: selectedStation.latitude, lng: selectedStation.longitude },
+            content:        `<div class="map-reservation-pill" onclick="openReservationPanel()">📅 Make Reservation</div>`,
+            position:       { lat: selectedStation.latitude, lng: selectedStation.longitude },
             disableAutoPan: true,
-            pixelOffset:   new google.maps.Size(0, -32)
+            pixelOffset:    new google.maps.Size(0, -32)
         });
         reservationPill.open(map);
 
@@ -1487,13 +1462,24 @@
                 return;
             }
 
+            // If the station itself is offline or under maintenance, override all charger statuses visually
+            const stationBlocked = selectedStation?.status === 'offline' || selectedStation?.status === 'maintenance';
+
             el.innerHTML = chargers.map(c => {
-                const cid         = c.id || c.chargerID;
-                const statusLabel = STATUS_LABELS[c.status] || c.status;
-                const statusColor = c.status === 'available'   ? 'var(--green)'
+                const cid = c.id || c.chargerID;
+
+                // Use station status for label/color when station is blocked
+                const statusLabel = stationBlocked
+                    ? (selectedStation.status === 'offline' ? 'Offline' : 'Maintenance')
+                    : (STATUS_LABELS[c.status] || c.status);
+
+                const statusColor = stationBlocked
+                    ? (selectedStation.status === 'offline' ? 'var(--red)' : 'var(--purple)')
+                    : c.status === 'available'   ? 'var(--green)'
                     : c.status === 'occupied'    ? 'var(--yellow)'
                     : c.status === 'maintenance' ? 'var(--purple)'
                     : 'var(--red)';
+
                 return `
                 <div class="charger-item">
                     <div>
@@ -1505,6 +1491,7 @@
                     <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
                 </div>`;
             }).join('');
+
         } catch {
             const el = document.getElementById('chargerList');
             if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Could not load charger info.</div>';
@@ -1570,7 +1557,6 @@
         return `${meters} m`;
     }
 
-    // Returns true if the route contains a ferry leg
     function routeHasFerry(route) {
         const steps = route.legs?.[0]?.steps || [];
         return steps.some(step => {
@@ -1591,7 +1577,6 @@
         const el = document.getElementById('routeOptions');
         if (!el) return;
 
-        // De-duplicate routes by duration and sort fastest first
         const seen   = new Set();
         const unique = routes.filter(r => {
             const key = r.legs[0].duration.value;
@@ -1680,7 +1665,10 @@
 
         const durationSec = leg.duration.value;
         const etaDate     = new Date(Date.now() + durationSec * 1000);
-        const etaStr      = etaDate.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+        const etaStr      = etaDate.toLocaleTimeString('tr-TR', {
+            timeZone: 'Europe/Istanbul',
+            hour: '2-digit', minute: '2-digit'
+        });
 
         document.getElementById('listView').style.display        = 'none';
         document.getElementById('detailView').classList.remove('active');
@@ -1695,7 +1683,6 @@
         renderNavSteps();
         showToast('Navigation started!');
 
-        // Watch real GPS position and advance steps automatically
         if (navSimInterval !== null) { navigator.geolocation.clearWatch(navSimInterval); navSimInterval = null; }
         navSimInterval = navigator.geolocation.watchPosition(pos => {
             userLocation = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -1704,7 +1691,6 @@
         }, null, { enableHighAccuracy: true, maximumAge: 3000 });
     }
 
-    // Advances to the next nav step when within 25 m of the step's end point
     function advanceStepIfNeeded() {
         if (!navSteps.length || navStepIndex >= navSteps.length) return;
         const step = navSteps[navStepIndex];
@@ -1740,18 +1726,18 @@
 
     function stepIcon(instruction) {
         const t = instruction.toLowerCase();
-        if (t.includes('arrive') || t.includes('destination'))               return '🏁';
+        if (t.includes('arrive') || t.includes('destination'))                    return '🏁';
         if (t.includes('ferry') || t.includes('vapur') || t.includes('feribot')) return '⛴️';
-        if (t.includes('bus') || t.includes('transit') || t.includes('otobüs')) return '🚌';
-        if (t.includes('subway') || t.includes('metro'))                     return '🚇';
-        if (t.includes('train') || t.includes('tren'))                       return '🚆';
-        if (t.includes('right') || t.includes('sağ'))                        return '↪️';
-        if (t.includes('left')  || t.includes('sol'))                        return '↩️';
-        if (t.includes('u-turn') || t.includes('u dönüşü'))                  return '🔄';
-        if (t.includes('roundabout') || t.includes('dönel'))                 return '🔵';
-        if (t.includes('ramp') || t.includes('rampa'))                       return '↗️';
-        if (t.includes('merge') || t.includes('birleş'))                     return '🔀';
-        if (t.includes('walk') || t.includes('yürü'))                        return '🚶';
+        if (t.includes('bus') || t.includes('transit') || t.includes('otobüs'))  return '🚌';
+        if (t.includes('subway') || t.includes('metro'))                          return '🚇';
+        if (t.includes('train') || t.includes('tren'))                            return '🚆';
+        if (t.includes('right') || t.includes('sağ'))                             return '↪️';
+        if (t.includes('left')  || t.includes('sol'))                             return '↩️';
+        if (t.includes('u-turn') || t.includes('u dönüşü'))                       return '🔄';
+        if (t.includes('roundabout') || t.includes('dönel'))                      return '🔵';
+        if (t.includes('ramp') || t.includes('rampa'))                            return '↗️';
+        if (t.includes('merge') || t.includes('birleş'))                          return '🔀';
+        if (t.includes('walk') || t.includes('yürü'))                             return '🚶';
         return '⬆️';
     }
 
@@ -1821,6 +1807,13 @@
     // ── Reservation flow ──────────────────────────────────────────────────────
     async function openReservationPanel() {
         if (!selectedStation) return;
+
+        // Block reservation flow for offline or maintenance stations
+        if (selectedStation.status === 'offline' || selectedStation.status === 'maintenance') {
+            showToast(`⚠️ This station is ${selectedStation.status}. Reservations are not available.`);
+            return;
+        }
+
         if (reservationPill) reservationPill.close();
 
         selectedCharger = null;
@@ -1961,23 +1954,33 @@
             return;
         }
 
+        // If the station itself is offline or under maintenance, block all chargers
+        const stationBlocked = selectedStation?.status === 'offline' || selectedStation?.status === 'maintenance';
+
         const vehicleConnector = selectedVehicle?.connectorType || '';
 
         el.innerHTML = currentChargers.map(c => {
-            const cid          = c.id || c.chargerID;
+            const cid = c.id || c.chargerID;
+
             const isCompatible = !vehicleConnector || c.connectorType === vehicleConnector;
-            const isAvailable  = c.status === 'available';
+            // Force unavailable if station is blocked, regardless of charger's own status
+            const isAvailable  = !stationBlocked && c.status === 'available';
             const isSelectable = isCompatible && isAvailable;
 
-            const statusLabel = STATUS_LABELS[c.status] || c.status;
-            const statusColor = isAvailable            ? 'var(--green)'
+            const statusLabel = stationBlocked
+                ? (selectedStation.status === 'offline' ? 'Offline' : 'Maintenance')
+                : (STATUS_LABELS[c.status] || c.status);
+            const statusColor = stationBlocked
+                ? (selectedStation.status === 'offline' ? 'var(--red)' : 'var(--purple)')
+                : c.status === 'available'   ? 'var(--green)'
                 : c.status === 'occupied'    ? 'var(--yellow)'
                 : c.status === 'maintenance' ? 'var(--purple)'
                 : 'var(--red)';
 
             let tooltip = '';
-            if (!isCompatible) tooltip = `Incompatible with your ${vehicleConnector}`;
-            else if (!isAvailable) tooltip = `This unit is currently ${statusLabel.toLowerCase()}`;
+            if (stationBlocked)     tooltip = `Station is ${selectedStation.status}`;
+            else if (!isCompatible) tooltip = `Incompatible with your ${vehicleConnector}`;
+            else if (!isAvailable)  tooltip = `This unit is currently ${statusLabel.toLowerCase()}`;
 
             return `
             <div class="res-charger-card ${!isSelectable ? 'unavailable' : ''}"
@@ -1985,8 +1988,11 @@
                  ${isSelectable ? `onclick="selectCharger(${cid})"` : `title="${tooltip}"`}>
                 <div>
                     <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW
-                        ${!isCompatible
+                        ${!isCompatible && !stationBlocked
                             ? '<span style="font-size:10px;color:var(--danger);margin-left:6px;">✗ incompatible</span>'
+                            : ''}
+                        ${stationBlocked
+                            ? `<span style="font-size:10px;color:${statusColor};margin-left:6px;">✗ ${selectedStation.status}</span>`
                             : ''}
                     </div>
                     <div class="charger-detail" style="color:${statusColor};margin-top:3px;">
@@ -2113,7 +2119,6 @@
             resStep         = 'vehicle';
             selectedCharger = null;
             renderVehicleStep();
-            // Restore previously selected vehicle highlight
             if (selectedVehicle) {
                 const card = document.getElementById(`vcard-${selectedVehicle.vehicleID}`);
                 if (card) {
