@@ -23,16 +23,26 @@ const Wallet = ({ user }) => { // User bilgisini prop olarak aldığını varsay
   });
 
   // 1. Verileri Çekme
+// 1. Verileri Çekme
   useEffect(() => {
+    // KORUMA 1: Eğer driverID henüz yüklenmediyse (sayfa yenilenme anı), işlemi durdur.
+    if (!driverID) return;
+
     const fetchData = async () => {
       try {
         const balanceRes = await fetch(`http://localhost:8000/api/wallet/balance/${driverID}`);
-        const driverData = await balanceRes.json();
-        setBalance(driverData.balance);
+        if (balanceRes.ok) {
+          const driverData = await balanceRes.json();
+          // KORUMA 2: Veri undefined gelirse 0'a eşitle
+          setBalance(driverData.balance || 0); 
+        }
 
         const cardsRes = await fetch(`http://localhost:8000/api/wallet/cards/${driverID}`);
-        const cardsData = await cardsRes.json();
-        setCards(cardsData);
+        if (cardsRes.ok) {
+          const cardsData = await cardsRes.json();
+          // KORUMA 3: Gelen veri dizi (array) değilse boş dizi ata ki .map() patlamasın
+          setCards(Array.isArray(cardsData) ? cardsData : []); 
+        }
       } catch (error) {
         console.error("Data fetch error:", error);
       } finally {
