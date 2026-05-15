@@ -1473,43 +1473,55 @@
     }
 
     async function loadChargers(stationId) {
-        try {
-            const res      = await fetch(`${API_BASE}/stations/${stationId}`);
-            const data     = await res.json();
-            const chargers = data.chargers || [];
-            currentChargers = chargers;
+    try {
+        const res      = await fetch(`${API_BASE}/stations/${stationId}`);
+        const data     = await res.json();
+        const chargers = data.chargers || [];
+        currentChargers = chargers;
 
-            const el = document.getElementById('chargerList');
-            if (!el) return;
+        const el = document.getElementById('chargerList');
+        if (!el) return;
 
-            if (!chargers.length) {
-                el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">No charger info available.</div>';
-                return;
-            }
-
-            el.innerHTML = chargers.map(c => {
-                const cid         = c.id || c.chargerID;
-                const statusLabel = STATUS_LABELS[c.status] || c.status;
-                const statusColor = c.status === 'available'   ? 'var(--green)'
-                    : c.status === 'occupied'    ? 'var(--yellow)'
-                    : c.status === 'maintenance' ? 'var(--purple)'
-                    : 'var(--red)';
-                return `
-                <div class="charger-item">
-                    <div>
-                        <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
-                        <div class="charger-detail" style="color:${statusColor};">
-                            Unit #${cid} · ${statusLabel}
-                        </div>
-                    </div>
-                    <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
-                </div>`;
-            }).join('');
-        } catch {
-            const el = document.getElementById('chargerList');
-            if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Could not load charger info.</div>';
+        if (!chargers.length) {
+            el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">No charger info available.</div>';
+            return;
         }
+
+        // If the station itself is offline or under maintenance, override all charger statuses visually
+        const stationBlocked = selectedStation?.status === 'offline' || selectedStation?.status === 'maintenance';
+
+        el.innerHTML = chargers.map(c => {
+            const cid = c.id || c.chargerID;
+
+            // Use station status for label/color when station is blocked
+            const statusLabel = stationBlocked
+                ? (selectedStation.status === 'offline' ? 'Offline' : 'Maintenance')
+                : (STATUS_LABELS[c.status] || c.status);
+
+            const statusColor = stationBlocked
+                ? (selectedStation.status === 'offline' ? 'var(--red)' : 'var(--purple)')
+                : c.status === 'available'   ? 'var(--green)'
+                : c.status === 'occupied'    ? 'var(--yellow)'
+                : c.status === 'maintenance' ? 'var(--purple)'
+                : 'var(--red)';
+
+            return `
+            <div class="charger-item">
+                <div>
+                    <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW</div>
+                    <div class="charger-detail" style="color:${statusColor};">
+                        Unit #${cid} · ${statusLabel}
+                    </div>
+                </div>
+                <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
+            </div>`;
+        }).join('');
+
+    } catch {
+        const el = document.getElementById('chargerList');
+        if (el) el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">Could not load charger info.</div>';
     }
+}
 
     // ── Route calculation ─────────────────────────────────────────────────────
     async function calculateRoutes(mode) {
@@ -1821,6 +1833,13 @@
     // ── Reservation flow ──────────────────────────────────────────────────────
     async function openReservationPanel() {
         if (!selectedStation) return;
+
+        // Block reservation flow for offline or maintenance stations
+        if (selectedStation.status === 'offline' || selectedStation.status === 'maintenance') {
+            showToast(`⚠️ This station is ${selectedStation.status}. Reservations are not available.`);
+            return;
+        }
+
         if (reservationPill) reservationPill.close();
 
         selectedCharger = null;
@@ -1953,50 +1972,61 @@
     }
 
     function renderResChargerList() {
-        const el = document.getElementById('resChargerList');
-        if (!el) return;
+    const el = document.getElementById('resChargerList');
+    if (!el) return;
 
-        if (!currentChargers.length) {
-            el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">No chargers found at this station.</div>';
-            return;
-        }
-
-        const vehicleConnector = selectedVehicle?.connectorType || '';
-
-        el.innerHTML = currentChargers.map(c => {
-            const cid          = c.id || c.chargerID;
-            const isCompatible = !vehicleConnector || c.connectorType === vehicleConnector;
-            const isAvailable  = c.status === 'available';
-            const isSelectable = isCompatible && isAvailable;
-
-            const statusLabel = STATUS_LABELS[c.status] || c.status;
-            const statusColor = isAvailable            ? 'var(--green)'
-                : c.status === 'occupied'    ? 'var(--yellow)'
-                : c.status === 'maintenance' ? 'var(--purple)'
-                : 'var(--red)';
-
-            let tooltip = '';
-            if (!isCompatible) tooltip = `Incompatible with your ${vehicleConnector}`;
-            else if (!isAvailable) tooltip = `This unit is currently ${statusLabel.toLowerCase()}`;
-
-            return `
-            <div class="res-charger-card ${!isSelectable ? 'unavailable' : ''}"
-                 id="res-charger-${cid}"
-                 ${isSelectable ? `onclick="selectCharger(${cid})"` : `title="${tooltip}"`}>
-                <div>
-                    <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW
-                        ${!isCompatible
-                            ? '<span style="font-size:10px;color:var(--danger);margin-left:6px;">✗ incompatible</span>'
-                            : ''}
-                    </div>
-                    <div class="charger-detail" style="color:${statusColor};margin-top:3px;">
-                        Unit #${cid} · ${statusLabel}
-                    </div>
-                </div>
-                <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
-            </div>`;
-        }).join('');
+    if (!currentChargers.length) {
+        el.innerHTML = '<div style="font-size:12px;color:var(--text-muted);">No chargers found at this station.</div>';
+        return;
     }
+
+    // If the station itself is offline or under maintenance, block all chargers
+    const stationBlocked = selectedStation?.status === 'offline' || selectedStation?.status === 'maintenance';
+
+    const vehicleConnector = selectedVehicle?.connectorType || '';
+
+    el.innerHTML = currentChargers.map(c => {
+        const cid = c.id || c.chargerID;
+
+        const isCompatible = !vehicleConnector || c.connectorType === vehicleConnector;
+        // Force unavailable if station is blocked, regardless of charger's own status
+        const isAvailable  = !stationBlocked && c.status === 'available';
+        const isSelectable = isCompatible && isAvailable;
+
+        const statusLabel = stationBlocked ? (selectedStation.status === 'offline' ? 'Offline' : 'Maintenance')
+            : (STATUS_LABELS[c.status] || c.status);
+        const statusColor = stationBlocked      ? (selectedStation.status === 'offline' ? 'var(--red)' : 'var(--purple)')
+            : c.status === 'available'          ? 'var(--green)'
+            : c.status === 'occupied'           ? 'var(--yellow)'
+            : c.status === 'maintenance'        ? 'var(--purple)'
+            : 'var(--red)';
+
+        let tooltip = '';
+        if (stationBlocked)      tooltip = `Station is ${selectedStation.status}`;
+        else if (!isCompatible)  tooltip = `Incompatible with your ${vehicleConnector}`;
+        else if (!isAvailable)   tooltip = `This unit is currently ${statusLabel.toLowerCase()}`;
+
+        return `
+        <div class="res-charger-card ${!isSelectable ? 'unavailable' : ''}"
+             id="res-charger-${cid}"
+             ${isSelectable ? `onclick="selectCharger(${cid})"` : `title="${tooltip}"`}>
+            <div>
+                <div class="charger-type">${c.connectorType} · ${c.powerOutput} kW
+                    ${!isCompatible && !stationBlocked
+                        ? '<span style="font-size:10px;color:var(--danger);margin-left:6px;">✗ incompatible</span>'
+                        : ''}
+                    ${stationBlocked
+                        ? `<span style="font-size:10px;color:${statusColor};margin-left:6px;">✗ ${selectedStation.status}</span>`
+                        : ''}
+                </div>
+                <div class="charger-detail" style="color:${statusColor};margin-top:3px;">
+                    Unit #${cid} · ${statusLabel}
+                </div>
+            </div>
+            <div class="charger-price">${c.pricePerKwh ?? '—'} ₺/kWh</div>
+        </div>`;
+    }).join('');
+}
 
     function selectCharger(chargerId) {
         selectedCharger = currentChargers.find(c => (c.id || c.chargerID) === chargerId);
