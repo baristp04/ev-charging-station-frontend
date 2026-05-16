@@ -13,6 +13,8 @@ This project provides a user-friendly interface that allows electric vehicle use
 * **Charging Station Management:** View the real-time status of available charging stations (e.g., available, in-use, reserved) via a map or list interface.
 * **Charging Session Control:** Interactive features to start and stop the charging process.
 * **Dynamic Pricing & Policies:** Billing screens that adhere strictly to system charging policies (e.g., no refunds for early termination).
+* **Reporting:** Users can report station faults and other issues they may address.
+* **Station Maintenance:** Operation Specialists and Technicians can see reports made by users and Specialists can maintain stations.
 
 ## 🛠 Tech Stack
 
