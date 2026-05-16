@@ -1,16 +1,50 @@
-# React + Vite
+# EV Charging Station Network Management System - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This repository contains the frontend application for the Electric Vehicle (EV) Charging Station Network Management System, developed as part of the **Fundamentals of Software Engineering** course.
 
-Currently, two official plugins are available:
+## 📖 About the Project
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This project provides a user-friendly interface that allows electric vehicle users to locate charging stations, manage their charging sessions, make reservations, and handle payment processes. Designed with software engineering principles in mind, it specifically focuses on requirements such as user wallet integration and comprehensive end-to-end test scenarios.
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+* **Station Reservation System:** Users can book charging slots in advance to ensure availability at their preferred time and location (not past 24 hours).
+* **User Wallet Interface:** View current balance, top up funds, and manage balance deductions linked to charging sessions.
+* **Charging Station Management:** View the real-time status of available charging stations (e.g., available, in-use, reserved) via a map or list interface.
+* **Charging Session Control:** Interactive features to start and stop the charging process.
+* **Dynamic Pricing & Policies:** Billing screens that adhere strictly to system charging policies (e.g., no refunds for early termination).
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+* **Frontend Framework:** React 
+* **Styling:** CSS
+* **State Management:** Context API
+* **Network Requests:** Axios / Fetch API
+
+## 🚀 Installation and Setup
+
+To run this project locally, follow these steps:
+
+1.  **Clone the Repository:**
+    ```bash
+    git clone https://github.com/baristp04/ev-charging-station-frontend.git
+    cd ev-charging-station-frontend
+    ```
+
+2.  **Install Dependencies:**
+    ```bash
+    npm install
+    # or
+    yarn install
+    ```
+
+4.  **Start the Development Server:**
+    ```bash
+    npm run dev
+    # or
+    yarn dev
+    ```
+
+## 🎓 Academic Context
+
+This project was developed for the **Fundamentals of Software Engineering** course in the Computer Engineering curriculum at **Ege University**.
