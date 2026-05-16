@@ -9,6 +9,7 @@ This project provides a user-friendly interface that allows electric vehicle use
 ## ✨ Features
 
 * **Station Reservation System:** Users can book charging slots in advance to ensure availability at their preferred time and location (not past 24 hours).
+* **Vehichle Registration Module:** Users can register their electric cars, also they can update and delete their cars.
 * **User Wallet Interface:** View current balance, top up funds, and manage balance deductions linked to charging sessions.
 * **Charging Station Management:** View the real-time status of available charging stations (e.g., available, in-use, reserved) via a map or list interface.
 * **Charging Session Control:** Interactive features to start and stop the charging process.
@@ -22,30 +23,6 @@ This project provides a user-friendly interface that allows electric vehicle use
 * **Styling:** CSS
 * **State Management:** Context API
 * **Network Requests:** Axios / Fetch API
-
-## 🚀 Installation and Setup
-
-To run this project locally, follow these steps:
-
-1.  **Clone the Repository:**
-    ```bash
-    git clone https://github.com/baristp04/ev-charging-station-frontend.git
-    cd ev-charging-station-frontend
-    ```
-
-2.  **Install Dependencies:**
-    ```bash
-    npm install
-    # or
-    yarn install
-    ```
-
-4.  **Start the Development Server:**
-    ```bash
-    npm run dev
-    # or
-    yarn dev
-    ```
 
 ## 🎓 Academic Context
 
